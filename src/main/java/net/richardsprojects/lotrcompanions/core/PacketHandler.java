@@ -6,10 +6,6 @@
  */
 package net.richardsprojects.lotrcompanions.core;
 
-import com.github.justinwon777.LOTRCompanions.client.CompanionScreen;
-import com.github.justinwon777.LOTRCompanions.container.CompanionContainer;
-import com.github.justinwon777.LOTRCompanions.entity.AbstractHumanCompanionEntity;
-import com.github.justinwon777.LOTRCompanions.networking.*;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -22,8 +18,10 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.entity.AbstractHumanCompanionEntity;
-import net.richardsprojects.lotrcompanions.networking.OpenInventoryPacket;
+import net.richardsprojects.lotrcompanions.client.CompanionScreen;
+import net.richardsprojects.lotrcompanions.container.CompanionContainer;
+import net.richardsprojects.lotrcompanions.entity.AbstractLOTRCompanionEntity;
+import net.richardsprojects.lotrcompanions.networking.*;
 
 public class PacketHandler {
     private static final String PROTOCOL_VERSION = "1";
@@ -42,8 +40,8 @@ public class PacketHandler {
                 SetPatrollingPacket::handle);
         INSTANCE.registerMessage(id++, ClearTargetPacket.class, ClearTargetPacket::encode, ClearTargetPacket::decode,
                 ClearTargetPacket::handle);
-        INSTANCE.registerMessage(id++, SetStationeryPacket.class, SetStationeryPacket::encode, SetStationeryPacket::decode,
-                SetStationeryPacket::handle);
+        /*INSTANCE.registerMessage(id++, SetStationeryPacket.class, SetStationeryPacket::encode, SetStationeryPacket::decode,
+                SetStationeryPacket::handle);*/
         INSTANCE.registerMessage(id++, ReleasePacket.class, ReleasePacket::encode, ReleasePacket::decode,
                 ReleasePacket::handle);
     }
@@ -54,8 +52,8 @@ public class PacketHandler {
         PlayerEntity player = Minecraft.getInstance().player;
         if (player != null) {
             Entity entity = player.level.getEntity(packet.getEntityId());
-            if (entity instanceof AbstractHumanCompanionEntity) {
-                AbstractHumanCompanionEntity companion = (AbstractHumanCompanionEntity) entity;
+            if (entity instanceof AbstractLOTRCompanionEntity) {
+                AbstractLOTRCompanionEntity companion = (AbstractLOTRCompanionEntity) entity;
                 ClientPlayerEntity clientplayerentity = Minecraft.getInstance().player;
                 CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, companion.inventory);
                 clientplayerentity.containerMenu = container;

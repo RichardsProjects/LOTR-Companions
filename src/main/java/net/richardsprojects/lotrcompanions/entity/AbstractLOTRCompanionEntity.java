@@ -7,10 +7,8 @@
 
 package net.richardsprojects.lotrcompanions.entity;
 
-import com.github.justinwon777.humancompanions.container.CompanionContainer;
-import com.github.justinwon777.humancompanions.entity.ai.*;
-
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
+import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
 
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -45,45 +43,38 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
-import org.apache.commons.lang3.ArrayUtils;
+import net.richardsprojects.lotrcompanions.entity.ai.*;
+import net.richardsprojects.lotrcompanions.networking.OpenInventoryPacket;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class AbstractHumanCompanionEntity extends TameableEntity{
+public class AbstractLOTRCompanionEntity extends TameableEntity{
 
-    private static final DataParameter<Integer> DATA_TYPE_ID = EntityDataManager.defineId(AbstractHumanCompanionEntity.class, DataSerializers.INT);
-    private static final DataParameter<Integer> SEX = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Integer> DATA_TYPE_ID = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class, DataSerializers.INT);
+    private static final DataParameter<Integer> SEX = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.INT);
-    private static final DataParameter<Integer> BASE_HEALTH = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Integer> BASE_HEALTH = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.INT);
-    private static final DataParameter<Integer> EXP_LVL = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Integer> EXP_LVL = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.INT);
-    private static final DataParameter<Boolean> EATING = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Boolean> EATING = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> ALERT = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Boolean> ALERT = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> HUNTING = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Boolean> HUNTING = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> PATROLLING = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Boolean> PATROLLING = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> FOLLOWING = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Boolean> FOLLOWING = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> GUARDING = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Boolean> GUARDING = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> STATIONERY = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Boolean> STATIONERY = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.BOOLEAN);
-    private static final DataParameter<Optional<BlockPos>> PATROL_POS = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Optional<BlockPos>> PATROL_POS = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.OPTIONAL_BLOCK_POS);
-    private static final DataParameter<Integer> PATROL_RADIUS = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
-            DataSerializers.INT);
-    private static final DataParameter<String> FOOD1 = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
-            DataSerializers.STRING);
-    private static final DataParameter<String> FOOD2 = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
-            DataSerializers.STRING);
-    private static final DataParameter<Integer> FOOD1_AMT = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
-            DataSerializers.INT);
-    private static final DataParameter<Integer> FOOD2_AMT = EntityDataManager.defineId(AbstractHumanCompanionEntity.class,
+    private static final DataParameter<Integer> PATROL_RADIUS = EntityDataManager.defineId(AbstractLOTRCompanionEntity.class,
             DataSerializers.INT);
 
     public Inventory inventory = new Inventory(27);
@@ -101,7 +92,7 @@ public class AbstractHumanCompanionEntity extends TameableEntity{
     private String food1;
     private String food2;
 
-    public AbstractHumanCompanionEntity(EntityType<? extends TameableEntity> entityType, World level) {
+    public AbstractLOTRCompanionEntity(EntityType<? extends TameableEntity> entityType, World level) {
         super(entityType, level);
         this.setTame(false);
         ((GroundPathNavigator)this.getNavigation()).setCanOpenDoors(true);
@@ -156,10 +147,6 @@ public class AbstractHumanCompanionEntity extends TameableEntity{
         // TODO: test if this can be overridden by the Knight
         this.entityData.define(BASE_HEALTH, 30);
         this.entityData.define(EXP_LVL, 0);
-        this.entityData.define(FOOD1, "");
-        this.entityData.define(FOOD2, "");
-        this.entityData.define(FOOD1_AMT, 0);
-        this.entityData.define(FOOD2_AMT, 0);
     }
 
     public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn,
@@ -179,18 +166,17 @@ public class AbstractHumanCompanionEntity extends TameableEntity{
         moveBackGoal = new MoveBackToPatrolGoal(this, getPatrolRadius());
         this.goalSelector.addGoal(3, moveBackGoal);
         this.goalSelector.addGoal(3, patrolGoal);
-        setFoodRequirements();
 
-        if (Config.SPAWN_ARMOR.get()) {
-            for (int i = 0; i < 4; i++) {
-                EquipmentSlotType armorType = armorTypes[i];
-                ItemStack itemstack = CompanionData.getSpawnArmor(armorType);
-                if (!itemstack.isEmpty()) {
-                    this.inventory.setItem(i, itemstack);
-                }
+        // set armor
+        for (int i = 0; i < 4; i++) {
+            EquipmentSlotType armorType = armorTypes[i];
+            ItemStack itemstack = CompanionData.getSpawnArmor(armorType);
+            if (!itemstack.isEmpty()) {
+                this.inventory.setItem(i, itemstack);
             }
-            checkArmor();
         }
+        checkArmor();
+
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
@@ -211,10 +197,7 @@ public class AbstractHumanCompanionEntity extends TameableEntity{
         tag.putFloat("XpP", this.experienceProgress);
         tag.putInt("XpLevel", this.experienceLevel);
         tag.putInt("XpTotal", this.totalExperience);
-        tag.putString("food1", food1);
-        tag.putString("food2", food2);
-        tag.putInt("food1_amt", foodRequirements.get(food1));
-        tag.putInt("food2_amt", foodRequirements.get(food2));
+
         if (this.getPatrolPos() != null) {
             int[] patrolPos = {this.getPatrolPos().getX(), this.getPatrolPos().getY(), this.getPatrolPos().getZ()};
             tag.putIntArray("patrol_pos", patrolPos);
@@ -396,11 +379,11 @@ public class AbstractHumanCompanionEntity extends TameableEntity{
     }
 
     public boolean hurt(DamageSource p_34288_, float p_34289_) {
-        if (p_34288_.getEntity() == this.getOwner() && !Config.FRIENDLY_FIRE_PLAYER.get()) {
+        if (p_34288_.getEntity() == this.getOwner() && !LOTRCompanions.FRIENDLY_FIRE_PLAYER) {
             return false;
         }
 
-        if (p_34288_ == DamageSource.FALL && !Config.FALL_DAMAGE.get()) {
+        if (p_34288_ == DamageSource.FALL && !LOTRCompanions.FALL_DAMAGE) {
             return false;
         }
 

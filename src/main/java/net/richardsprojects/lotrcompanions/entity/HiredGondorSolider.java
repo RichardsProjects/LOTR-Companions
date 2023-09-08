@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class HiredGondorSolider extends AbstractHumanCompanionEntity {
+public class HiredGondorSolider extends AbstractLOTRCompanionEntity {
 
     public HiredGondorSolider(EntityType<? extends TameableEntity> entityType, World level) {
         super(entityType, level);
