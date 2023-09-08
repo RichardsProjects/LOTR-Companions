@@ -5,11 +5,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.BowItem;
-import net.richardsprojects.lotrcompanions.entity.AbstractLOTRCompanionEntity;
+import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
 
 import java.util.EnumSet;
 
-public class ArcherBowAttackGoal<T extends AbstractLOTRCompanionEntity & IRangedAttackMob> extends Goal{
+public class ArcherBowAttackGoal<T extends AbstractHiredLOTREntity & IRangedAttackMob> extends Goal{
     private final T mob;
     private final double speedModifier;
     private int attackIntervalMin;
@@ -29,11 +29,12 @@ public class ArcherBowAttackGoal<T extends AbstractLOTRCompanionEntity & IRanged
     }
 
     public boolean canUse() {
-        if (mob.isEating()) {
-            return false;
-        } else {
+        // TODO: reimplement
+        //if (mob.isEating()) {
+        //    return false;
+        //} else {
             return this.mob.getTarget() != null && this.isHoldingBow();
-        }
+        //}
     }
 
     protected boolean isHoldingBow() {

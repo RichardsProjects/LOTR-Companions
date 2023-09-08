@@ -4,13 +4,13 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.richardsprojects.lotrcompanions.entity.AbstractLOTRCompanionEntity;
+import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
 
 public class EatGoal extends Goal {
-    protected final AbstractLOTRCompanionEntity companion;
+    protected final AbstractHiredLOTREntity companion;
     ItemStack food = ItemStack.EMPTY;
 
-    public EatGoal(AbstractLOTRCompanionEntity entity) {
+    public EatGoal(AbstractHiredLOTREntity entity) {
         companion = entity;
     }
 

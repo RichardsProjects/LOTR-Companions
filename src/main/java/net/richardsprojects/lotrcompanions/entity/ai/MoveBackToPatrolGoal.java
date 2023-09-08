@@ -2,14 +2,14 @@ package net.richardsprojects.lotrcompanions.entity.ai;
 
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.vector.Vector3d;
-import net.richardsprojects.lotrcompanions.entity.AbstractLOTRCompanionEntity;
+import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
 
 public class MoveBackToPatrolGoal extends Goal {
     public Vector3d patrolVec;
-    public AbstractLOTRCompanionEntity companion;
+    public AbstractHiredLOTREntity companion;
     public int radius;
 
-    public MoveBackToPatrolGoal(AbstractLOTRCompanionEntity p_25568_, int radius) {
+    public MoveBackToPatrolGoal(AbstractHiredLOTREntity p_25568_, int radius) {
         this.companion = p_25568_;
         this.radius = radius;
     }

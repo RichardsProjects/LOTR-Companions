@@ -1,12 +1,15 @@
 package net.richardsprojects.lotrcompanions;
 
+import lotr.client.render.entity.GondorSoldierRenderer;
+import lotr.common.entity.npc.GondorSoldierEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.richardsprojects.lotrcompanions.client.CompanionRenderer;
+import net.richardsprojects.lotrcompanions.client.render.HiredGondorSoldierRenderer;
+import net.richardsprojects.lotrcompanions.core.PacketHandler;
 import net.richardsprojects.lotrcompanions.entity.LOTRCEntity;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
 import org.apache.logging.log4j.LogManager;
@@ -32,12 +35,13 @@ public class LOTRCompanions {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         LOTRCEntity.ENTITIES.register(eventBus);
         LOTRCItems.ITEMS.register(eventBus);
+        PacketHandler.register();
 
         eventBus.addListener(this::setupClientRendering);
     }
 
     private void setupClientRendering(final FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(LOTRCEntity.HIRED_GONDOR_SOLDIER.get(), CompanionRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(LOTRCEntity.HIRED_GONDOR_SOLDIER.get(), GondorSoldierRenderer::new);
     }
 
 }

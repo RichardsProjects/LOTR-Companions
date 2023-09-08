@@ -4,17 +4,18 @@ import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.vector.Vector3d;
 
+import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
 public class AvoidCreeperGoal<T extends LivingEntity> extends Goal {
-    protected final TameableEntity mob;
+    protected final AbstractHiredLOTREntity mob;
     private final double walkSpeedModifier;
     private final double sprintSpeedModifier;
     protected T toAvoid;
@@ -26,11 +27,11 @@ public class AvoidCreeperGoal<T extends LivingEntity> extends Goal {
     protected final Predicate<LivingEntity> predicateOnAvoidEntity;
     private final EntityPredicate avoidEntityTargeting;
 
-    public AvoidCreeperGoal(TameableEntity p_25027_, Class<T> p_25028_, float p_25029_, double p_25030_, double p_25031_) {
+    public AvoidCreeperGoal(AbstractHiredLOTREntity p_25027_, Class<T> p_25028_, float p_25029_, double p_25030_, double p_25031_) {
         this(p_25027_, p_25028_, (p_25052_) -> true, p_25029_, p_25030_, p_25031_, EntityPredicates.NO_CREATIVE_OR_SPECTATOR::test);
     }
 
-    public AvoidCreeperGoal(TameableEntity p_25040_, Class<T> p_25041_, Predicate<LivingEntity> p_25042_, float p_25043_,
+    public AvoidCreeperGoal(AbstractHiredLOTREntity p_25040_, Class<T> p_25041_, Predicate<LivingEntity> p_25042_, float p_25043_,
                             double p_25044_, double p_25045_, Predicate<LivingEntity> p_25046_) {
         this.mob = p_25040_;
         this.avoidClass = p_25041_;

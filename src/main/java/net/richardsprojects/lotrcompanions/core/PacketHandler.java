@@ -18,9 +18,9 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.client.CompanionScreen;
+import net.richardsprojects.lotrcompanions.client.screen.CompanionScreen;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
-import net.richardsprojects.lotrcompanions.entity.AbstractLOTRCompanionEntity;
+import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
 import net.richardsprojects.lotrcompanions.networking.*;
 
 public class PacketHandler {
@@ -34,8 +34,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(id++, OpenInventoryPacket.class, OpenInventoryPacket::encode, OpenInventoryPacket::decode, OpenInventoryPacket::handle);
         INSTANCE.registerMessage(id++, SetAlertPacket.class, SetAlertPacket::encode, SetAlertPacket::decode,
                 SetAlertPacket::handle);
-        INSTANCE.registerMessage(id++, SetHuntingPacket.class, SetHuntingPacket::encode, SetHuntingPacket::decode,
-                SetHuntingPacket::handle);
         INSTANCE.registerMessage(id++, SetPatrollingPacket.class, SetPatrollingPacket::encode, SetPatrollingPacket::decode,
                 SetPatrollingPacket::handle);
         INSTANCE.registerMessage(id++, ClearTargetPacket.class, ClearTargetPacket::encode, ClearTargetPacket::decode,
@@ -52,8 +50,8 @@ public class PacketHandler {
         PlayerEntity player = Minecraft.getInstance().player;
         if (player != null) {
             Entity entity = player.level.getEntity(packet.getEntityId());
-            if (entity instanceof AbstractLOTRCompanionEntity) {
-                AbstractLOTRCompanionEntity companion = (AbstractLOTRCompanionEntity) entity;
+            if (entity instanceof AbstractHiredLOTREntity) {
+                AbstractHiredLOTREntity companion = (AbstractHiredLOTREntity) entity;
                 ClientPlayerEntity clientplayerentity = Minecraft.getInstance().player;
                 CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, companion.inventory);
                 clientplayerentity.containerMenu = container;

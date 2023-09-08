@@ -1,0 +1,20 @@
+package net.richardsprojects.lotrcompanions.client.render.model;
+
+import lotr.client.render.entity.model.LOTRBipedModel;
+
+public class HumanCompanionModel<E extends AbstractHiredLOTREntity> extends LOTRBipedModel<E> {
+
+    public HumanCompanionModel(boolean smallArms) {
+        this(0.0F, false, smallArms);
+    }
+
+    public HumanCompanionModel(float f) {
+        this(f, true, false);
+    }
+
+    public HumanCompanionModel(float f, boolean isArmor, boolean smallArms) {
+        super(f, 0.0F, isArmor, smallArms);
+        if (!isArmor)
+            createLongHairModel(0.0F, f);
+    }
+}

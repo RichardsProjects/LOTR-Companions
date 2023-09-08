@@ -1,4 +1,4 @@
-package net.richardsprojects.lotrcompanions.client;
+package net.richardsprojects.lotrcompanions.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
-import net.richardsprojects.lotrcompanions.entity.AbstractLOTRCompanionEntity;
+import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSolider;
 import net.richardsprojects.lotrcompanions.networking.*;
 
@@ -41,9 +41,8 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
     private static final ResourceLocation RELEASE_BUTTON = new ResourceLocation(LOTRCompanions.MOD_ID, "textures" +
             "/releasebutton.png");
     private final int containerRows;
-    private final AbstractLOTRCompanionEntity companion;
+    private final AbstractHiredLOTREntity companion;
     private CompanionButton alertButton;
-    private CompanionButton huntingButton;
     private CompanionButton patrolButton;
     private CompanionButton clearButton;
     //private CompanionButton stationeryButton;
@@ -59,7 +58,7 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
     int col2;
 
     public CompanionScreen(CompanionContainer p_98409_, PlayerInventory p_98410_,
-                           AbstractLOTRCompanionEntity companion) {
+                           AbstractHiredLOTREntity companion) {
         super(p_98409_, p_98410_, companion.getName());
         this.companion = companion;
         this.passEvents = false;
@@ -105,12 +104,7 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
                 btn -> {
                     PacketHandler.INSTANCE.sendToServer(new SetAlertPacket(companion.getId()));
                 }));
-        this.huntingButton = addButton(new CompanionButton("hunting", col2, row1, 16, 12, 0, 0
-                ,13,
-                HUNTING_BUTTON,
-                btn -> {
-                    PacketHandler.INSTANCE.sendToServer(new SetHuntingPacket(companion.getId()));
-                }));
+
         this.patrolButton = addButton(new CompanionButton("patrolling", col1, row2, 16, 12,
                 0, 0
                 ,13,
@@ -186,17 +180,7 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
 
             this.renderComponentTooltip(stack, tooltips, x, y);
         }
-        if (this.huntingButton.isHovered()) {
-            List<ITextComponent> tooltips = new ArrayList<>();
-            if (this.companion.isHunting()) {
-                tooltips.add(new StringTextComponent("Hunting mode: On"));
-            } else {
-                tooltips.add(new StringTextComponent("Hunting mode: Off"));
-            }
-            tooltips.add(new StringTextComponent("Attacks nearby mobs for food").withStyle(TextFormatting.GRAY).withStyle(TextFormatting.ITALIC));
 
-            this.renderComponentTooltip(stack, tooltips, x, y);
-        }
         if (this.patrolButton.isHovered()) {
             List<ITextComponent> tooltips = new ArrayList<>();
             if (this.companion.isFollowing()) {

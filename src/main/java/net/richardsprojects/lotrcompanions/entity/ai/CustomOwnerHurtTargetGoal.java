@@ -7,23 +7,24 @@ import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
+import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
 
 import java.util.EnumSet;
 
 public class CustomOwnerHurtTargetGoal extends TargetGoal {
-    private final TameableEntity tameAnimal;
+    private final AbstractHiredLOTREntity follower;
     private LivingEntity ownerLastHurt;
     private int timestamp;
 
-    public CustomOwnerHurtTargetGoal(TameableEntity p_26114_) {
-        super(p_26114_, false);
-        this.tameAnimal = p_26114_;
+    public CustomOwnerHurtTargetGoal(AbstractHiredLOTREntity entity) {
+        super(entity, false);
+        this.follower = entity;
         this.setFlags(EnumSet.of(Flag.TARGET));
     }
 
     public boolean canUse() {
-        if (this.tameAnimal.isTame() && !this.tameAnimal.isOrderedToSit()) {
-            LivingEntity livingentity = this.tameAnimal.getOwner();
+        if (this.follower.isTame()) {
+            LivingEntity livingentity = this.follower.getOwner();
             if (livingentity == null) {
                 return false;
             } else {
@@ -31,7 +32,7 @@ public class CustomOwnerHurtTargetGoal extends TargetGoal {
                 if (this.ownerLastHurt instanceof TameableEntity) {
                     if (((TameableEntity) this.ownerLastHurt).isTame()) {
                         LivingEntity owner1 = ((TameableEntity) this.ownerLastHurt).getOwner();
-                        LivingEntity owner2 = this.tameAnimal.getOwner();
+                        LivingEntity owner2 = this.follower.getOwner();
                         if (owner1 == owner2) {
                             if (!LOTRCompanions.FRIENDLY_FIRE_COMPANIONS) {
                                 return false;
@@ -42,7 +43,7 @@ public class CustomOwnerHurtTargetGoal extends TargetGoal {
                     return false;
                 }
                 int i = livingentity.getLastHurtMobTimestamp();
-                return i != this.timestamp && this.canAttack(this.ownerLastHurt, EntityPredicate.DEFAULT) && this.tameAnimal.wantsToAttack(this.ownerLastHurt, livingentity);
+                return i != this.timestamp && this.canAttack(this.ownerLastHurt, EntityPredicate.DEFAULT) && this.follower.wantsToAttack(this.ownerLastHurt, livingentity);
             }
         } else {
             return false;
@@ -51,7 +52,7 @@ public class CustomOwnerHurtTargetGoal extends TargetGoal {
 
     public void start() {
         this.mob.setTarget(this.ownerLastHurt);
-        LivingEntity livingentity = this.tameAnimal.getOwner();
+        LivingEntity livingentity = this.follower.getOwner();
         if (livingentity != null) {
             this.timestamp = livingentity.getLastHurtMobTimestamp();
         }

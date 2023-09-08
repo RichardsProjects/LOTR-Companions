@@ -1,0 +1,12 @@
+package net.richardsprojects.lotrcompanions.client.render;
+
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.richardsprojects.lotrcompanions.client.render.model.HumanCompanionModel;
+
+public abstract class AbstractHumanCompanionRenderer<E extends AbstractHiredLOTREntity> extends LOTRCBipedRenderer<E, HumanCompanionModel<E>> {
+
+    public AbstractHumanCompanionRenderer(EntityRendererManager mgr) {
+        super(mgr, HumanCompanionModel::new, new HumanCompanionModel<>(0.5F), new HumanCompanionModel<>(1.0F), 0.5F);
+    }
+
+}

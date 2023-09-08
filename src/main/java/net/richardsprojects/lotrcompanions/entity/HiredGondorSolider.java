@@ -7,6 +7,7 @@
 
 package net.richardsprojects.lotrcompanions.entity;
 
+import lotr.common.init.LOTRItems;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.SpawnReason;
@@ -15,15 +16,16 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class HiredGondorSolider extends AbstractLOTRCompanionEntity {
+public class HiredGondorSolider extends AbstractHiredLOTREntity {
 
-    public HiredGondorSolider(EntityType<? extends TameableEntity> entityType, World level) {
+    public HiredGondorSolider(EntityType entityType, World level) {
         super(entityType, level);
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, true));
     }
@@ -65,6 +67,11 @@ public class HiredGondorSolider extends AbstractLOTRCompanionEntity {
                                            SpawnReason reason, @Nullable ILivingEntityData spawnDataIn,
                                            @Nullable CompoundNBT dataTag) {
         this.inventory.setItem(4, Items.IRON_SWORD.getDefaultInstance());
+        setItemSlot(EquipmentSlotType.FEET, new ItemStack((IItemProvider) LOTRItems.GONDOR_BOOTS.get()));
+        setItemSlot(EquipmentSlotType.LEGS, new ItemStack((IItemProvider)LOTRItems.GONDOR_LEGGINGS.get()));
+        setItemSlot(EquipmentSlotType.CHEST, new ItemStack((IItemProvider)LOTRItems.GONDOR_CHESTPLATE.get()));
+        setItemSlot(EquipmentSlotType.HEAD, new ItemStack((IItemProvider)LOTRItems.GONDOR_HELMET.get()));
+        setItemSlot(EquipmentSlotType.OFFHAND, new ItemStack((IItemProvider)LOTRItems.GONDOR_SHIELD.get()));
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 }

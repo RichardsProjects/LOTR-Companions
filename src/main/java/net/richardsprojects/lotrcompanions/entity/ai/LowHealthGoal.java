@@ -5,22 +5,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.entity.AbstractLOTRCompanionEntity;
+import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
 
 public class LowHealthGoal extends Goal {
-    protected final AbstractLOTRCompanionEntity mob;
+    protected final AbstractHiredLOTREntity mob;
     int startTick = 0;
     StringTextComponent text = new StringTextComponent("I need food!");
     ItemStack food = ItemStack.EMPTY;
 
-    public LowHealthGoal(AbstractLOTRCompanionEntity entity) {
+    public LowHealthGoal(AbstractHiredLOTREntity entity) {
         this.mob = entity;
     }
 
     public boolean canUse() {
         if (LOTRCompanions.LOW_HEALTH_FOOD) {
             if (this.mob.getHealth() < this.mob.getMaxHealth() / 2 && this.mob.isTame()) {
-                food = mob.checkFood();
+                // TODO: Bring this back in
+                //food = mob.checkFood();
                 return food.isEmpty();
             }
         }

@@ -3,7 +3,7 @@ package net.richardsprojects.lotrcompanions.entity.ai;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.util.math.vector.Vector3d;
-import net.richardsprojects.lotrcompanions.entity.AbstractLOTRCompanionEntity;
+import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
 
 import javax.annotation.Nullable;
 
@@ -11,14 +11,14 @@ public class PatrolGoal extends RandomWalkingGoal {
 
     protected final float probability;
     public Vector3d patrolVec;
-    public AbstractLOTRCompanionEntity companion;
+    public AbstractHiredLOTREntity companion;
     public int radius;
 
-    public PatrolGoal(AbstractLOTRCompanionEntity p_25987_, int interval, int radius) {
+    public PatrolGoal(AbstractHiredLOTREntity p_25987_, int interval, int radius) {
         this(p_25987_, 1.0D, 0.001F, interval, radius);
     }
 
-    public PatrolGoal(AbstractLOTRCompanionEntity p_25990_, double p_25991_, float p_25992_, int interval,
+    public PatrolGoal(AbstractHiredLOTREntity p_25990_, double p_25991_, float p_25992_, int interval,
                       int radius) {
         super(p_25990_, p_25991_);
         this.probability = p_25992_;
