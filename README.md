@@ -4,5 +4,5 @@ LOTR Companions is a work-in-progress Forge Minecraft Mod inspired by and with s
 
 This means that it is written for Minecraft 1.16.5 and will match the version of the LOTR: Renewed mod.
 
-Also since it uses GPLv3.0 code it is likewise licensed under GLPv3.0
+Also since it uses GPLv3.0 code it is likewise licensed under GPLv3.0
 
