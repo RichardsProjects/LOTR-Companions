@@ -5,7 +5,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 import java.util.function.Supplier;
 
@@ -35,14 +35,15 @@ public class SetAlertPacket {
                     ServerPlayerEntity player = context.get().getSender();
                     if (player != null && player.level instanceof ServerWorld) {
                         Entity entity = player.level.getEntity(msg.getEntityId());
-                        if (entity instanceof AbstractHiredLOTREntity) {
-                            AbstractHiredLOTREntity companion = (AbstractHiredLOTREntity) entity;
-                            companion.setAlert(!companion.isAlert());
+                        if (entity instanceof HiredGondorSoldier) {
+                            HiredGondorSoldier companion = (HiredGondorSoldier) entity;
+                            // TODO: reimplement eventually
+                            /*companion.setAlert(!companion.isAlert());
                             if (companion.isAlert()) {
                                 companion.addAlertGoals();
                             } else {
                                 companion.removeAlertGoals();
-                            }
+                            }*/
                         }
                     }
                 });

@@ -1,13 +1,12 @@
 package net.richardsprojects.lotrcompanions.client.render;
 
-import lotr.client.render.RandomTextureVariants;
 import lotr.client.render.entity.AbstractManRenderer;
+import lotr.client.render.entity.GondorSoldierRenderer;
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
 
-public class HiredGondorSoldierRenderer extends AbstractManRenderer<AbstractHiredLOTREntity> {
+public class HiredGondorSoldierRenderer extends GondorSoldierRenderer {
     public HiredGondorSoldierRenderer(EntityRendererManager mgr) {
         super(mgr);
     }

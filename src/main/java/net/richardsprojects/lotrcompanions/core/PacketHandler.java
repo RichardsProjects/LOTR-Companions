@@ -11,6 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -20,7 +22,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.client.screen.CompanionScreen;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.networking.*;
 
 public class PacketHandler {
@@ -50,10 +52,22 @@ public class PacketHandler {
         PlayerEntity player = Minecraft.getInstance().player;
         if (player != null) {
             Entity entity = player.level.getEntity(packet.getEntityId());
-            if (entity instanceof AbstractHiredLOTREntity) {
-                AbstractHiredLOTREntity companion = (AbstractHiredLOTREntity) entity;
+            if (entity instanceof HiredGondorSoldier) {
+                HiredGondorSoldier companion = (HiredGondorSoldier) entity;
                 ClientPlayerEntity clientplayerentity = Minecraft.getInstance().player;
-                CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, companion.inventory);
+
+                Inventory tmpInventory = new Inventory(15);
+                for (int i = 0; i < 9; i++) {
+                    tmpInventory.setItem(i, companion.inventory.getItem(i));
+                }
+                tmpInventory.setItem(9, companion.getItemBySlot(EquipmentSlotType.HEAD));
+                tmpInventory.setItem(10, companion.getItemBySlot(EquipmentSlotType.CHEST));
+                tmpInventory.setItem(11, companion.getItemBySlot(EquipmentSlotType.LEGS));
+                tmpInventory.setItem(12, companion.getItemBySlot(EquipmentSlotType.FEET));
+                tmpInventory.setItem(13, companion.getItemBySlot(EquipmentSlotType.MAINHAND));
+                tmpInventory.setItem(14, companion.getItemBySlot(EquipmentSlotType.OFFHAND));
+
+                CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, tmpInventory);
                 clientplayerentity.containerMenu = container;
                 Minecraft.getInstance().setScreen(new CompanionScreen(container, player.inventory, companion));
             }

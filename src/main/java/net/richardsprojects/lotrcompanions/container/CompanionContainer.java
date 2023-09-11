@@ -9,32 +9,39 @@ import net.minecraft.item.ItemStack;
 
 public class CompanionContainer extends Container {
     private final IInventory container;
-    private final int containerRows;
+    private final int containerRows = 1;
 
-    public CompanionContainer(int p_39230_, PlayerInventory p_39231_, IInventory p_39232_) {
+    public CompanionContainer(int p_39230_, PlayerInventory p_39231_, IInventory companionInv) {
         super(null, p_39230_);
-        checkContainerSize(p_39232_, 3 * 9);
-        this.container = p_39232_;
-        this.containerRows = 3;
-        p_39232_.startOpen(p_39231_.player);
-        int i = (this.containerRows - 4) * 18;
+        checkContainerSize(companionInv, companionInv.getContainerSize());
+        this.container = companionInv;
+        companionInv.startOpen(p_39231_.player);
 
-        for (int j = 0; j < this.containerRows; ++j) {
-            for (int k = 0; k < 9; ++k) {
-                this.addSlot(new Slot(p_39232_, k + j * 9, 8 + k * 18, 18 + j * 18));
-            }
+        // add the 9 companion inventory slots
+        for (int k = 0; k < 9; ++k) {
+            this.addSlot(new Slot(companionInv, k, 8 + k * 18, 110));
         }
 
+        // add the 3 rows of player inventory
         for (int l = 0; l < 3; ++l) {
             for (int j1 = 0; j1 < 9; ++j1) {
-                this.addSlot(new Slot(p_39231_, j1 + l * 9 + 9, 8 + j1 * 18, 103 + l * 18 + i));
+                this.addSlot(new Slot(p_39231_, j1 + l * 9 + 9, 8 + j1 * 18, 142 + l * 18));
             }
         }
 
+        // add the player's hotbar
         for (int i1 = 0; i1 < 9; ++i1) {
-            this.addSlot(new Slot(p_39231_, i1, 8 + i1 * 18, 161 + i));
+            this.addSlot(new Slot(p_39231_, i1, 8 + i1 * 18, 200));
+            System.out.println("Adding slot: " + (8 + i1 * 18));
         }
 
+        // add the 6 companion equipment slots
+        this.addSlot(new Slot(companionInv, 9,8,31)); // i = 44
+        this.addSlot(new Slot(companionInv, 10,8,49));
+        this.addSlot(new Slot(companionInv, 11,8,67));
+        this.addSlot(new Slot(companionInv, 12,8,85));
+        this.addSlot(new Slot(companionInv, 13,62,67));
+        this.addSlot(new Slot(companionInv, 14,62,85));
     }
 
     public boolean stillValid(PlayerEntity p_39242_) {

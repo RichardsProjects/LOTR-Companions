@@ -4,20 +4,21 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class EatGoal extends Goal {
-    protected final AbstractHiredLOTREntity companion;
+    protected final HiredGondorSoldier companion;
     ItemStack food = ItemStack.EMPTY;
 
-    public EatGoal(AbstractHiredLOTREntity entity) {
+    public EatGoal(HiredGondorSoldier entity) {
         companion = entity;
     }
 
     public boolean canUse() {
         if (companion.getHealth() < companion.getMaxHealth()) {
-            food = companion.checkFood();
-            return !food.isEmpty();
+            // TODO: reimplement
+            //food = companion.checkFood();
+            //return !food.isEmpty();
         }
         return false;
     }
@@ -25,20 +26,20 @@ public class EatGoal extends Goal {
     public void start() {
         companion.setItemSlot(EquipmentSlotType.OFFHAND, food);
         companion.startUsingItem(Hand.OFF_HAND);
-        companion.setEating(true);
+        //companion.setEating(true);
     }
 
     public void stop() {
         companion.setItemSlot(EquipmentSlotType.OFFHAND, ItemStack.EMPTY);
-        companion.setEating(false);
+        //companion.setEating(false);
     }
 
     public void tick () {
         if (companion.getHealth() < companion.getMaxHealth()) {
-            food = companion.checkFood();
+            /*food = companion.checkFood();
             if (!food.isEmpty()) {
                 start();
-            }
+            }*/
         }
     }
 }

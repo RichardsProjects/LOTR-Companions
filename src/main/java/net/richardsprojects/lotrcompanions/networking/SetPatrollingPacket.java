@@ -5,7 +5,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 import java.util.function.Supplier;
 
@@ -35,8 +35,10 @@ public class SetPatrollingPacket {
                     ServerPlayerEntity player = context.get().getSender();
                     if (player != null && player.level instanceof ServerWorld) {
                         Entity entity = player.level.getEntity(msg.getEntityId());
-                        if (entity instanceof AbstractHiredLOTREntity) {
-                            AbstractHiredLOTREntity companion = (AbstractHiredLOTREntity) entity;
+                        if (entity instanceof HiredGondorSoldier) {
+                            // TODO: reimplement at some point
+                            /*
+                            HiredGondorSoldier companion = (HiredGondorSoldier) entity;
                             if (companion.isFollowing()) {
                                 companion.setPatrolling(true);
                                 companion.setFollowing(false);
@@ -51,7 +53,7 @@ public class SetPatrollingPacket {
                                 companion.setPatrolling(false);
                                 companion.setFollowing(true);
                                 companion.setGuarding(false);
-                            }
+                            }*/
                         }
                     }
                 });

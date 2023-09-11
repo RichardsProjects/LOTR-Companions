@@ -6,7 +6,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 import java.util.function.Supplier;
 
@@ -36,8 +36,8 @@ public class ReleasePacket {
                     ServerPlayerEntity player = context.get().getSender();
                     if (player != null && player.level instanceof ServerWorld) {
                         Entity entity = player.level.getEntity(msg.getEntityId());
-                        if (entity instanceof AbstractHiredLOTREntity) {
-                            AbstractHiredLOTREntity companion = (AbstractHiredLOTREntity) entity;
+                        if (entity instanceof HiredGondorSoldier) {
+                            HiredGondorSoldier companion = (HiredGondorSoldier) entity;
                             // TODO: Reimplement this at some point
                             //companion.release();
                             String message = companion.getDisplayName().getString().split(" ")[0] +

@@ -7,16 +7,16 @@ import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 import java.util.EnumSet;
 
 public class CustomOwnerHurtTargetGoal extends TargetGoal {
-    private final AbstractHiredLOTREntity follower;
+    private final HiredGondorSoldier follower;
     private LivingEntity ownerLastHurt;
     private int timestamp;
 
-    public CustomOwnerHurtTargetGoal(AbstractHiredLOTREntity entity) {
+    public CustomOwnerHurtTargetGoal(HiredGondorSoldier entity) {
         super(entity, false);
         this.follower = entity;
         this.setFlags(EnumSet.of(Flag.TARGET));

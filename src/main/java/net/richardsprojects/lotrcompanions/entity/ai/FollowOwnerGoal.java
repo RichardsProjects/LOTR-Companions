@@ -12,10 +12,10 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class FollowOwnerGoal extends Goal {
-    private final AbstractHiredLOTREntity entity;
+    private final HiredGondorSoldier entity;
     private LivingEntity owner;
     private final IWorldReader level;
     private final double speedModifier;
@@ -26,7 +26,7 @@ public class FollowOwnerGoal extends Goal {
     private float oldWaterCost;
     private final boolean canFly;
 
-    public FollowOwnerGoal(AbstractHiredLOTREntity p_i225711_1_, double p_i225711_2_, float p_i225711_4_, float p_i225711_5_, boolean p_i225711_6_) {
+    public FollowOwnerGoal(HiredGondorSoldier p_i225711_1_, double p_i225711_2_, float p_i225711_4_, float p_i225711_5_, boolean p_i225711_6_) {
         this.entity = p_i225711_1_;
         this.level = p_i225711_1_.level;
         this.speedModifier = p_i225711_2_;

@@ -5,15 +5,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class LowHealthGoal extends Goal {
-    protected final AbstractHiredLOTREntity mob;
+    protected final HiredGondorSoldier mob;
     int startTick = 0;
     StringTextComponent text = new StringTextComponent("I need food!");
     ItemStack food = ItemStack.EMPTY;
 
-    public LowHealthGoal(AbstractHiredLOTREntity entity) {
+    public LowHealthGoal(HiredGondorSoldier entity) {
         this.mob = entity;
     }
 

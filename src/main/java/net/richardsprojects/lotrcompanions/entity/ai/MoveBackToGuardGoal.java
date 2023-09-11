@@ -2,22 +2,22 @@ package net.richardsprojects.lotrcompanions.entity.ai;
 
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.vector.Vector3d;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class MoveBackToGuardGoal extends Goal {
 
-    public AbstractHiredLOTREntity companion;
+    public HiredGondorSoldier companion;
     public Vector3d patrolVec;
 
-    public MoveBackToGuardGoal(AbstractHiredLOTREntity p_25990_) {
+    public MoveBackToGuardGoal(HiredGondorSoldier p_25990_) {
         this.companion = p_25990_;
     }
 
     public boolean canUse() {
-        if (this.companion.getPatrolPos() == null || !companion.isGuarding()) {
+        /*if (this.companion.getPatrolPos() == null || !companion.isGuarding()) {
             return false;
-        }
-        this.patrolVec = Vector3d.atBottomCenterOf(this.companion.getPatrolPos());
+        }*/
+        //this.patrolVec = Vector3d.atBottomCenterOf(this.companion.getPatrolPos());
         Vector3d currentVec = Vector3d.atBottomCenterOf(this.companion.blockPosition());
         if (patrolVec.distanceTo(currentVec) <= 1) {
             return false;

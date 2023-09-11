@@ -3,18 +3,18 @@ package net.richardsprojects.lotrcompanions.entity.ai;
 import java.util.EnumSet;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class CustomSitGoal extends Goal {
-    private final AbstractHiredLOTREntity mob;
+    private final HiredGondorSoldier mob;
 
-    public CustomSitGoal(AbstractHiredLOTREntity mob) {
+    public CustomSitGoal(HiredGondorSoldier mob) {
         this.mob = mob;
         this.setFlags(EnumSet.of(Goal.Flag.JUMP, Goal.Flag.MOVE));
     }
 
     public boolean canContinueToUse() {
-        return this.mob.isStationery();
+        return true; //return this.mob.isStationery();
     }
 
     public boolean canUse() {
@@ -29,7 +29,7 @@ public class CustomSitGoal extends Goal {
             if (livingentity == null) {
                 return true;
             } else {
-                return (!(this.mob.distanceToSqr(livingentity) < 144.0D) || livingentity.getLastHurtByMob() == null) && this.mob.isStationery();
+                return (!(this.mob.distanceToSqr(livingentity) < 144.0D) || livingentity.getLastHurtByMob() == null); //&& this.mob.isStationery();
             }
         }
     }

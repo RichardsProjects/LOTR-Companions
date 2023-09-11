@@ -5,17 +5,17 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.TargetGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.entity.AbstractHiredLOTREntity;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 import java.util.EnumSet;
 
 public class CustomOwnerHurtByTargetGoal extends TargetGoal {
 
-    private final AbstractHiredLOTREntity follower;
+    private final HiredGondorSoldier follower;
     private LivingEntity ownerLastHurtBy;
     private int timestamp;
 
-    public CustomOwnerHurtByTargetGoal(AbstractHiredLOTREntity p_26107_) {
+    public CustomOwnerHurtByTargetGoal(HiredGondorSoldier p_26107_) {
         super(p_26107_, false);
         this.follower = p_26107_;
         this.setFlags(EnumSet.of(Flag.TARGET));
