@@ -41,15 +41,12 @@ public class HiredGondorSoldierEggItem extends ForgeSpawnEggItem {
         ItemStack itemstack = p_77659_2_.getItemInHand(p_77659_3_);
         RayTraceResult raytraceresult = getPlayerPOVHitResult(p_77659_1_, p_77659_2_, RayTraceContext.FluidMode.SOURCE_ONLY);
 
-        System.out.println("Test1");
 
         if (raytraceresult.getType() != RayTraceResult.Type.BLOCK) {
-            System.out.println("Test2");
             return ActionResult.pass(itemstack);
         } else if (!(p_77659_1_ instanceof ServerWorld)) {
             return ActionResult.success(itemstack);
         } else {
-            System.out.println("Test3");
             BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)raytraceresult;
             BlockPos blockpos = blockraytraceresult.getBlockPos();
             if (!(p_77659_1_.getBlockState(blockpos).getBlock() instanceof FlowingFluidBlock)) {
@@ -57,15 +54,11 @@ public class HiredGondorSoldierEggItem extends ForgeSpawnEggItem {
             } else if (p_77659_1_.mayInteract(p_77659_2_, blockpos) && p_77659_2_.mayUseItemAt(blockpos, blockraytraceresult.getDirection(), itemstack)) {
                 EntityType<?> entitytype = this.getType(itemstack.getTag());
 
-                System.out.println("Test4");
-
                 HiredGondorSoldier entity = (HiredGondorSoldier) entitytype.spawn((ServerWorld)p_77659_1_, itemstack, p_77659_2_, blockpos, SpawnReason.SPAWN_EGG, false, false);
                 if (entity == null) {
                     return ActionResult.pass(itemstack);
                 } else {
-                    System.out.println("Test5");
                     entity.tame(p_77659_2_);
-                    System.out.println("Test6");
 
                     if (!p_77659_2_.abilities.instabuild) {
                         itemstack.shrink(1);
@@ -83,7 +76,6 @@ public class HiredGondorSoldierEggItem extends ForgeSpawnEggItem {
     @Override
     public ActionResultType useOn(ItemUseContext p_195939_1_) {
         World world = p_195939_1_.getLevel();
-        System.out.println("Test1");
         if (!(world instanceof ServerWorld)) {
             return ActionResultType.SUCCESS;
         } else {
@@ -104,7 +96,6 @@ public class HiredGondorSoldierEggItem extends ForgeSpawnEggItem {
                 }
             }
 
-            System.out.println("Test2");
             BlockPos blockpos1;
             if (blockstate.getCollisionShape(world, blockpos).isEmpty()) {
                 blockpos1 = blockpos;
@@ -115,7 +106,6 @@ public class HiredGondorSoldierEggItem extends ForgeSpawnEggItem {
             EntityType<?> entitytype = this.getType(itemstack.getTag());
             HiredGondorSoldier entity = (HiredGondorSoldier) entitytype.spawn((ServerWorld)world, itemstack, p_195939_1_.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP);
             if (entity != null) {
-                System.out.println("Test3");
                 entity.tame(p_195939_1_.getPlayer());
                 itemstack.shrink(1);
             }

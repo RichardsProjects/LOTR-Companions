@@ -11,8 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -56,18 +54,7 @@ public class PacketHandler {
                 HiredGondorSoldier companion = (HiredGondorSoldier) entity;
                 ClientPlayerEntity clientplayerentity = Minecraft.getInstance().player;
 
-                Inventory tmpInventory = new Inventory(15);
-                for (int i = 0; i < 9; i++) {
-                    tmpInventory.setItem(i, companion.inventory.getItem(i));
-                }
-                tmpInventory.setItem(9, companion.getItemBySlot(EquipmentSlotType.HEAD));
-                tmpInventory.setItem(10, companion.getItemBySlot(EquipmentSlotType.CHEST));
-                tmpInventory.setItem(11, companion.getItemBySlot(EquipmentSlotType.LEGS));
-                tmpInventory.setItem(12, companion.getItemBySlot(EquipmentSlotType.FEET));
-                tmpInventory.setItem(13, companion.getItemBySlot(EquipmentSlotType.MAINHAND));
-                tmpInventory.setItem(14, companion.getItemBySlot(EquipmentSlotType.OFFHAND));
-
-                CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, tmpInventory);
+                CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, companion.inventory);
                 clientplayerentity.containerMenu = container;
                 Minecraft.getInstance().setScreen(new CompanionScreen(container, player.inventory, companion));
             }
