@@ -8,6 +8,7 @@
 package net.richardsprojects.lotrcompanions.entity;
 
 import lotr.common.entity.npc.GondorSoldierEntity;
+import lotr.common.init.LOTRItems;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -18,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -27,7 +29,9 @@ import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.*;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -69,6 +73,15 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
 
     public HiredGondorSoldier(EntityType entityType, World level) {
         super(entityType, level);
+
+        inventory.setItem(9, new ItemStack(LOTRItems.GONDOR_HELMET.get()));
+        inventory.setItem(10, new ItemStack(LOTRItems.GONDOR_CHESTPLATE.get()));
+        inventory.setItem(11, new ItemStack(LOTRItems.GONDOR_LEGGINGS.get()));
+        inventory.setItem(12, new ItemStack(LOTRItems.GONDOR_BOOTS.get()));
+        inventory.setItem(13, new ItemStack(LOTRItems.GONDOR_SWORD.get()));
+        inventory.setItem(14, new ItemStack(LOTRItems.GONDOR_SHIELD.get()));
+        updateEquipment();
+
         this.setTame(false);
     }
 
@@ -254,7 +267,14 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
             tag.putUUID("Owner", this.getOwnerUUID());
         }
 
-        tag.put("inventory", this.inventory.createTag());
+        // create temp NonNullList to save inventory to
+        NonNullList<ItemStack> items = NonNullList.withSize(15, ItemStack.EMPTY);
+        for (int i = 0; i < 15; i++) {
+            ItemStack item = inventory.getItem(i);
+            if (item != null) items.set(i, item);
+        }
+        ItemStackHelper.saveAllItems(tag, items);
+
         /*tag.putBoolean("Alert", this.isAlert());
         tag.putBoolean("Hunting", this.isHunting());
         tag.putBoolean("Patrolling", this.isPatrolling());*/
@@ -328,9 +348,13 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
             }
         }
 
-        if (tag.contains("inventory", 9)) {
-            this.inventory.fromTag(tag.getList("inventory", 10));
+        NonNullList<ItemStack> items = NonNullList.withSize(15, ItemStack.EMPTY);
+        ItemStackHelper.loadAllItems(tag, items);
+        for (int i = 0; i < 15; i++) {
+            ItemStack item = items.get(i);
+            if (!item.getItem().equals(ItemStack.EMPTY)) this.inventory.setItem(i, items.get(i));
         }
+
         if (tag.contains("following")) {
             this.setFollowing(tag.getBoolean("following"));
         }
@@ -353,6 +377,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
 
     public void tick() {
         checkStats();
+        updateEquipment();
         super.tick();
     }
 
@@ -373,6 +398,15 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         if ((int) this.getMaxHealth() != getBaseHealth()) {
             modifyMaxHealth(getBaseHealth() - 30, "Base Health from current level", false);
         }
+    }
+
+    public void updateEquipment() {
+        setItemSlot(EquipmentSlotType.HEAD, inventory.getItem(9));
+        setItemSlot(EquipmentSlotType.CHEST, inventory.getItem(10));
+        setItemSlot(EquipmentSlotType.LEGS, inventory.getItem(11));
+        setItemSlot(EquipmentSlotType.FEET, inventory.getItem((12)));
+        setItemSlot(EquipmentSlotType.MAINHAND, inventory.getItem(13));
+        setItemSlot(EquipmentSlotType.OFFHAND, inventory.getItem(14));
     }
 
     public void modifyMaxHealth(int change, String name, boolean permanent) {
@@ -408,5 +442,5 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
             setCurrentXp(newExperience);
         }
     }
-
 }
+
