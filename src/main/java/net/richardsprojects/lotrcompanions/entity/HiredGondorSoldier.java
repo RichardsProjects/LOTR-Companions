@@ -168,17 +168,13 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
                     //moveBackGoal.radius = 4;
                 }
             } else {
-                System.out.println("Is tamed");
-
                 if (this.isAlliedTo(player)) {
-                    System.out.println("Is allied to player");
                     if(player.isShiftKeyDown()) {
                         if (!this.level.isClientSide()) {
                             // TODO: reimplement stay
                         }
                     } else {
                         if (!this.level.isClientSide()) {
-                            System.out.println("Attempt to open GUI");
                             this.openGui((ServerPlayerEntity) player);
                         }
                     }
@@ -256,6 +252,8 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         this.targetSelector.addGoal(2, new CustomOwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
     }
+
+    // TODO: Fix issue with entities not following when player teleports
 
     public boolean wantsToAttack(LivingEntity p_142018_1_, LivingEntity p_142018_2_) {
         return true;
@@ -354,6 +352,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
             ItemStack item = items.get(i);
             if (!item.getItem().equals(ItemStack.EMPTY)) this.inventory.setItem(i, items.get(i));
         }
+        updateEquipment();
 
         if (tag.contains("following")) {
             this.setFollowing(tag.getBoolean("following"));
@@ -407,6 +406,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         setItemSlot(EquipmentSlotType.FEET, inventory.getItem((12)));
         setItemSlot(EquipmentSlotType.MAINHAND, inventory.getItem(13));
         setItemSlot(EquipmentSlotType.OFFHAND, inventory.getItem(14));
+        System.out.println("Update Equipment called");
     }
 
     public void modifyMaxHealth(int change, String name, boolean permanent) {

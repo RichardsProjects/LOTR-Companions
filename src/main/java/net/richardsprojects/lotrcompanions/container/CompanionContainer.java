@@ -2,14 +2,24 @@ package net.richardsprojects.lotrcompanions.container;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
+import net.minecraft.item.ArmorItem;
+
 public class CompanionContainer extends Container {
     private final IInventory container;
     private final int containerRows = 1;
+
+    private Slot helmet;
+    private Slot chest;
+    private Slot legs;
+    private Slot boots;
+    private Slot mainHand;
+    private Slot offHand;
 
     public CompanionContainer(int p_39230_, PlayerInventory p_39231_, IInventory companionInv) {
         super(null, p_39230_);
@@ -32,21 +42,22 @@ public class CompanionContainer extends Container {
         // add the player's hotbar
         for (int i1 = 0; i1 < 9; ++i1) {
             this.addSlot(new Slot(p_39231_, i1, 8 + i1 * 18, 200));
-            System.out.println("Adding slot: " + (8 + i1 * 18));
         }
 
         // add the 6 companion equipment slots
-        this.addSlot(new Slot(companionInv, 9,8,31)); // i = 44
-        this.addSlot(new Slot(companionInv, 10,8,49));
-        this.addSlot(new Slot(companionInv, 11,8,67));
-        this.addSlot(new Slot(companionInv, 12,8,85));
-        this.addSlot(new Slot(companionInv, 13,62,67));
-        this.addSlot(new Slot(companionInv, 14,62,85));
+        helmet = this.addSlot(new Slot(companionInv, 9,8,31)); // i = 44
+        chest = this.addSlot(new Slot(companionInv, 10,8,49));
+        legs = this.addSlot(new Slot(companionInv, 11,8,67));
+        boots = this.addSlot(new Slot(companionInv, 12,8,85));
+        mainHand = this.addSlot(new Slot(companionInv, 13,62,67));
+        offHand = this.addSlot(new Slot(companionInv, 14,62,85));
     }
 
     public boolean stillValid(PlayerEntity p_39242_) {
         return this.container.stillValid(p_39242_);
     }
+
+    // TODO: prevent a player from putting incorrect equipment in the equipment slots
 
     public ItemStack quickMoveStack(PlayerEntity p_39253_, int p_39254_) {
         ItemStack itemstack = ItemStack.EMPTY;
@@ -54,6 +65,37 @@ public class CompanionContainer extends Container {
         if (slot != null && slot.hasItem()) {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
+
+            if (itemstack1.getItem() instanceof ArmorItem) {
+                ArmorItem armor = (ArmorItem) itemstack1.getItem();
+                boolean slotUpdated = false;
+                if (armor.getSlot() == EquipmentSlotType.HEAD && !helmet.hasItem()) {
+                    helmet.set(itemstack1);
+                    helmet.setChanged();
+                    slotUpdated = true;
+                } else if (armor.getSlot() == EquipmentSlotType.CHEST && !chest.hasItem()) {
+                    chest.set(itemstack1);
+                    chest.setChanged();
+                    slotUpdated = true;
+                } else if (armor.getSlot() == EquipmentSlotType.LEGS && !legs.hasItem()) {
+                    legs.set(itemstack1);
+                    legs.setChanged();
+                    slotUpdated = true;
+                } else if (armor.getSlot() == EquipmentSlotType.FEET && !boots.hasItem()) {
+                    boots.set(itemstack1);
+                    boots.setChanged();
+                    slotUpdated = true;
+                }
+
+                if (slotUpdated) {
+                    slot.set(ItemStack.EMPTY);
+                    slot.setChanged();
+                    return ItemStack.EMPTY;
+                }
+            }
+
+            // TODO: Implement the same logic with swords and shields
+
             if (p_39254_ < this.containerRows * 9) {
                 if (!this.moveItemStackTo(itemstack1, this.containerRows * 9, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
