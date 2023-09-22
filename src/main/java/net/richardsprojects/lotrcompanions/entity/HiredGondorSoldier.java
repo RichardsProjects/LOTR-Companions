@@ -29,9 +29,7 @@ import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.*;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -46,8 +44,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
-import net.minecraft.tileentity.ChestTileEntity;
 
 public class HiredGondorSoldier extends GondorSoldierEntity {
 
@@ -66,6 +62,15 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
     private static final DataParameter<Integer> KILLS = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.INT);
 
     private static final DataParameter<Boolean> FOLLOWING = EntityDataManager.defineId(HiredGondorSoldier.class,
+            DataSerializers.BOOLEAN);
+
+    private static final DataParameter<Boolean> STATIONARY = EntityDataManager.defineId(HiredGondorSoldier.class,
+            DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> PATROLLING = EntityDataManager.defineId(HiredGondorSoldier.class,
+            DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> ALERT = EntityDataManager.defineId(HiredGondorSoldier.class,
+            DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> GUARDING = EntityDataManager.defineId(HiredGondorSoldier.class,
             DataSerializers.BOOLEAN);
 
     // 9 inventory slots + 6 equipment slots
@@ -94,6 +99,10 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         this.entityData.define(MAX_XP, 1);
         this.entityData.define(KILLS, 0);
         this.entityData.define(FOLLOWING, false);
+        this.entityData.define(GUARDING, false);
+        this.entityData.define(PATROLLING, false);
+        this.entityData.define(ALERT, false);
+        this.entityData.define(STATIONARY, false);
         this.entityData.define(BASE_HEALTH, 30);
     }
 
@@ -161,8 +170,8 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
                             new StringTextComponent("Thanks!")), this.getUUID());
                     player.sendMessage(new StringTextComponent("Companion added"), this.getUUID());
                     //setPatrolPos(null);
-                    //setPatrolling(false);
-                    //setFollowing(true);
+                    setPatrolling(false);
+                    setFollowing(true);
                     //setPatrolRadius(4);
                     //patrolGoal.radius = 4;
                     //moveBackGoal.radius = 4;
@@ -184,6 +193,10 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
             return ActionResultType.sidedSuccess(this.level.isClientSide());
         }
         return super.mobInteract(player, hand);
+    }
+
+    private void setPatrolling(boolean patrolling) {
+        this.entityData.set(PATROLLING, patrolling);
     }
 
     public boolean isAlliedTo(Entity p_184191_1_) {
@@ -295,6 +308,22 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
 
     public boolean isFollowing() {
         return this.entityData.get(FOLLOWING);
+    }
+
+    public boolean isPatrolling() {
+        return this.entityData.get(PATROLLING);
+    }
+
+    public boolean isAlert() {
+        return this.entityData.get(ALERT);
+    }
+
+    public boolean isStationary() {
+        return this.entityData.get(STATIONARY);
+    }
+
+    public void setStationary(boolean stationary) {
+        this.entityData.set(STATIONARY, stationary);
     }
 
     public void setFollowing(boolean following) {

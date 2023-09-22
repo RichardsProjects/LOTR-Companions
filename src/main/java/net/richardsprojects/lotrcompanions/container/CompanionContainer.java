@@ -1,5 +1,6 @@
 package net.richardsprojects.lotrcompanions.container;
 
+import lotr.common.item.SpearItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -9,6 +10,8 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ShieldItem;
+import net.minecraft.item.SwordItem;
 
 public class CompanionContainer extends Container {
     private final IInventory container;
@@ -66,9 +69,9 @@ public class CompanionContainer extends Container {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
 
+            boolean slotUpdated = false;
             if (itemstack1.getItem() instanceof ArmorItem) {
                 ArmorItem armor = (ArmorItem) itemstack1.getItem();
-                boolean slotUpdated = false;
                 if (armor.getSlot() == EquipmentSlotType.HEAD && !helmet.hasItem()) {
                     helmet.set(itemstack1);
                     helmet.setChanged();
@@ -86,15 +89,25 @@ public class CompanionContainer extends Container {
                     boots.setChanged();
                     slotUpdated = true;
                 }
-
-                if (slotUpdated) {
-                    slot.set(ItemStack.EMPTY);
-                    slot.setChanged();
-                    return ItemStack.EMPTY;
-                }
             }
 
-            // TODO: Implement the same logic with swords and shields
+            if (itemstack1.getItem() instanceof SwordItem || itemstack1.getItem() instanceof SpearItem) {
+                mainHand.set(itemstack1);
+                mainHand.setChanged();
+                slotUpdated = true;
+            }
+
+            if (itemstack1.getItem() instanceof ShieldItem) {
+                offHand.set(itemstack1);
+                offHand.setChanged();
+                slotUpdated = true;
+            }
+
+            if (slotUpdated) {
+                slot.set(ItemStack.EMPTY);
+                slot.setChanged();
+                return ItemStack.EMPTY;
+            }
 
             if (p_39254_ < this.containerRows * 9) {
                 if (!this.moveItemStackTo(itemstack1, this.containerRows * 9, this.slots.size(), true)) {
