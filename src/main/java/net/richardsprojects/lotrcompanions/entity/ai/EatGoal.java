@@ -16,9 +16,8 @@ public class EatGoal extends Goal {
 
     public boolean canUse() {
         if (companion.getHealth() < companion.getMaxHealth()) {
-            // TODO: reimplement
-            //food = companion.checkFood();
-            //return !food.isEmpty();
+            food = companion.checkFood();
+            return !food.isEmpty();
         }
         return false;
     }

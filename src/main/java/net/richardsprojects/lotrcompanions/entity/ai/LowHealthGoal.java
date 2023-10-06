@@ -20,9 +20,8 @@ public class LowHealthGoal extends Goal {
     public boolean canUse() {
         if (LOTRCompanions.LOW_HEALTH_FOOD) {
             if (this.mob.getHealth() < this.mob.getMaxHealth() / 2 && this.mob.isTame()) {
-                // TODO: Bring this back in
-                //food = mob.checkFood();
-                return food.isEmpty();
+                food = mob.checkFood();
+                return !food.isEmpty();
             }
         }
         return false;

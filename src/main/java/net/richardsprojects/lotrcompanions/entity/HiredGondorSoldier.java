@@ -130,6 +130,18 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         return this.entityData.get(KILLS);
     }
 
+    public ItemStack checkFood() {
+        for (int i = 0; i < 9; ++i) {
+            ItemStack itemstack = this.inventory.getItem(i);
+            if (itemstack.isEdible()) {
+                if ((float)itemstack.getItem().getFoodProperties().getNutrition() + this.getHealth() <= this.getMaxHealth()) {
+                    return itemstack;
+                }
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
     public void setCurrentXp(int currentXp) {
         this.entityData.set(CURRENT_XP, currentXp);
     }
@@ -172,6 +184,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
                     //setPatrolPos(null);
                     setPatrolling(false);
                     setFollowing(true);
+                    setStationary(false);
                     //setPatrolRadius(4);
                     //patrolGoal.radius = 4;
                     //moveBackGoal.radius = 4;
@@ -222,6 +235,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         player.nextContainerCounter();
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new OpenInventoryPacket(
                 player.containerCounter, this.inventory.getContainerSize(), this.getId()));
+        setStationary(true);
 
         // synchronize the equipment slots
         inventory.setItem(9, getItemBySlot(EquipmentSlotType.HEAD));
@@ -251,10 +265,10 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new SwimGoal(this));
-        //this.goalSelector.addGoal(0, new EatGoal(this));
-        //this.goalSelector.addGoal(1, new CustomSitGoal(this));
+        this.goalSelector.addGoal(0, new EatGoal(this));
+        this.goalSelector.addGoal(1, new CustomSitGoal(this));
         //this.goalSelector.addGoal(2, new AvoidCreeperGoal(this, CreeperEntity.class, 10.0F, 1.5D, 1.5D));
-        //this.goalSelector.addGoal(3, new MoveBackToGuardGoal(this));
+        this.goalSelector.addGoal(3, new MoveBackToGuardGoal(this));
         this.goalSelector.addGoal(3, new CustomFollowOwnerGoal(this, 1.3D, 8.0F, 2.0F, false));
         this.goalSelector.addGoal(5, new CustomWaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
@@ -290,9 +304,9 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         tag.putBoolean("Hunting", this.isHunting());
         tag.putBoolean("Patrolling", this.isPatrolling());*/
         tag.putBoolean("following", this.isFollowing());
-        /*tag.putBoolean("Guarding", this.isGuarding());
-        tag.putBoolean("Stationery", this.isStationery());
-        tag.putInt("radius", this.getPatrolRadius());
+        //tag.putBoolean("Guarding", this.isGuarding());
+        tag.putBoolean("Stationery", this.isStationary());
+        /*tag.putInt("radius", this.getPatrolRadius());
         tag.putInt("baseHealth", this.getBaseHealth());*/
         tag.putInt("mob_kills", this.getMobKills());
         tag.putInt("xp_level", this.getExpLvl());

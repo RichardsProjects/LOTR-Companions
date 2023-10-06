@@ -38,8 +38,8 @@ public class PacketHandler {
                 SetPatrollingPacket::handle);
         INSTANCE.registerMessage(id++, ClearTargetPacket.class, ClearTargetPacket::encode, ClearTargetPacket::decode,
                 ClearTargetPacket::handle);
-        /*INSTANCE.registerMessage(id++, SetStationeryPacket.class, SetStationeryPacket::encode, SetStationeryPacket::decode,
-                SetStationeryPacket::handle);*/
+        INSTANCE.registerMessage(id++, SetStationaryPacket.class, SetStationaryPacket::encode, SetStationaryPacket::decode,
+                SetStationaryPacket::handle);
         INSTANCE.registerMessage(id++, ReleasePacket.class, ReleasePacket::encode, ReleasePacket::decode,
                 ReleasePacket::handle);
     }
