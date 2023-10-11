@@ -24,10 +24,13 @@ public class CompanionContainer extends Container {
     private Slot mainHand;
     private Slot offHand;
 
-    public CompanionContainer(int p_39230_, PlayerInventory p_39231_, IInventory companionInv) {
+    private int entityId;
+
+    public CompanionContainer(int p_39230_, PlayerInventory p_39231_, IInventory companionInv, int entityId) {
         super(null, p_39230_);
         checkContainerSize(companionInv, companionInv.getContainerSize());
         this.container = companionInv;
+        this.entityId = entityId;
         companionInv.startOpen(p_39231_.player);
 
         // add the 9 companion inventory slots
@@ -54,6 +57,10 @@ public class CompanionContainer extends Container {
         boots = this.addSlot(new Slot(companionInv, 12,8,85));
         mainHand = this.addSlot(new Slot(companionInv, 13,62,67));
         offHand = this.addSlot(new Slot(companionInv, 14,62,85));
+    }
+
+    public int getEntityId() {
+        return entityId;
     }
 
     public boolean stillValid(PlayerEntity p_39242_) {

@@ -54,7 +54,7 @@ public class PacketHandler {
                 HiredGondorSoldier companion = (HiredGondorSoldier) entity;
                 ClientPlayerEntity clientplayerentity = Minecraft.getInstance().player;
 
-                CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, companion.inventory);
+                CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, companion.inventory, companion.getId());
                 clientplayerentity.containerMenu = container;
                 Minecraft.getInstance().setScreen(new CompanionScreen(container, player.inventory, companion));
             }

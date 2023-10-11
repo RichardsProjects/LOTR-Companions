@@ -246,7 +246,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         inventory.setItem(14, getItemBySlot(EquipmentSlotType.OFFHAND));
 
         player.containerMenu = new CompanionContainer(
-                player.containerCounter, player.inventory, inventory
+                player.containerCounter, player.inventory, inventory, getId()
         );
 
         player.containerMenu.addSlotListener(player);
@@ -268,7 +268,8 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         this.goalSelector.addGoal(0, new EatGoal(this));
         this.goalSelector.addGoal(1, new CustomSitGoal(this));
         //this.goalSelector.addGoal(2, new AvoidCreeperGoal(this, CreeperEntity.class, 10.0F, 1.5D, 1.5D));
-        this.goalSelector.addGoal(3, new MoveBackToGuardGoal(this));
+        // TODO: Error in this class - need to fix
+        //this.goalSelector.addGoal(3, new MoveBackToGuardGoal(this));
         this.goalSelector.addGoal(3, new CustomFollowOwnerGoal(this, 1.3D, 8.0F, 2.0F, false));
         this.goalSelector.addGoal(5, new CustomWaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
@@ -449,7 +450,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         setItemSlot(EquipmentSlotType.FEET, inventory.getItem((12)));
         setItemSlot(EquipmentSlotType.MAINHAND, inventory.getItem(13));
         setItemSlot(EquipmentSlotType.OFFHAND, inventory.getItem(14));
-        System.out.println("Update Equipment called");
+        //System.out.println("Update Equipment called");
     }
 
     public void modifyMaxHealth(int change, String name, boolean permanent) {
