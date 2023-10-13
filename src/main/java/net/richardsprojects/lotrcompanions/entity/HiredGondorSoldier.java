@@ -79,6 +79,9 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
     public HiredGondorSoldier(EntityType entityType, World level) {
         super(entityType, level);
 
+        // TODO: remove when done testing
+        this.entityData.set(BASE_HEALTH, 60);
+
         inventory.setItem(9, new ItemStack(LOTRItems.GONDOR_HELMET.get()));
         inventory.setItem(10, new ItemStack(LOTRItems.GONDOR_CHESTPLATE.get()));
         inventory.setItem(11, new ItemStack(LOTRItems.GONDOR_LEGGINGS.get()));
@@ -88,6 +91,19 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         updateEquipment();
 
         this.setTame(false);
+    }
+
+    public Inventory getCustomInventory() {
+        return inventory;
+    }
+
+    @Override
+    public ItemStack eat(World world, ItemStack stack) {
+        if (stack.isEdible()) {
+            this.heal(stack.getItem().getFoodProperties().getNutrition());
+        }
+        super.eat(world, stack);
+        return stack;
     }
 
     protected void defineSynchedData() {

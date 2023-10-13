@@ -9,6 +9,8 @@ import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 public class EatGoal extends Goal {
     protected final HiredGondorSoldier companion;
     ItemStack food = ItemStack.EMPTY;
+    ItemStack oldOffhand = ItemStack.EMPTY;
+
 
     public EatGoal(HiredGondorSoldier entity) {
         companion = entity;
@@ -23,22 +25,23 @@ public class EatGoal extends Goal {
     }
 
     public void start() {
+        oldOffhand = companion.getCustomInventory().getItem(14);
         companion.setItemSlot(EquipmentSlotType.OFFHAND, food);
         companion.startUsingItem(Hand.OFF_HAND);
         //companion.setEating(true);
     }
 
     public void stop() {
-        companion.setItemSlot(EquipmentSlotType.OFFHAND, ItemStack.EMPTY);
+        companion.setItemSlot(EquipmentSlotType.OFFHAND, oldOffhand);
         //companion.setEating(false);
     }
 
     public void tick () {
         if (companion.getHealth() < companion.getMaxHealth()) {
-            /*food = companion.checkFood();
+            food = companion.checkFood();
             if (!food.isEmpty()) {
                 start();
-            }*/
+            }
         }
     }
 }
