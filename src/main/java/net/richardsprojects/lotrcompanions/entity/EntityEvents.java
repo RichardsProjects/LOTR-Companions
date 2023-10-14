@@ -36,6 +36,7 @@ public class EntityEvents {
         Entity entity = event.getPlayer().level.getEntity(companionContainer.getEntityId());
         if (entity instanceof HiredGondorSoldier) {
             ((HiredGondorSoldier) entity).setStationary(false);
+            ((HiredGondorSoldier) entity).setInventoryOpen(false);
         }
     }
 

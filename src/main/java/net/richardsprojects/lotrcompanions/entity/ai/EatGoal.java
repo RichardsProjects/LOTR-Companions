@@ -10,14 +10,15 @@ public class EatGoal extends Goal {
     protected final HiredGondorSoldier companion;
     ItemStack food = ItemStack.EMPTY;
     ItemStack oldOffhand = ItemStack.EMPTY;
-
+    boolean started = false;
+    int timeLeft = -1;
 
     public EatGoal(HiredGondorSoldier entity) {
         companion = entity;
     }
 
     public boolean canUse() {
-        if (companion.getHealth() < companion.getMaxHealth()) {
+        if (companion.getHealth() < companion.getMaxHealth() && !companion.isInventoryOpen()) {
             food = companion.checkFood();
             return !food.isEmpty();
         }
@@ -25,22 +26,40 @@ public class EatGoal extends Goal {
     }
 
     public void start() {
-        oldOffhand = companion.getCustomInventory().getItem(14);
+        started = true;
+        oldOffhand = companion.getCustomInventory().getItem(14).copy();
+        companion.getCustomInventory().setItem(14, food);
+        timeLeft = food.getUseDuration() + 1;
         companion.setItemSlot(EquipmentSlotType.OFFHAND, food);
+        companion.setItemInHand(Hand.OFF_HAND, food);
         companion.startUsingItem(Hand.OFF_HAND);
         //companion.setEating(true);
     }
 
     public void stop() {
+        companion.getCustomInventory().setItem(14, oldOffhand);
         companion.setItemSlot(EquipmentSlotType.OFFHAND, oldOffhand);
-        //companion.setEating(false);
+        started = false;
+        timeLeft = -1;
+    }
+
+    @Override
+    public boolean isInterruptable() {
+        return false;
     }
 
     public void tick () {
-        if (companion.getHealth() < companion.getMaxHealth()) {
-            food = companion.checkFood();
-            if (!food.isEmpty()) {
-                start();
+        if (started && timeLeft > -1) {
+            --timeLeft;
+            if (timeLeft == 0) {
+                stop();
+            }
+        } else {
+            if (companion.getHealth() < companion.getMaxHealth()) {
+                food = companion.checkFood();
+                if (!food.isEmpty()) {
+                    if (!started) start();
+                }
             }
         }
     }

@@ -8,6 +8,11 @@
 package net.richardsprojects.lotrcompanions.entity;
 
 import lotr.common.entity.npc.GondorSoldierEntity;
+import lotr.common.entity.npc.NPCEntity;
+import lotr.common.entity.npc.ai.goal.FriendlyNPCConversationGoal;
+import lotr.common.entity.npc.ai.goal.NPCMeleeAttackGoal;
+import lotr.common.entity.npc.ai.goal.TalkToCurrentGoal;
+import lotr.common.entity.npc.ai.goal.WatchSunriseSunsetGoal;
 import lotr.common.init.LOTRItems;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -25,6 +30,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.pathfinding.GroundPathNavigator;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.*;
 import net.minecraft.util.text.StringTextComponent;
@@ -73,8 +80,27 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
     private static final DataParameter<Boolean> GUARDING = EntityDataManager.defineId(HiredGondorSoldier.class,
             DataSerializers.BOOLEAN);
 
+    private static final DataParameter<Boolean> INVENTORY_OPEN = EntityDataManager.defineId(HiredGondorSoldier.class,
+            DataSerializers.BOOLEAN);
+
     // 9 inventory slots + 6 equipment slots
     public Inventory inventory = new Inventory(15);
+
+    /* Remove consuming goals since we have our own */
+    @Override
+    protected void addConsumingGoals(int prio) {}
+
+    // Only AI we will keep from here is the attack goals
+    @Override
+    protected void addNPCAI() {
+        ((GroundPathNavigator)this.getNavigation()).setCanOpenDoors(true);
+        this.getNavigation().setCanFloat(true);
+        this.setPathfindingMalus(PathNodeType.DANGER_FIRE, 16.0F);
+        this.setPathfindingMalus(PathNodeType.DAMAGE_FIRE, -1.0F);
+        this.initialiseAttackGoals(getAttackGoalsHolder());
+        this.addNPCTargetingAI();
+        this.addAttackGoal(2);
+    }
 
     public HiredGondorSoldier(EntityType entityType, World level) {
         super(entityType, level);
@@ -120,6 +146,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         this.entityData.define(ALERT, false);
         this.entityData.define(STATIONARY, false);
         this.entityData.define(BASE_HEALTH, 30);
+        this.entityData.define(INVENTORY_OPEN, false);
     }
 
     public static AttributeModifierMap.MutableAttribute createAttributes() {
@@ -150,9 +177,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         for (int i = 0; i < 9; ++i) {
             ItemStack itemstack = this.inventory.getItem(i);
             if (itemstack.isEdible()) {
-                if ((float)itemstack.getItem().getFoodProperties().getNutrition() + this.getHealth() <= this.getMaxHealth()) {
-                    return itemstack;
-                }
+                return itemstack;
             }
         }
         return ItemStack.EMPTY;
@@ -166,8 +191,16 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         return this.entityData.get(CURRENT_XP);
     }
 
+    public boolean isInventoryOpen() {
+        return this.entityData.get(INVENTORY_OPEN);
+    }
+
     public void setMaxXp(int maxXp) {
         this.entityData.set(MAX_XP, maxXp);
+    }
+
+    public void setInventoryOpen(boolean isOpen) {
+        this.entityData.set(INVENTORY_OPEN, isOpen);
     }
 
     public int getMaxXp() {
@@ -252,6 +285,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new OpenInventoryPacket(
                 player.containerCounter, this.inventory.getContainerSize(), this.getId()));
         setStationary(true);
+        setInventoryOpen(true);
 
         // synchronize the equipment slots
         inventory.setItem(9, getItemBySlot(EquipmentSlotType.HEAD));
@@ -322,7 +356,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         tag.putBoolean("Patrolling", this.isPatrolling());*/
         tag.putBoolean("following", this.isFollowing());
         //tag.putBoolean("Guarding", this.isGuarding());
-        tag.putBoolean("Stationery", this.isStationary());
+        tag.putBoolean("stationary", this.isStationary());
         /*tag.putInt("radius", this.getPatrolRadius());
         tag.putInt("baseHealth", this.getBaseHealth());*/
         tag.putInt("mob_kills", this.getMobKills());
