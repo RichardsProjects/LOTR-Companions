@@ -14,7 +14,7 @@ public class CustomSitGoal extends Goal {
     }
 
     public boolean canContinueToUse() {
-        return this.mob.isStationary();
+        return this.mob.isStationary() || this.mob.isInventoryOpen();
     }
 
     public boolean canUse() {
@@ -29,7 +29,7 @@ public class CustomSitGoal extends Goal {
             if (livingentity == null) {
                 return true;
             } else {
-                return (!(this.mob.distanceToSqr(livingentity) < 144.0D) || livingentity.getLastHurtByMob() == null) && this.mob.isStationary();
+                return (!(this.mob.distanceToSqr(livingentity) < 144.0D) || livingentity.getLastHurtByMob() == null) && (this.mob.isStationary() || this.mob.isInventoryOpen());
             }
         }
     }

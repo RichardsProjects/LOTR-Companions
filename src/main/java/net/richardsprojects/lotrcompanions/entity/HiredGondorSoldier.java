@@ -54,6 +54,8 @@ import java.util.UUID;
 
 public class HiredGondorSoldier extends GondorSoldierEntity {
 
+    // TODO: Save the current hp level and reload it when entity is reloaded so they have to spend a bunch of time healing
+
     protected static final DataParameter<Byte> DATA_FLAGS_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.BYTE);
     protected static final DataParameter<Optional<UUID>> DATA_OWNERUUID_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.OPTIONAL_UUID);
     private static final DataParameter<Integer> LVL = EntityDataManager.defineId(HiredGondorSoldier.class,
@@ -90,9 +92,9 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
     @Override
     protected void addConsumingGoals(int prio) {}
 
-    // Only AI we will keep from here is the attack goals
     @Override
     protected void addNPCAI() {
+        // reimplement only minimum AI and attack Goals - the rest are added in the register method
         ((GroundPathNavigator)this.getNavigation()).setCanOpenDoors(true);
         this.getNavigation().setCanFloat(true);
         this.setPathfindingMalus(PathNodeType.DANGER_FIRE, 16.0F);
@@ -104,9 +106,6 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
 
     public HiredGondorSoldier(EntityType entityType, World level) {
         super(entityType, level);
-
-        // TODO: remove when done testing
-        this.entityData.set(BASE_HEALTH, 60);
 
         inventory.setItem(9, new ItemStack(LOTRItems.GONDOR_HELMET.get()));
         inventory.setItem(10, new ItemStack(LOTRItems.GONDOR_CHESTPLATE.get()));
@@ -230,24 +229,14 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
                     player.sendMessage(new TranslationTextComponent("chat.type.text", this.getDisplayName(),
                             new StringTextComponent("Thanks!")), this.getUUID());
                     player.sendMessage(new StringTextComponent("Companion added"), this.getUUID());
-                    //setPatrolPos(null);
                     setPatrolling(false);
                     setFollowing(true);
                     setStationary(false);
-                    //setPatrolRadius(4);
-                    //patrolGoal.radius = 4;
-                    //moveBackGoal.radius = 4;
                 }
             } else {
                 if (this.isAlliedTo(player)) {
-                    if(player.isShiftKeyDown()) {
-                        if (!this.level.isClientSide()) {
-                            // TODO: reimplement stay
-                        }
-                    } else {
-                        if (!this.level.isClientSide()) {
-                            this.openGui((ServerPlayerEntity) player);
-                        }
+                    if (!this.level.isClientSide()) {
+                        this.openGui((ServerPlayerEntity) player);
                     }
                 }
                 return ActionResultType.sidedSuccess(this.level.isClientSide());
@@ -284,7 +273,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         player.nextContainerCounter();
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new OpenInventoryPacket(
                 player.containerCounter, this.inventory.getContainerSize(), this.getId()));
-        setStationary(true);
+        //setStationary(true);
         setInventoryOpen(true);
 
         // synchronize the equipment slots
@@ -317,9 +306,6 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(0, new EatGoal(this));
         this.goalSelector.addGoal(1, new CustomSitGoal(this));
-        //this.goalSelector.addGoal(2, new AvoidCreeperGoal(this, CreeperEntity.class, 10.0F, 1.5D, 1.5D));
-        // TODO: Error in this class - need to fix
-        //this.goalSelector.addGoal(3, new MoveBackToGuardGoal(this));
         this.goalSelector.addGoal(3, new CustomFollowOwnerGoal(this, 1.3D, 8.0F, 2.0F, false));
         this.goalSelector.addGoal(5, new CustomWaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));

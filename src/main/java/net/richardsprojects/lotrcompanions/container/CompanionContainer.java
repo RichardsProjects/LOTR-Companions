@@ -1,30 +1,43 @@
 package net.richardsprojects.lotrcompanions.container;
 
+import com.mojang.datafixers.util.Pair;
 import lotr.common.item.SpearItem;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.item.SwordItem;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CompanionContainer extends Container {
     private final IInventory container;
     private final int containerRows = 1;
 
-    private Slot helmet;
-    private Slot chest;
-    private Slot legs;
-    private Slot boots;
+    private Slot[] armorSlots = new Slot[4];
     private Slot mainHand;
     private Slot offHand;
 
     private int entityId;
+
+    public static final ResourceLocation EMPTY_ARMOR_SLOT_HELMET = new ResourceLocation("item/empty_armor_slot_helmet");
+    public static final ResourceLocation EMPTY_ARMOR_SLOT_CHESTPLATE = new ResourceLocation("item/empty_armor_slot_chestplate");
+    public static final ResourceLocation EMPTY_ARMOR_SLOT_LEGGINGS = new ResourceLocation("item/empty_armor_slot_leggings");
+    public static final ResourceLocation EMPTY_ARMOR_SLOT_BOOTS = new ResourceLocation("item/empty_armor_slot_boots");
+    public static final ResourceLocation EMPTY_ARMOR_SLOT_SHIELD = new ResourceLocation("item/empty_armor_slot_shield");
+    private static final ResourceLocation[] TEXTURE_EMPTY_SLOTS = new ResourceLocation[]{EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET};
+    private static final EquipmentSlotType[] SLOT_IDS = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
+
+    private static final int[] yPos = new int[]{31, 49, 67, 85};
 
     public CompanionContainer(int p_39230_, PlayerInventory p_39231_, IInventory companionInv, int entityId) {
         super(null, p_39230_);
@@ -50,13 +63,36 @@ public class CompanionContainer extends Container {
             this.addSlot(new Slot(p_39231_, i1, 8 + i1 * 18, 200));
         }
 
+        // setup 4 custom armor slots
+        for(int slot = 9; slot < 13; slot++) {
+            final EquipmentSlotType equipmentSlotType = SLOT_IDS[slot - 9];
+            armorSlots[slot - 9] = this.addSlot(new Slot(companionInv, slot, 8, yPos[slot - 9]) {
+                public int getMaxStackSize() {
+                    return 1;
+                }
+
+                public boolean mayPlace(ItemStack itemStack) {
+                    if (itemStack.getItem() instanceof ArmorItem) {
+                        ArmorItem item = (ArmorItem) itemStack.getItem();
+                        return item.getSlot() == equipmentSlotType;
+                    } else {
+                        return false;
+                    }
+                }
+
+                public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+                    return Pair.of(PlayerContainer.BLOCK_ATLAS, TEXTURE_EMPTY_SLOTS[equipmentSlotType.getIndex()]);
+                }
+            });
+        }
+
         // add the 6 companion equipment slots
-        helmet = this.addSlot(new Slot(companionInv, 9,8,31)); // i = 44
-        chest = this.addSlot(new Slot(companionInv, 10,8,49));
-        legs = this.addSlot(new Slot(companionInv, 11,8,67));
-        boots = this.addSlot(new Slot(companionInv, 12,8,85));
         mainHand = this.addSlot(new Slot(companionInv, 13,62,67));
-        offHand = this.addSlot(new Slot(companionInv, 14,62,85));
+        offHand = this.addSlot(new Slot(companionInv, 14,62,85) {
+            public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+                return Pair.of(PlayerContainer.BLOCK_ATLAS, EMPTY_ARMOR_SLOT_SHIELD);
+            }
+        });
     }
 
     public int getEntityId() {
@@ -66,8 +102,6 @@ public class CompanionContainer extends Container {
     public boolean stillValid(PlayerEntity p_39242_) {
         return this.container.stillValid(p_39242_);
     }
-
-    // TODO: prevent a player from putting incorrect equipment in the equipment slots
 
     public ItemStack quickMoveStack(PlayerEntity p_39253_, int p_39254_) {
         ItemStack itemstack = ItemStack.EMPTY;
@@ -79,21 +113,21 @@ public class CompanionContainer extends Container {
             boolean slotUpdated = false;
             if (itemstack1.getItem() instanceof ArmorItem) {
                 ArmorItem armor = (ArmorItem) itemstack1.getItem();
-                if (armor.getSlot() == EquipmentSlotType.HEAD && !helmet.hasItem()) {
-                    helmet.set(itemstack1);
-                    helmet.setChanged();
+                if (armor.getSlot() == EquipmentSlotType.HEAD && !armorSlots[0].hasItem()) {
+                    armorSlots[0].set(itemstack1);
+                    armorSlots[0].setChanged();
                     slotUpdated = true;
-                } else if (armor.getSlot() == EquipmentSlotType.CHEST && !chest.hasItem()) {
-                    chest.set(itemstack1);
-                    chest.setChanged();
+                } else if (armor.getSlot() == EquipmentSlotType.CHEST && !armorSlots[1].hasItem()) {
+                    armorSlots[1].set(itemstack1);
+                    armorSlots[1].setChanged();
                     slotUpdated = true;
-                } else if (armor.getSlot() == EquipmentSlotType.LEGS && !legs.hasItem()) {
-                    legs.set(itemstack1);
-                    legs.setChanged();
+                } else if (armor.getSlot() == EquipmentSlotType.LEGS && !armorSlots[2].hasItem()) {
+                    armorSlots[2].set(itemstack1);
+                    armorSlots[2].setChanged();
                     slotUpdated = true;
-                } else if (armor.getSlot() == EquipmentSlotType.FEET && !boots.hasItem()) {
-                    boots.set(itemstack1);
-                    boots.setChanged();
+                } else if (armor.getSlot() == EquipmentSlotType.FEET && !armorSlots[3].hasItem()) {
+                    armorSlots[3].set(itemstack1);
+                    armorSlots[3].setChanged();
                     slotUpdated = true;
                 }
             }

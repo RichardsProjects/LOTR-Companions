@@ -35,7 +35,7 @@ public class EntityEvents {
         // make companion no longer stationary
         Entity entity = event.getPlayer().level.getEntity(companionContainer.getEntityId());
         if (entity instanceof HiredGondorSoldier) {
-            ((HiredGondorSoldier) entity).setStationary(false);
+            //((HiredGondorSoldier) entity).setStationary(false);
             ((HiredGondorSoldier) entity).setInventoryOpen(false);
         }
     }

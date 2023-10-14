@@ -30,10 +30,8 @@ public class EatGoal extends Goal {
         oldOffhand = companion.getCustomInventory().getItem(14).copy();
         companion.getCustomInventory().setItem(14, food);
         timeLeft = food.getUseDuration() + 1;
-        companion.setItemSlot(EquipmentSlotType.OFFHAND, food);
         companion.setItemInHand(Hand.OFF_HAND, food);
         companion.startUsingItem(Hand.OFF_HAND);
-        //companion.setEating(true);
     }
 
     public void stop() {
