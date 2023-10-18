@@ -8,12 +8,8 @@
 package net.richardsprojects.lotrcompanions.entity;
 
 import lotr.common.entity.npc.GondorSoldierEntity;
-import lotr.common.entity.npc.NPCEntity;
-import lotr.common.entity.npc.ai.goal.FriendlyNPCConversationGoal;
-import lotr.common.entity.npc.ai.goal.NPCMeleeAttackGoal;
-import lotr.common.entity.npc.ai.goal.TalkToCurrentGoal;
-import lotr.common.entity.npc.ai.goal.WatchSunriseSunsetGoal;
 import lotr.common.init.LOTRItems;
+
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -54,8 +50,6 @@ import java.util.UUID;
 
 public class HiredGondorSoldier extends GondorSoldierEntity {
 
-    // TODO: Save the current hp level and reload it when entity is reloaded so they have to spend a bunch of time healing
-
     protected static final DataParameter<Byte> DATA_FLAGS_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.BYTE);
     protected static final DataParameter<Optional<UUID>> DATA_OWNERUUID_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.OPTIONAL_UUID);
     private static final DataParameter<Integer> LVL = EntityDataManager.defineId(HiredGondorSoldier.class,
@@ -81,6 +75,11 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
             DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> GUARDING = EntityDataManager.defineId(HiredGondorSoldier.class,
             DataSerializers.BOOLEAN);
+
+    private static final DataParameter<Float> TMP_LAST_HEALTH = EntityDataManager.defineId(HiredGondorSoldier.class,
+            DataSerializers.FLOAT);
+    private boolean tmpHealthLoaded = false;
+    private boolean healthUpdateFromTmpHealth = false;
 
     private static final DataParameter<Boolean> INVENTORY_OPEN = EntityDataManager.defineId(HiredGondorSoldier.class,
             DataSerializers.BOOLEAN);
@@ -146,6 +145,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         this.entityData.define(STATIONARY, false);
         this.entityData.define(BASE_HEALTH, 30);
         this.entityData.define(INVENTORY_OPEN, false);
+        this.entityData.define(TMP_LAST_HEALTH, 30f);
     }
 
     public static AttributeModifierMap.MutableAttribute createAttributes() {
@@ -304,9 +304,9 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new SwimGoal(this));
-        this.goalSelector.addGoal(0, new EatGoal(this));
         this.goalSelector.addGoal(1, new CustomSitGoal(this));
         this.goalSelector.addGoal(3, new CustomFollowOwnerGoal(this, 1.3D, 8.0F, 2.0F, false));
+        this.goalSelector.addGoal(3, new EatGoal(this));
         this.goalSelector.addGoal(5, new CustomWaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
@@ -337,24 +337,19 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         }
         ItemStackHelper.saveAllItems(tag, items);
 
-        /*tag.putBoolean("Alert", this.isAlert());
-        tag.putBoolean("Hunting", this.isHunting());
-        tag.putBoolean("Patrolling", this.isPatrolling());*/
         tag.putBoolean("following", this.isFollowing());
-        //tag.putBoolean("Guarding", this.isGuarding());
         tag.putBoolean("stationary", this.isStationary());
-        /*tag.putInt("radius", this.getPatrolRadius());
-        tag.putInt("baseHealth", this.getBaseHealth());*/
         tag.putInt("mob_kills", this.getMobKills());
         tag.putInt("xp_level", this.getExpLvl());
         tag.putInt("current_xp", this.getCurrentXp());
         tag.putInt("max_xp", this.getMaxXp());
         tag.putInt("base_health", this.getBaseHealth());
+        tag.putFloat("tmp_last_health", this.getHealth());
+        System.out.println("Saving tmp_last_health = " + this.getHealth());
+    }
 
-        /*if (this.getPatrolPos() != null) {
-            int[] patrolPos = {this.getPatrolPos().getX(), this.getPatrolPos().getY(), this.getPatrolPos().getZ()};
-            tag.putIntArray("patrol_pos", patrolPos);
-        }*/
+    private float getTmpLastHealth() {
+        return this.entityData.get(TMP_LAST_HEALTH);
     }
 
     public boolean isFollowing() {
@@ -452,11 +447,22 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         if (tag.contains("base_health")) {
             this.setBaseHealth(tag.getInt("base_health"));
         }
+        if (tag.contains("tmp_last_health")) {
+            this.entityData.set(TMP_LAST_HEALTH, tag.getFloat("tmp_last_health"));
+            this.setHealth(tag.getFloat("tmp_last_health"));
+            tmpHealthLoaded = true;
+        }
     }
 
     public void tick() {
         checkStats();
         updateEquipment();
+
+        if (tmpHealthLoaded && !healthUpdateFromTmpHealth) {
+            this.setHealth(getTmpLastHealth());
+            healthUpdateFromTmpHealth = true;
+        }
+
         super.tick();
     }
 
@@ -517,6 +523,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
             int difference = newExperience - getMaxXp();
             setCurrentXp(difference);
             setMaxXp(getMaxXp() + 2);
+            setHealth(getHealth() + 2);
             setBaseHealth(getBaseHealth() + 2);
         } else {
             setCurrentXp(newExperience);
