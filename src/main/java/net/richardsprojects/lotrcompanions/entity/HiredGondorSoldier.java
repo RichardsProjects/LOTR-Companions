@@ -492,7 +492,6 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
         setItemSlot(EquipmentSlotType.FEET, inventory.getItem((12)));
         setItemSlot(EquipmentSlotType.MAINHAND, inventory.getItem(13));
         setItemSlot(EquipmentSlotType.OFFHAND, inventory.getItem(14));
-        //System.out.println("Update Equipment called");
     }
 
     public void modifyMaxHealth(int change, String name, boolean permanent) {

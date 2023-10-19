@@ -15,6 +15,12 @@ public class LOTRCItems {
             LOTRCompanions.MOD_ID);
 
     public static final RegistryObject<ForgeSpawnEggItem> HIRED_GONDOR_SOLDIER_EGG = ITEMS.register("hired_gondor_soldier_spawn_egg",
-            () -> new HiredGondorSoldierEggItem());
+            HiredGondorSoldierEggItem::new);
+    public static final RegistryObject<Item> ONE_COIN = ITEMS.register("one_coin",
+            OneCoinItem::new);
+    public static final RegistryObject<Item> TEN_COIN = ITEMS.register("ten_coin",
+            TenCoinItem::new);
+    public static final RegistryObject<Item> HUNDRED_COIN = ITEMS.register("hundred_coin",
+            HundredCoinItem::new);
 
 }
