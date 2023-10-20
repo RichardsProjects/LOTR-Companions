@@ -452,6 +452,10 @@ public class HiredGondorSoldier extends GondorSoldierEntity {
             this.setHealth(tag.getFloat("tmp_last_health"));
             tmpHealthLoaded = true;
         }
+
+        if (tag.contains("stationary")) {
+            this.setStationary(tag.getBoolean("stationary"));
+        }
     }
 
     public void tick() {
