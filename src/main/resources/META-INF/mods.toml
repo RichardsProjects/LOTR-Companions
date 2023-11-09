@@ -61,3 +61,9 @@ This mod is inspired by the Human Companions mod to reimplement hireable units i
     versionRange="[1.16.5,1.17)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.lotrcompanions]]
+    modId="lotr"
+    mandatory=true
+    versionRange="Renewed-5.5"
+    ordering="BEFORE"
+    side="BOTH"

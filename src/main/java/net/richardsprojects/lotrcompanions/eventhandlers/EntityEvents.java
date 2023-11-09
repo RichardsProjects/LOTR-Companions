@@ -1,19 +1,17 @@
-package net.richardsprojects.lotrcompanions.entity;
+package net.richardsprojects.lotrcompanions.eventhandlers;
 
 import lotr.common.entity.npc.*;
-import net.minecraft.advancements.criterion.PlayerEntityInteractionTrigger;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.living.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -21,9 +19,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
+import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
+import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
 
-import java.util.Objects;
 import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = LOTRCompanions.MOD_ID)
@@ -196,6 +195,18 @@ public class EntityEvents {
         }
 
         return false;
+    }
+
+    // TODO: Complete this so that followers get brought
+    @SubscribeEvent
+    public static void onPlayerTeleport(EntityTeleportEvent event) {
+        if (!(event.getEntity() instanceof PlayerEntity)) {
+            return;
+        }
+
+        System.out.println("OnPlayerTeleport called");
+        System.out.println("Player X: " + event.getEntity().getX() + " Y: " + event.getEntity().getY() + " Z: " + event.getEntity().getZ());
+        //event.getEntity().level.getEntities()
     }
 
     // TODO: Implement hiring Bree-Land Guards eventually for 20 coins
