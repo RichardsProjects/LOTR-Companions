@@ -126,6 +126,15 @@ repositories {
     }
 }
 
+mixin {
+    add sourceSets.main, "lotrcompanions.mixin-refmap.json"
+
+    config 'lotrcompanions.mixin.json'
+    disableTargetValidator = false
+    overwriteErrorLevel = 'error'
+}
+
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
@@ -168,6 +177,8 @@ jar {
             "MixinConfigs": "lotrcompanions.mixin.json"
         ])
     }
+
+    rename 'mixin.refmap.json', 'lotrcompanions.mixin-refmap.json'
 }
 
 // Example configuration to allow publishing using the maven-publish task
