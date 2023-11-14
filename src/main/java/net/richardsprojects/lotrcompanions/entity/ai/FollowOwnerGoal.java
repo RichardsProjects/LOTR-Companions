@@ -1,6 +1,8 @@
 package net.richardsprojects.lotrcompanions.entity.ai;
 
 import java.util.EnumSet;
+
+import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.LivingEntity;
@@ -12,10 +14,12 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
+import net.richardsprojects.lotrcompanions.entity.HirableUnit;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class FollowOwnerGoal extends Goal {
-    private final HiredGondorSoldier entity;
+    private final NPCEntity entity;
+    private final HirableUnit hirable;
     private LivingEntity owner;
     private final IWorldReader level;
     private final double speedModifier;
@@ -26,8 +30,10 @@ public class FollowOwnerGoal extends Goal {
     private float oldWaterCost;
     private final boolean canFly;
 
-    public FollowOwnerGoal(HiredGondorSoldier p_i225711_1_, double p_i225711_2_, float p_i225711_4_, float p_i225711_5_, boolean p_i225711_6_) {
+    public FollowOwnerGoal(NPCEntity p_i225711_1_, HirableUnit hirable, double p_i225711_2_, float p_i225711_4_, float p_i225711_5_, boolean p_i225711_6_) {
         this.entity = p_i225711_1_;
+        this.hirable = hirable;
+
         this.level = p_i225711_1_.level;
         this.speedModifier = p_i225711_2_;
         this.navigation = p_i225711_1_.getNavigation();
@@ -41,7 +47,7 @@ public class FollowOwnerGoal extends Goal {
     }
 
     public boolean canUse() {
-        LivingEntity livingentity = this.entity.getOwner();
+        LivingEntity livingentity = this.hirable.getOwner();
         if (livingentity == null) {
             return false;
         } else if (livingentity.isSpectator()) {

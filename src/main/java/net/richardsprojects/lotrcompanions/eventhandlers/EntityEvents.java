@@ -6,8 +6,10 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -21,8 +23,10 @@ import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
+import net.richardsprojects.lotrcompanions.event.LOTRFastTravelWaypointEvent;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
 
+import java.util.List;
 import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = LOTRCompanions.MOD_ID)
@@ -39,20 +43,15 @@ public class EntityEvents {
 
     @SubscribeEvent
     public static void playerCloseInventory(final PlayerContainerEvent.Close event) {
-        System.out.println("Player Close Inventory event called");
-
         if (!(event.getContainer() instanceof CompanionContainer)) {
             return;
         }
-
-        System.out.println("Player Close Inventory event called");
 
         CompanionContainer companionContainer = (CompanionContainer) event.getContainer();
 
         // make companion no longer stationary
         Entity entity = event.getPlayer().level.getEntity(companionContainer.getEntityId());
         if (entity instanceof HiredGondorSoldier) {
-            //((HiredGondorSoldier) entity).setStationary(false);
             ((HiredGondorSoldier) entity).setInventoryOpen(false);
         }
     }
@@ -197,16 +196,39 @@ public class EntityEvents {
         return false;
     }
 
-    // TODO: Complete this so that followers get brought
     @SubscribeEvent
     public static void onPlayerTeleport(EntityTeleportEvent event) {
         if (!(event.getEntity() instanceof PlayerEntity)) {
             return;
         }
 
-        System.out.println("OnPlayerTeleport called");
-        System.out.println("Player X: " + event.getEntity().getX() + " Y: " + event.getEntity().getY() + " Z: " + event.getEntity().getZ());
-        //event.getEntity().level.getEntities()
+        AxisAlignedBB initial = new AxisAlignedBB(event.getPrevX(), event.getPrevY(), event.getPrevZ(),
+                event.getPrevX() + 1, event.getPrevY() + 1, event.getPrevZ() + 1);
+        List<HiredGondorSoldier> entities = event.getEntity().level.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
+        for (HiredGondorSoldier soldier : entities) {
+            if (!soldier.isStationary()) soldier.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLOTRWaypoint(LOTRFastTravelWaypointEvent event) {
+        System.out.println("Inside LOTRFastTravelWaypointEvent handler");
+
+        ServerPlayerEntity player = event.getPlayer();
+        ServerWorld world = event.getWorld();
+        BlockPos pos = event.getTravelPos();
+
+        List<HiredGondorSoldier> entities = world.getEntitiesOfClass(HiredGondorSoldier.class, player.getBoundingBox().inflate(256.0));
+        System.out.println("Found Soldier Entities: " + entities);
+        System.out.println("Entity List Size: " + entities.size());
+
+        for (HiredGondorSoldier soldier : entities) {
+            if (!soldier.isStationary()) {
+                soldier.moveTo(pos.getX(), pos.getY(), pos.getZ());
+                System.out.println("Updated pos of " + soldier + " to X: " + pos.getX() + ", Y: " + pos.getY() + ", Z:" + player.getZ());
+            }
+        }
+
     }
 
     // TODO: Implement hiring Bree-Land Guards eventually for 20 coins

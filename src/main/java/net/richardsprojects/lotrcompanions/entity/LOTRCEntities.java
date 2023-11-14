@@ -19,4 +19,10 @@ public class LOTRCEntities {
                     .sized(0.6F, 1.8F)
                     .build(new ResourceLocation(LOTRCompanions.MOD_ID, "hired_gondor_soldier").toString()));
 
+    // TODO: check if this is the correct size
+    public static final RegistryObject<EntityType<HiredBreeGuard>> HIRED_BREE_GUARD =
+            ENTITIES.register("hired_bree_guard", () -> EntityType.Builder.of(HiredBreeGuard::new, EntityClassification.AMBIENT)
+                    .sized(0.6F, 1.8F)
+                    .build(new ResourceLocation(LOTRCompanions.MOD_ID, "hired_bree_soldier").toString()));
+
 }

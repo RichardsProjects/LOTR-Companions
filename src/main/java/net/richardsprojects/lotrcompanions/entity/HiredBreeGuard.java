@@ -1,12 +1,6 @@
-/**
- * This file has been modified from the Human Companions Mod
- * which can be found here:
- *
- * https://github.com/justinwon777/HumanCompanions/tree/main
- */
-
 package net.richardsprojects.lotrcompanions.entity;
 
+import lotr.common.entity.npc.BreeGuardEntity;
 import lotr.common.entity.npc.GondorSoldierEntity;
 import lotr.common.init.LOTRItems;
 
@@ -16,7 +10,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -35,7 +28,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -50,7 +42,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUnit {
+public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
 
     protected static final DataParameter<Byte> DATA_FLAGS_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.BYTE);
     protected static final DataParameter<Optional<UUID>> DATA_OWNERUUID_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.OPTIONAL_UUID);
@@ -89,6 +81,20 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
     // 9 inventory slots + 6 equipment slots
     public Inventory inventory = new Inventory(15);
 
+    public HiredBreeGuard(EntityType<? extends BreeGuardEntity> type, World w) {
+        super(type, w);
+
+        inventory.setItem(9, new ItemStack(Items.IRON_HELMET));
+        inventory.setItem(10, new ItemStack(Items.LEATHER_CHESTPLATE));
+        inventory.setItem(11, new ItemStack(Items.CHAINMAIL_LEGGINGS));
+        inventory.setItem(12, new ItemStack(Items.CHAINMAIL_BOOTS));
+        inventory.setItem(13, new ItemStack(LOTRItems.IRON_SPEAR.get()));
+        inventory.setItem(14, new ItemStack(Items.SHIELD));
+        updateEquipment();
+
+        this.setTame(false);
+    }
+
     /* Remove consuming goals since we have our own */
     @Override
     protected void addConsumingGoals(int prio) {}
@@ -103,20 +109,6 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
         this.initialiseAttackGoals(getAttackGoalsHolder());
         this.addNPCTargetingAI();
         this.addAttackGoal(2);
-    }
-
-    public HiredGondorSoldier(EntityType entityType, World level) {
-        super(entityType, level);
-
-        inventory.setItem(9, new ItemStack(LOTRItems.GONDOR_HELMET.get()));
-        inventory.setItem(10, new ItemStack(LOTRItems.GONDOR_CHESTPLATE.get()));
-        inventory.setItem(11, new ItemStack(LOTRItems.GONDOR_LEGGINGS.get()));
-        inventory.setItem(12, new ItemStack(LOTRItems.GONDOR_BOOTS.get()));
-        inventory.setItem(13, new ItemStack(LOTRItems.GONDOR_SWORD.get()));
-        inventory.setItem(14, new ItemStack(LOTRItems.GONDOR_SHIELD.get()));
-        updateEquipment();
-
-        this.setTame(false);
     }
 
     public Inventory getCustomInventory() {
@@ -307,7 +299,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new CustomSitGoal(this,this));
-        this.goalSelector.addGoal(3, new CustomFollowOwnerGoal(this, this, 1.3D, 8.0F, 2.0F, false));
+        this.goalSelector.addGoal(3, new CustomFollowOwnerGoal(this, this,1.3D, 8.0F, 2.0F, false));
         this.goalSelector.addGoal(3, new EatGoal(this,this));
         this.goalSelector.addGoal(5, new CustomWaterAvoidingRandomWalkingGoal(this,this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));

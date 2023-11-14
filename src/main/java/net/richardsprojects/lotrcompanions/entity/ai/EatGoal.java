@@ -1,24 +1,29 @@
 package net.richardsprojects.lotrcompanions.entity.ai;
 
+import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.richardsprojects.lotrcompanions.entity.HirableUnit;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class EatGoal extends Goal {
-    protected final HiredGondorSoldier companion;
+    protected final NPCEntity entity;
+
+    protected final HirableUnit companion;
     ItemStack food = ItemStack.EMPTY;
     ItemStack oldOffhand = ItemStack.EMPTY;
     boolean started = false;
     int timeLeft = -1;
 
-    public EatGoal(HiredGondorSoldier entity) {
-        companion = entity;
+    public EatGoal(NPCEntity entity, HirableUnit unit) {
+        this.entity = entity;
+        companion = unit;
     }
 
     public boolean canUse() {
-        if (companion.getHealth() < companion.getMaxHealth() && !companion.isInventoryOpen()) {
+        if (entity.getHealth() < entity.getMaxHealth() && !companion.isInventoryOpen()) {
             food = companion.checkFood();
             return !food.isEmpty();
         }
@@ -30,13 +35,13 @@ public class EatGoal extends Goal {
         oldOffhand = companion.getCustomInventory().getItem(14).copy();
         companion.getCustomInventory().setItem(14, food);
         timeLeft = food.getUseDuration() + 1;
-        companion.setItemInHand(Hand.OFF_HAND, food);
-        companion.startUsingItem(Hand.OFF_HAND);
+        entity.setItemInHand(Hand.OFF_HAND, food);
+        entity.startUsingItem(Hand.OFF_HAND);
     }
 
     public void stop() {
         companion.getCustomInventory().setItem(14, oldOffhand);
-        companion.setItemSlot(EquipmentSlotType.OFFHAND, oldOffhand);
+        entity.setItemSlot(EquipmentSlotType.OFFHAND, oldOffhand);
         started = false;
         timeLeft = -1;
     }
@@ -53,7 +58,7 @@ public class EatGoal extends Goal {
                 stop();
             }
         } else {
-            if (companion.getHealth() < companion.getMaxHealth()) {
+            if (entity.getHealth() < entity.getMaxHealth()) {
                 food = companion.checkFood();
                 if (!food.isEmpty()) {
                     if (!started) start();

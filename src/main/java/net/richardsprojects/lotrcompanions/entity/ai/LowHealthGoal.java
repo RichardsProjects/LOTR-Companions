@@ -1,26 +1,31 @@
 package net.richardsprojects.lotrcompanions.entity.ai;
 
+import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
+import net.richardsprojects.lotrcompanions.entity.HirableUnit;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class LowHealthGoal extends Goal {
-    protected final HiredGondorSoldier mob;
+    protected final NPCEntity entity;
+    protected final HirableUnit unit;
+
     int startTick = 0;
     StringTextComponent text = new StringTextComponent("I need food!");
     ItemStack food = ItemStack.EMPTY;
 
-    public LowHealthGoal(HiredGondorSoldier entity) {
-        this.mob = entity;
+    public LowHealthGoal(NPCEntity entity, HirableUnit unit) {
+        this.entity = entity;
+        this.unit = unit;
     }
 
     public boolean canUse() {
         if (LOTRCompanions.LOW_HEALTH_FOOD) {
-            if (this.mob.getHealth() < this.mob.getMaxHealth() / 2 && this.mob.isTame()) {
-                food = mob.checkFood();
+            if (this.entity.getHealth() < this.entity.getMaxHealth() / 2 && this.unit.isTame()) {
+                food = unit.checkFood();
                 return !food.isEmpty();
             }
         }
@@ -28,18 +33,18 @@ public class LowHealthGoal extends Goal {
     }
 
     public void start() {
-        startTick = this.mob.tickCount;
-        if (this.mob.getOwner() != null) {
-            this.mob.getOwner().sendMessage(new TranslationTextComponent("chat.type.text", this.mob.getDisplayName(), text),
-                    this.mob.getUUID());
+        startTick = this.entity.tickCount;
+        if (this.unit.getOwner() != null) {
+            this.unit.getOwner().sendMessage(new TranslationTextComponent("chat.type.text", this.entity.getDisplayName(), text),
+                    this.entity.getUUID());
         }
     }
 
     public void tick() {
-        if ((this.mob.tickCount - startTick) % (15 * 20) == 0 && this.mob.tickCount > startTick) {
-            if (this.mob.getOwner() != null) {
-                this.mob.getOwner().sendMessage(new TranslationTextComponent("chat.type.text", this.mob.getDisplayName(), text),
-                        this.mob.getUUID());
+        if ((this.entity.tickCount - startTick) % (15 * 20) == 0 && this.entity.tickCount > startTick) {
+            if (this.unit.getOwner() != null) {
+                this.unit.getOwner().sendMessage(new TranslationTextComponent("chat.type.text", this.entity.getDisplayName(), text),
+                        this.entity.getUUID());
             }
         }
 
