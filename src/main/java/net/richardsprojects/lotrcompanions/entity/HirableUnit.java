@@ -4,26 +4,49 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
 
 public interface HirableUnit {
 
     @Nullable
-    public LivingEntity getOwner();
+    LivingEntity getOwner();
 
-    public boolean isFollowing();
+    boolean isFollowing();
 
-    public boolean isInventoryOpen();
+    boolean isInventoryOpen();
 
-    public ItemStack checkFood();
+    ItemStack checkFood();
 
-    public Inventory getCustomInventory();
+    Inventory getCustomInventory();
 
-    public boolean isTame();
+    boolean isTame();
 
-    public boolean wantsToAttack(LivingEntity p_142018_1_, LivingEntity p_142018_2_);
+    boolean wantsToAttack(LivingEntity p_142018_1_, LivingEntity p_142018_2_);
 
-    public boolean isStationary();
+    boolean isStationary();
 
+    void setMobKills(int kills);
+
+    void giveExperiencePoints(int points);
+
+    int getMobKills();
+
+    ITextComponent getName();
+
+    boolean isPatrolling();
+    float getMaxHealth();
+
+    float getHealth();
+
+    int getExpLvl();
+
+    int getMaxXp();
+
+    int getCurrentXp();
+
+    boolean isAlert();
+
+    int getId();
 }

@@ -7,6 +7,7 @@
 package net.richardsprojects.lotrcompanions.core;
 
 
+import lotr.common.speech.SpeechEnums;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.client.screen.CompanionScreen;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
+import net.richardsprojects.lotrcompanions.entity.HiredBreeGuard;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.networking.*;
 
@@ -50,8 +52,18 @@ public class PacketHandler {
         PlayerEntity player = Minecraft.getInstance().player;
         if (player != null) {
             Entity entity = player.level.getEntity(packet.getEntityId());
+
             if (entity instanceof HiredGondorSoldier) {
                 HiredGondorSoldier companion = (HiredGondorSoldier) entity;
+
+                ClientPlayerEntity clientplayerentity = Minecraft.getInstance().player;
+
+                CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, companion.inventory, companion.getId());
+                clientplayerentity.containerMenu = container;
+                Minecraft.getInstance().setScreen(new CompanionScreen(container, player.inventory, companion));
+            } else if (entity instanceof HiredBreeGuard) {
+                HiredBreeGuard companion = (HiredBreeGuard) entity;
+
                 ClientPlayerEntity clientplayerentity = Minecraft.getInstance().player;
 
                 CompanionContainer container = new CompanionContainer(packet.getId(), player.inventory, companion.inventory, companion.getId());

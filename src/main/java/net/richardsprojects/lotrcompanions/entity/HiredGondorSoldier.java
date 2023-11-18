@@ -31,11 +31,8 @@ import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.*;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -220,28 +217,11 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
     public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
         System.out.println("Mob Interact Called!");
 
-        ItemStack itemstack = player.getItemInHand(hand);
         if (hand == Hand.MAIN_HAND) {
-            if (!this.isTame() && !this.level.isClientSide()) {
-                System.out.println("Is not tamed");
-
-                // TODO: temporarily allow taming with cooked chicken
-                if (itemstack.getItem().equals(Items.COOKED_CHICKEN)) {
-                    this.tame(player);
-                    player.sendMessage(new TranslationTextComponent("chat.type.text", this.getDisplayName(),
-                            new StringTextComponent("Thanks!")), this.getUUID());
-                    player.sendMessage(new StringTextComponent("Companion added"), this.getUUID());
-                    setPatrolling(false);
-                    setFollowing(true);
-                    setStationary(false);
+            if (this.isAlliedTo(player)) {
+                if (!this.level.isClientSide()) {
+                    this.openGui((ServerPlayerEntity) player);
                 }
-            } else {
-                if (this.isAlliedTo(player)) {
-                    if (!this.level.isClientSide()) {
-                        this.openGui((ServerPlayerEntity) player);
-                    }
-                }
-                return ActionResultType.sidedSuccess(this.level.isClientSide());
             }
             return ActionResultType.sidedSuccess(this.level.isClientSide());
         }
@@ -318,8 +298,6 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
         this.targetSelector.addGoal(2, new CustomOwnerHurtTargetGoal(this,this));
         this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
     }
-
-    // TODO: Fix issue with entities not following when player teleports
 
     public boolean wantsToAttack(LivingEntity p_142018_1_, LivingEntity p_142018_2_) {
         return true;

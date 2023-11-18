@@ -20,6 +20,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
+import net.richardsprojects.lotrcompanions.entity.HirableUnit;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.networking.SetAlertPacket;
 import net.richardsprojects.lotrcompanions.networking.SetPatrollingPacket;
@@ -33,7 +34,7 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
     private static final ResourceLocation STATIONARY_BUTTON = new ResourceLocation(LOTRCompanions.MOD_ID, "textures" +
             "/stationary_button.png");
 
-    private final HiredGondorSoldier companion;
+    private final HirableUnit companion;
     DecimalFormat df = new DecimalFormat("#.#");
     int sidebarX;
     int row1;
@@ -43,7 +44,7 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
     private CompanionButton patrolButton;
     private CompanionButton stationaryButton;
 
-    public CompanionScreen(CompanionContainer p_98409_, PlayerInventory p_98410_, HiredGondorSoldier companion) {
+    public CompanionScreen(CompanionContainer p_98409_, PlayerInventory p_98410_, HirableUnit companion) {
         super(p_98409_, p_98410_, companion.getName());
 
         this.companion = companion;

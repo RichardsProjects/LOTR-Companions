@@ -1,30 +1,20 @@
 package net.richardsprojects.lotrcompanions.mixins;
 
-import lotr.common.LOTRLog;
 import lotr.common.data.FastTravelDataModule;
-import lotr.common.stat.LOTRStats;
-import lotr.common.util.UsernameHelper;
 import lotr.common.world.map.Waypoint;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.event.LOTRFastTravelWaypointEvent;
-import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @Mixin(FastTravelDataModule.class)
 public abstract class LOTRFastTravelDataModuleMixin {

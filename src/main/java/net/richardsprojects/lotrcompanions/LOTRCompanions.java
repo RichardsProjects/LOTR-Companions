@@ -7,6 +7,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.richardsprojects.lotrcompanions.client.render.HiredBreeGuardRenderer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
 import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
@@ -40,6 +41,7 @@ public class LOTRCompanions {
 
     private void setupClientRendering(final FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(LOTRCEntities.HIRED_GONDOR_SOLDIER.get(), GondorSoldierRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(LOTRCEntities.HIRED_BREE_GUARD.get(), HiredBreeGuardRenderer::new);
     }
 
 }

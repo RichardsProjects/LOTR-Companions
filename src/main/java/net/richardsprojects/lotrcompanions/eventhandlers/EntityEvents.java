@@ -21,6 +21,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
+import net.richardsprojects.lotrcompanions.entity.HirableUnit;
+import net.richardsprojects.lotrcompanions.entity.HiredBreeGuard;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
 import net.richardsprojects.lotrcompanions.event.LOTRFastTravelWaypointEvent;
@@ -34,10 +36,10 @@ public class EntityEvents {
     @SubscribeEvent
     public static void giveExperience(final LivingDeathEvent event) {
         Entity companion = event.getSource().getEntity();
-        if (companion instanceof HiredGondorSoldier) {
+        if (companion instanceof HiredGondorSoldier || companion instanceof HiredBreeGuard) {
             // TODO: put in some calculations for each mob type
-            ((HiredGondorSoldier) companion).giveExperiencePoints(1);
-            ((HiredGondorSoldier) companion).setMobKills(((HiredGondorSoldier) companion).getMobKills() + 1);
+            ((HirableUnit) companion).giveExperiencePoints(1);
+            ((HirableUnit) companion).setMobKills(((HirableUnit) companion).getMobKills() + 1);
         }
     }
 
@@ -91,7 +93,7 @@ public class EntityEvents {
         // check that they have a coin in their hand
         if (!(event.getItemStack().getItem().equals(LOTRCItems.ONE_COIN.get()) ||
               event.getItemStack().getItem().equals(LOTRCItems.HUNDRED_COIN.get()) ||
-              event.getItemStack().getItem().equals(LOTRCItems.HUNDRED_COIN.get()))) {
+              event.getItemStack().getItem().equals(LOTRCItems.TEN_COIN.get()))) {
             return;
             }
 
@@ -113,6 +115,44 @@ public class EntityEvents {
             gondorSoldier.remove();
             removeCoins(event.getPlayer().inventory, 60);
             event.getPlayer().sendMessage(new StringTextComponent("The Gondor Soldier has been hired for 60 coins"), event.getPlayer().getUUID());
+        }
+    }
+
+    @SubscribeEvent
+    public static void hireBreeGuard(PlayerInteractEvent.EntityInteract event) {
+        // only allow this event to run on the server
+        if (!(event.getWorld() instanceof ServerWorld)) {
+            return;
+        }
+
+        if (!(event.getTarget() instanceof BreeGuardEntity)) {
+            return;
+        }
+
+        // check that they have a coin in their hand
+        if (!(event.getItemStack().getItem().equals(LOTRCItems.ONE_COIN.get()) ||
+                event.getItemStack().getItem().equals(LOTRCItems.HUNDRED_COIN.get()) ||
+                event.getItemStack().getItem().equals(LOTRCItems.TEN_COIN.get()))) {
+            return;
+        }
+
+        int coins = totalCoins(event.getPlayer().inventory);
+        if (coins < 40) {
+            event.getPlayer().sendMessage(new StringTextComponent("I require 40 coins in payment to be hired."), event.getPlayer().getUUID());
+            return;
+        }
+
+        BreeGuardEntity breeGuard = (BreeGuardEntity) event.getTarget();
+        HiredBreeGuard newEntity = (HiredBreeGuard) LOTRCEntities.HIRED_BREE_GUARD.get().spawn(
+                (ServerWorld) event.getWorld(), null,
+                event.getPlayer(), new BlockPos(breeGuard.getX(), breeGuard.getY(), breeGuard.getZ()),
+                SpawnReason.NATURAL, true, false
+        );
+        if (newEntity != null) {
+            newEntity.tame(event.getPlayer());
+            breeGuard.remove();
+            removeCoins(event.getPlayer().inventory, 40);
+            event.getPlayer().sendMessage(new StringTextComponent("The Breeland Guard has been hired for 40 coins"), event.getPlayer().getUUID());
         }
     }
 
@@ -204,9 +244,13 @@ public class EntityEvents {
 
         AxisAlignedBB initial = new AxisAlignedBB(event.getPrevX(), event.getPrevY(), event.getPrevZ(),
                 event.getPrevX() + 1, event.getPrevY() + 1, event.getPrevZ() + 1);
-        List<HiredGondorSoldier> entities = event.getEntity().level.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
-        for (HiredGondorSoldier soldier : entities) {
+        List<HiredGondorSoldier> gondorSoldiers = event.getEntity().level.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
+        List<HiredBreeGuard> breeGuards = event.getEntity().level.getEntitiesOfClass(HiredBreeGuard.class, initial.inflate(256));
+        for (HiredGondorSoldier soldier : gondorSoldiers) {
             if (!soldier.isStationary()) soldier.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+        }
+        for (HiredBreeGuard breeGuard : breeGuards) {
+            if (!breeGuard.isStationary()) breeGuard.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
         }
     }
 
@@ -218,17 +262,19 @@ public class EntityEvents {
         ServerWorld world = event.getWorld();
         BlockPos pos = event.getTravelPos();
 
-        List<HiredGondorSoldier> entities = world.getEntitiesOfClass(HiredGondorSoldier.class, player.getBoundingBox().inflate(256.0));
-        System.out.println("Found Soldier Entities: " + entities);
-        System.out.println("Entity List Size: " + entities.size());
+        List<HiredGondorSoldier> gondorSoldiers = world.getEntitiesOfClass(HiredGondorSoldier.class, player.getBoundingBox().inflate(256.0));
+        List<HiredBreeGuard> breeGuards = world.getEntitiesOfClass(HiredBreeGuard.class, player.getBoundingBox().inflate(256.0));
 
-        for (HiredGondorSoldier soldier : entities) {
+        for (HiredGondorSoldier soldier : gondorSoldiers) {
             if (!soldier.isStationary()) {
                 soldier.moveTo(pos.getX(), pos.getY(), pos.getZ());
-                System.out.println("Updated pos of " + soldier + " to X: " + pos.getX() + ", Y: " + pos.getY() + ", Z:" + player.getZ());
             }
         }
-
+        for (HiredBreeGuard breeGuard : breeGuards) {
+            if (!breeGuard.isStationary()) {
+                breeGuard.moveTo(pos.getX(), pos.getY(), pos.getZ());
+            }
+        }
     }
 
     // TODO: Implement hiring Bree-Land Guards eventually for 20 coins

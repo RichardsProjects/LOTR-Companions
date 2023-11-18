@@ -44,38 +44,38 @@ import java.util.UUID;
 
 public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
 
-    protected static final DataParameter<Byte> DATA_FLAGS_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.BYTE);
-    protected static final DataParameter<Optional<UUID>> DATA_OWNERUUID_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.OPTIONAL_UUID);
-    private static final DataParameter<Integer> LVL = EntityDataManager.defineId(HiredGondorSoldier.class,
+    protected static final DataParameter<Byte> DATA_FLAGS_ID = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.BYTE);
+    protected static final DataParameter<Optional<UUID>> DATA_OWNERUUID_ID = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.OPTIONAL_UUID);
+    private static final DataParameter<Integer> LVL = EntityDataManager.defineId(HiredBreeGuard.class,
             DataSerializers.INT);
-    private static final DataParameter<Integer> CURRENT_XP = EntityDataManager.defineId(HiredGondorSoldier.class,
-            DataSerializers.INT);
-
-    private static final DataParameter<Integer> BASE_HEALTH = EntityDataManager.defineId(HiredGondorSoldier.class,
-            DataSerializers.INT);
-    private static final DataParameter<Integer> MAX_XP = EntityDataManager.defineId(HiredGondorSoldier.class,
+    private static final DataParameter<Integer> CURRENT_XP = EntityDataManager.defineId(HiredBreeGuard.class,
             DataSerializers.INT);
 
-    private static final DataParameter<Integer> KILLS = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.INT);
+    private static final DataParameter<Integer> BASE_HEALTH = EntityDataManager.defineId(HiredBreeGuard.class,
+            DataSerializers.INT);
+    private static final DataParameter<Integer> MAX_XP = EntityDataManager.defineId(HiredBreeGuard.class,
+            DataSerializers.INT);
 
-    private static final DataParameter<Boolean> FOLLOWING = EntityDataManager.defineId(HiredGondorSoldier.class,
-            DataSerializers.BOOLEAN);
+    private static final DataParameter<Integer> KILLS = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.INT);
 
-    private static final DataParameter<Boolean> STATIONARY = EntityDataManager.defineId(HiredGondorSoldier.class,
-            DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> PATROLLING = EntityDataManager.defineId(HiredGondorSoldier.class,
-            DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> ALERT = EntityDataManager.defineId(HiredGondorSoldier.class,
-            DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> GUARDING = EntityDataManager.defineId(HiredGondorSoldier.class,
+    private static final DataParameter<Boolean> FOLLOWING = EntityDataManager.defineId(HiredBreeGuard.class,
             DataSerializers.BOOLEAN);
 
-    private static final DataParameter<Float> TMP_LAST_HEALTH = EntityDataManager.defineId(HiredGondorSoldier.class,
+    private static final DataParameter<Boolean> STATIONARY = EntityDataManager.defineId(HiredBreeGuard.class,
+            DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> PATROLLING = EntityDataManager.defineId(HiredBreeGuard.class,
+            DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> ALERT = EntityDataManager.defineId(HiredBreeGuard.class,
+            DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> GUARDING = EntityDataManager.defineId(HiredBreeGuard.class,
+            DataSerializers.BOOLEAN);
+
+    private static final DataParameter<Float> TMP_LAST_HEALTH = EntityDataManager.defineId(HiredBreeGuard.class,
             DataSerializers.FLOAT);
     private boolean tmpHealthLoaded = false;
     private boolean healthUpdateFromTmpHealth = false;
 
-    private static final DataParameter<Boolean> INVENTORY_OPEN = EntityDataManager.defineId(HiredGondorSoldier.class,
+    private static final DataParameter<Boolean> INVENTORY_OPEN = EntityDataManager.defineId(HiredBreeGuard.class,
             DataSerializers.BOOLEAN);
 
     // 9 inventory slots + 6 equipment slots
@@ -214,26 +214,10 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
 
         ItemStack itemstack = player.getItemInHand(hand);
         if (hand == Hand.MAIN_HAND) {
-            if (!this.isTame() && !this.level.isClientSide()) {
-                System.out.println("Is not tamed");
-
-                // TODO: temporarily allow taming with cooked chicken
-                if (itemstack.getItem().equals(Items.COOKED_CHICKEN)) {
-                    this.tame(player);
-                    player.sendMessage(new TranslationTextComponent("chat.type.text", this.getDisplayName(),
-                            new StringTextComponent("Thanks!")), this.getUUID());
-                    player.sendMessage(new StringTextComponent("Companion added"), this.getUUID());
-                    setPatrolling(false);
-                    setFollowing(true);
-                    setStationary(false);
+            if (this.isAlliedTo(player)) {
+                if (!this.level.isClientSide()) {
+                    this.openGui((ServerPlayerEntity) player);
                 }
-            } else {
-                if (this.isAlliedTo(player)) {
-                    if (!this.level.isClientSide()) {
-                        this.openGui((ServerPlayerEntity) player);
-                    }
-                }
-                return ActionResultType.sidedSuccess(this.level.isClientSide());
             }
             return ActionResultType.sidedSuccess(this.level.isClientSide());
         }
@@ -310,8 +294,6 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
         this.targetSelector.addGoal(2, new CustomOwnerHurtTargetGoal(this,this));
         this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
     }
-
-    // TODO: Fix issue with entities not following when player teleports
 
     public boolean wantsToAttack(LivingEntity p_142018_1_, LivingEntity p_142018_2_) {
         return true;
