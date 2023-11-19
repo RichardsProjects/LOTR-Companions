@@ -148,6 +148,9 @@ public class EntityEvents {
                 event.getPlayer(), new BlockPos(breeGuard.getX(), breeGuard.getY(), breeGuard.getZ()),
                 SpawnReason.NATURAL, true, false
         );
+
+        // TODO: Update gear to match correctly
+
         if (newEntity != null) {
             newEntity.tame(event.getPlayer());
             breeGuard.remove();
@@ -265,17 +268,19 @@ public class EntityEvents {
         List<HiredGondorSoldier> gondorSoldiers = world.getEntitiesOfClass(HiredGondorSoldier.class, player.getBoundingBox().inflate(256.0));
         List<HiredBreeGuard> breeGuards = world.getEntitiesOfClass(HiredBreeGuard.class, player.getBoundingBox().inflate(256.0));
 
+        // TODO: Occasionally position of Bree Guards isn't getting updated on client
+
         for (HiredGondorSoldier soldier : gondorSoldiers) {
             if (!soldier.isStationary()) {
                 soldier.moveTo(pos.getX(), pos.getY(), pos.getZ());
             }
         }
         for (HiredBreeGuard breeGuard : breeGuards) {
+            System.out.println(breeGuard);
             if (!breeGuard.isStationary()) {
                 breeGuard.moveTo(pos.getX(), pos.getY(), pos.getZ());
             }
         }
     }
 
-    // TODO: Implement hiring Bree-Land Guards eventually for 20 coins
 }

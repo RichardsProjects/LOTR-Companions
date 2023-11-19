@@ -143,7 +143,7 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
     }
 
     public static AttributeModifierMap.MutableAttribute createAttributes() {
-        return GondorSoldierEntity.regAttrs()
+        return BreeGuardEntity.regAttrs()
                 .add(Attributes.FOLLOW_RANGE, 20.0D)
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.ATTACK_DAMAGE, 1.0D)
@@ -210,8 +210,6 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
 
     @Override
     public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
-        System.out.println("Mob Interact Called!");
-
         ItemStack itemstack = player.getItemInHand(hand);
         if (hand == Hand.MAIN_HAND) {
             if (this.isAlliedTo(player)) {
