@@ -1,7 +1,12 @@
 package net.richardsprojects.lotrcompanions.client.render;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import lotr.client.render.entity.BreeManRenderer;
 import lotr.client.render.entity.GondorSoldierRenderer;
+import lotr.common.entity.npc.BreeGuardEntity;
+import lotr.common.entity.npc.BreeManEntity;
+import lotr.common.entity.npc.GondorManEntity;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 
 public class HiredBreeGuardRenderer extends BreeManRenderer {
@@ -10,8 +15,10 @@ public class HiredBreeGuardRenderer extends BreeManRenderer {
         super(mgr);
     }
 
-    /*public ResourceLocation getEntityTexture(NPCEntity entity) {
-        System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
-        return new ResourceLocation("lotr", "textures/entity/gondor/gondor_soldier/0");
-    }*/
+    @Override
+    public void render(BreeManEntity entity, float yaw, float partialTicks, MatrixStack matStack, IRenderTypeBuffer buf, int packedLight) {
+        super.render(entity, yaw, partialTicks, matStack, buf, packedLight);
+
+        CompanionRenderUtils.renderHealthBar(this.entityRenderDispatcher, this.getFont(), entity, matStack, buf, packedLight);
+    }
 }
