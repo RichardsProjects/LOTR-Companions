@@ -1,7 +1,6 @@
 package net.richardsprojects.lotrcompanions.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import lotr.common.entity.npc.GondorManEntity;
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -22,7 +21,6 @@ public class CompanionRenderUtils {
             int length = (int) (healthPercent * 10);
             String healthBar = "";
             for (int i = 0; i < length; i++) {
-                //char asciiChar = 219;
                 healthBar += "\u2588";
             }
             int difference = 10 - length;

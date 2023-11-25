@@ -44,6 +44,8 @@ public class PacketHandler {
                 SetStationaryPacket::handle);
         INSTANCE.registerMessage(id++, ReleasePacket.class, ReleasePacket::encode, ReleasePacket::decode,
                 ReleasePacket::handle);
+        INSTANCE.registerMessage(id++, UpdateHiredEntityEquipmentPacket.class, UpdateHiredEntityEquipmentPacket::encode,
+                UpdateHiredEntityEquipmentPacket::decode, UpdateHiredEntityEquipmentPacket::handle);
     }
 
     @SuppressWarnings("resource")

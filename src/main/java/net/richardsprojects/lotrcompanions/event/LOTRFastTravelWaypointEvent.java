@@ -11,9 +11,12 @@ public class LOTRFastTravelWaypointEvent extends Event {
     private ServerWorld world;
     private BlockPos travelPos;
 
-    public LOTRFastTravelWaypointEvent(ServerPlayerEntity player, ServerWorld world, BlockPos travelPos) {
+    private BlockPos originalPos;
+
+    public LOTRFastTravelWaypointEvent(ServerPlayerEntity player, ServerWorld world, BlockPos originalPos, BlockPos travelPos) {
         this.player = player;
         this.world = world;
+        this.originalPos = originalPos;
         this.travelPos = travelPos;
     }
 
@@ -27,5 +30,9 @@ public class LOTRFastTravelWaypointEvent extends Event {
 
     public BlockPos getTravelPos() {
         return travelPos;
+    }
+
+    public BlockPos getOriginalPos() {
+        return originalPos;
     }
 }

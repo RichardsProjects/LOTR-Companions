@@ -21,22 +21,19 @@ public abstract class LOTRFastTravelDataModuleMixin {
 
     @Inject(at = @At(value = "HEAD"), method="fastTravelTo", remap = false)
     private void fastTravelTo(ServerPlayerEntity player, Waypoint waypoint, CallbackInfo info) {
+        System.out.println("FastTravelTo mixin was run");
+
         ServerWorld world = player.getLevel();
+        BlockPos orig = new BlockPos(player.getX(), player.getY(), player.getZ());
         BlockPos travelPos = waypoint.getTravelPosition(world, player);
+        System.out.println("Travel Pos: " + travelPos);
+
+        System.out.println("Creating a LOTRFastTravelWaypointEvent event");
 
         if (travelPos != null) {
-            LOTRFastTravelWaypointEvent event = new LOTRFastTravelWaypointEvent(player, world, travelPos);
+            LOTRFastTravelWaypointEvent event = new LOTRFastTravelWaypointEvent(player, world, orig, travelPos);
             MinecraftForge.EVENT_BUS.post(event);
+            System.out.println("Posted LOTRFastTravelWaypointEvent event to the event bus");
         }
     }
-
-    @Shadow protected abstract void sendFTScreenPacket(ServerPlayerEntity player, Waypoint waypoint, int startX, int startZ);
-
-    @Shadow public abstract void setTimeSinceFTWithUpdate(int i);
-
-    @Shadow protected abstract <T extends MobEntity> T fastTravelEntity(ServerWorld world, T entity, double x, double y, double z);
-
-    @Shadow public abstract void incrementWPUseCount(Waypoint waypoint);
-
-    @Shadow protected abstract void setUUIDToMount(UUID uuid);
 }

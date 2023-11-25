@@ -7,6 +7,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 public interface HirableUnit {
 
@@ -33,12 +34,12 @@ public interface HirableUnit {
 
     int getMobKills();
 
-    ITextComponent getName();
+    ITextComponent getHiredUnitName();
 
     boolean isPatrolling();
-    float getMaxHealth();
+    float getHiredUnitMaxHealth();
 
-    float getHealth();
+    float getHiredUnitHealth();
 
     int getExpLvl();
 
@@ -49,4 +50,20 @@ public interface HirableUnit {
     boolean isAlert();
 
     int getId();
+
+    UUID getOwnerUUID();
+
+    void setMaxXp(int maxXp);
+
+    void setHiredUnitHealth(float p_70606_1_);
+
+    void setExpLvl(int lvl);
+
+    void setCurrentXp(int currentXp);
+
+    void setBaseHealth(int health);
+
+    int getBaseHealth();
+
+    void setStationary(boolean stationary);
 }

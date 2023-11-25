@@ -1,8 +1,8 @@
 package net.richardsprojects.lotrcompanions.eventhandlers;
 
 import lotr.common.entity.npc.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.command.impl.TeleportCommand;
+import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -11,9 +11,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.EntityTeleportEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -21,15 +24,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
-import net.richardsprojects.lotrcompanions.entity.HirableUnit;
-import net.richardsprojects.lotrcompanions.entity.HiredBreeGuard;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
-import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
+import net.richardsprojects.lotrcompanions.entity.*;
 import net.richardsprojects.lotrcompanions.event.LOTRFastTravelWaypointEvent;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = LOTRCompanions.MOD_ID)
 public class EntityEvents {
@@ -55,6 +56,8 @@ public class EntityEvents {
         Entity entity = event.getPlayer().level.getEntity(companionContainer.getEntityId());
         if (entity instanceof HiredGondorSoldier) {
             ((HiredGondorSoldier) entity).setInventoryOpen(false);
+        } else if (entity instanceof HiredBreeGuard) {
+            ((HiredBreeGuard) entity).setInventoryOpen(false);
         }
     }
 
@@ -81,6 +84,9 @@ public class EntityEvents {
     }
     @SubscribeEvent
     public static void hireGondorSoldier(PlayerInteractEvent.EntityInteract event) {
+        // TODO: Clean up code between hireGOndorSoldier and hireBreelandGuard so that they are one method with less
+        //  repeated code
+
         // only allow this event to run on the server
         if (!(event.getWorld() instanceof ServerWorld)) {
             return;
@@ -136,6 +142,8 @@ public class EntityEvents {
             return;
         }
 
+        // TODO: Make prices be based upon faction reputation
+
         int coins = totalCoins(event.getPlayer().inventory);
         if (coins < 40) {
             event.getPlayer().sendMessage(new StringTextComponent("I require 40 coins in payment to be hired."), event.getPlayer().getUUID());
@@ -155,7 +163,7 @@ public class EntityEvents {
             newEntity.tame(event.getPlayer());
             breeGuard.remove();
             removeCoins(event.getPlayer().inventory, 40);
-            event.getPlayer().sendMessage(new StringTextComponent("The Breeland Guard has been hired for 40 coins"), event.getPlayer().getUUID());
+            event.getPlayer().sendMessage(new StringTextComponent("The Bree-land Guard has been hired for 40 coins"), event.getPlayer().getUUID());
         }
     }
 
@@ -177,6 +185,8 @@ public class EntityEvents {
     }
 
     private static boolean removeCoins(PlayerInventory inventory, int amount) {
+        // TODO: Fix bug in here with stacks over 64
+
         int coinsRemoved = 0;
 
         for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -245,15 +255,29 @@ public class EntityEvents {
             return;
         }
 
+        if (!(event.getEntity().level instanceof ServerWorld)) {
+            return;
+        }
+
         AxisAlignedBB initial = new AxisAlignedBB(event.getPrevX(), event.getPrevY(), event.getPrevZ(),
                 event.getPrevX() + 1, event.getPrevY() + 1, event.getPrevZ() + 1);
         List<HiredGondorSoldier> gondorSoldiers = event.getEntity().level.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
         List<HiredBreeGuard> breeGuards = event.getEntity().level.getEntitiesOfClass(HiredBreeGuard.class, initial.inflate(256));
+
         for (HiredGondorSoldier soldier : gondorSoldiers) {
             if (!soldier.isStationary()) soldier.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+            ServerChunkProvider scp = ((ServerWorld) event.getEntity().level).getChunkSource();
+            scp.removeEntity(soldier);
+            scp.addEntity(soldier);
+            ((ServerWorld) event.getEntity().level).updateChunkPos(soldier);
         }
+
         for (HiredBreeGuard breeGuard : breeGuards) {
             if (!breeGuard.isStationary()) breeGuard.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+            ServerChunkProvider scp = ((ServerWorld) event.getEntity().level).getChunkSource();
+            scp.removeEntity(breeGuard);
+            scp.addEntity(breeGuard);
+            ((ServerWorld) event.getEntity().level).updateChunkPos(breeGuard);
         }
     }
 
@@ -265,22 +289,51 @@ public class EntityEvents {
         ServerWorld world = event.getWorld();
         BlockPos pos = event.getTravelPos();
 
-        List<HiredGondorSoldier> gondorSoldiers = world.getEntitiesOfClass(HiredGondorSoldier.class, player.getBoundingBox().inflate(256.0));
-        List<HiredBreeGuard> breeGuards = world.getEntitiesOfClass(HiredBreeGuard.class, player.getBoundingBox().inflate(256.0));
+        AxisAlignedBB initial = new AxisAlignedBB(event.getOriginalPos().getX(), event.getOriginalPos().getY(),
+                event.getOriginalPos().getZ(), event.getOriginalPos().getX() + 1, event.getOriginalPos().getY() + 1,
+                event.getOriginalPos().getZ() + 1);
 
-        // TODO: Occasionally position of Bree Guards isn't getting updated on client
+        List<HiredGondorSoldier> gondorSoldiers = world.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
+        List<HiredBreeGuard> breeGuards = world.getEntitiesOfClass(HiredBreeGuard.class, initial.inflate(256));
 
         for (HiredGondorSoldier soldier : gondorSoldiers) {
             if (!soldier.isStationary()) {
+                System.out.println("Updating position of " + soldier);
                 soldier.moveTo(pos.getX(), pos.getY(), pos.getZ());
+                ServerChunkProvider scp = world.getChunkSource();
+                scp.removeEntity(soldier);
+                scp.addEntity(soldier);
+                world.updateChunkPos(soldier);
             }
         }
         for (HiredBreeGuard breeGuard : breeGuards) {
             System.out.println(breeGuard);
             if (!breeGuard.isStationary()) {
+                System.out.println("Updating position of " + breeGuard);
                 breeGuard.moveTo(pos.getX(), pos.getY(), pos.getZ());
+                ServerChunkProvider scp = world.getChunkSource();
+                scp.removeEntity(breeGuard);
+                scp.addEntity(breeGuard);
+                world.updateChunkPos(breeGuard);
             }
         }
     }
 
+    @SubscribeEvent
+    public static void preventFriendlyFireFromPlayerToCompanion(LivingDamageEvent event) {
+        if (!HiredUnitHelper.isEntityHiredUnit(event.getEntity())) {
+            return;
+        }
+
+        UUID owner = HiredUnitHelper.getHirableUnit(event.getEntity()).getOwnerUUID();
+
+        if (event.getSource() != null && event.getSource().getEntity() != null
+                && event.getSource().getEntity() instanceof PlayerEntity) {
+            // cancel a damage event if damage comes from owner
+            PlayerEntity player = (PlayerEntity) event.getSource().getEntity();
+            if (owner.equals(player.getUUID())) {
+                event.setCanceled(true);
+            }
+        }
+    }
 }

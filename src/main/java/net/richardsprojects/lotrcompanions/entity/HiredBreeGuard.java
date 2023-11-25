@@ -1,7 +1,6 @@
 package net.richardsprojects.lotrcompanions.entity;
 
 import lotr.common.entity.npc.BreeGuardEntity;
-import lotr.common.entity.npc.GondorSoldierEntity;
 import lotr.common.init.LOTRItems;
 
 import net.minecraft.entity.*;
@@ -24,10 +23,11 @@ import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.*;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.GameRules;
+
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerChunkProvider;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -35,12 +35,10 @@ import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
 import net.richardsprojects.lotrcompanions.entity.ai.*;
 import net.richardsprojects.lotrcompanions.networking.OpenInventoryPacket;
+import net.richardsprojects.lotrcompanions.networking.UpdateHiredEntityEquipmentPacket;
 
 import javax.annotation.Nullable;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
 
@@ -90,7 +88,7 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
         inventory.setItem(12, new ItemStack(Items.CHAINMAIL_BOOTS));
         inventory.setItem(13, new ItemStack(LOTRItems.IRON_SPEAR.get()));
         inventory.setItem(14, new ItemStack(Items.SHIELD));
-        updateEquipment();
+        //updateEquipment();
 
         this.setTame(false);
     }
@@ -166,6 +164,11 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
         return this.entityData.get(KILLS);
     }
 
+    @Override
+    public ITextComponent getHiredUnitName() {
+        return getName();
+    }
+
     public ItemStack checkFood() {
         for (int i = 0; i < 9; ++i) {
             ItemStack itemstack = this.inventory.getItem(i);
@@ -190,6 +193,11 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
 
     public void setMaxXp(int maxXp) {
         this.entityData.set(MAX_XP, maxXp);
+    }
+
+    @Override
+    public void setHiredUnitHealth(float p_70606_1_) {
+        setHealth(p_70606_1_);
     }
 
     public void setInventoryOpen(boolean isOpen) {
@@ -249,7 +257,6 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
         player.nextContainerCounter();
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new OpenInventoryPacket(
                 player.containerCounter, this.inventory.getContainerSize(), this.getId()));
-        //setStationary(true);
         setInventoryOpen(true);
 
         // synchronize the equipment slots
@@ -332,6 +339,16 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
 
     public boolean isPatrolling() {
         return this.entityData.get(PATROLLING);
+    }
+
+    @Override
+    public float getHiredUnitMaxHealth() {
+        return getMaxHealth();
+    }
+
+    @Override
+    public float getHiredUnitHealth() {
+        return getHealth();
     }
 
     public boolean isAlert() {
@@ -439,17 +456,33 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
         if (tmpHealthLoaded && !healthUpdateFromTmpHealth) {
             this.setHealth(getTmpLastHealth());
             healthUpdateFromTmpHealth = true;
+
+            if (this.level instanceof ServerWorld && !((ServerWorld) this.level).isClientSide()) {
+                System.out.println("Running tick on Server Side");
+                ServerChunkProvider scp = ((ServerWorld) this.level).getChunkSource();
+                scp.removeEntity(this);
+                scp.addEntity(this);
+
+                // TODO: Send armor update packet
+                ArrayList<ItemStack> gear = new ArrayList<>();
+                for (int i = 0; i < 6; i++) gear.add(ItemStack.EMPTY);
+                gear.set(0, inventory.getItem(9));
+                gear.set(1, inventory.getItem(10));
+                gear.set(2, inventory.getItem(11));
+                gear.set(3, inventory.getItem(12));
+                gear.set(4, inventory.getItem(13));
+                gear.set(5, inventory.getItem(14));
+
+                System.out.println("Sending UpdateHiredEntityEquipmentPacket packet from server: ");
+                PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> PacketDistributor.TargetPoint.p(getX(), getY(), getZ(), 50, level.dimension()).get()), new UpdateHiredEntityEquipmentPacket(this.getId(), gear));
+            }
         }
 
         super.tick();
     }
 
     public void die(DamageSource p_70645_1_) {
-        if (!this.level.isClientSide && this.level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getOwner() instanceof ServerPlayerEntity) {
-            // TODO: Re-implement this
-            //this.getOwner().sendMessage(TextComponentUtils., Util.NIL_UUID);
-        }
-
+        HiredUnitHelper.die(this.level, p_70645_1_, this);
         super.die(p_70645_1_);
     }
 
@@ -493,18 +526,9 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
         }
     }
 
+    // TODO: Make it so that hired units cannot be damaged by allied factions
+
     public void giveExperiencePoints(int points) {
-        int newExperience = getCurrentXp() + points;
-        if (newExperience >= getMaxXp()) {
-            setExpLvl(getExpLvl() + 1);
-            int difference = newExperience - getMaxXp();
-            setCurrentXp(difference);
-            setMaxXp(getMaxXp() + 2);
-            setHealth(getHealth() + 2);
-            setBaseHealth(getBaseHealth() + 2);
-        } else {
-            setCurrentXp(newExperience);
-        }
+        HiredUnitHelper.giveExperiencePoints(this, points);
     }
 }
-

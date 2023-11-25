@@ -16,7 +16,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -31,7 +30,7 @@ import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.*;
-import net.minecraft.world.GameRules;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -111,7 +110,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
         inventory.setItem(12, new ItemStack(LOTRItems.GONDOR_BOOTS.get()));
         inventory.setItem(13, new ItemStack(LOTRItems.GONDOR_SWORD.get()));
         inventory.setItem(14, new ItemStack(LOTRItems.GONDOR_SHIELD.get()));
-        updateEquipment();
+        //updateEquipment();
 
         this.setTame(false);
     }
@@ -171,6 +170,11 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
         return this.entityData.get(KILLS);
     }
 
+    @Override
+    public ITextComponent getHiredUnitName() {
+        return getName();
+    }
+
     public ItemStack checkFood() {
         for (int i = 0; i < 9; ++i) {
             ItemStack itemstack = this.inventory.getItem(i);
@@ -215,7 +219,6 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
 
     @Override
     public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
-        System.out.println("Mob Interact Called!");
 
         if (hand == Hand.MAIN_HAND) {
             if (this.isAlliedTo(player)) {
@@ -226,10 +229,6 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
             return ActionResultType.sidedSuccess(this.level.isClientSide());
         }
         return super.mobInteract(player, hand);
-    }
-
-    private void setPatrolling(boolean patrolling) {
-        this.entityData.set(PATROLLING, patrolling);
     }
 
     public boolean isAlliedTo(Entity p_184191_1_) {
@@ -255,7 +254,6 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
         player.nextContainerCounter();
         PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new OpenInventoryPacket(
                 player.containerCounter, this.inventory.getContainerSize(), this.getId()));
-        //setStationary(true);
         setInventoryOpen(true);
 
         // synchronize the equipment slots
@@ -325,7 +323,6 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
         tag.putInt("max_xp", this.getMaxXp());
         tag.putInt("base_health", this.getBaseHealth());
         tag.putFloat("tmp_last_health", this.getHealth());
-        System.out.println("Saving tmp_last_health = " + this.getHealth());
     }
 
     private float getTmpLastHealth() {
@@ -338,6 +335,16 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
 
     public boolean isPatrolling() {
         return this.entityData.get(PATROLLING);
+    }
+
+    @Override
+    public float getHiredUnitMaxHealth() {
+        return getMaxHealth();
+    }
+
+    @Override
+    public float getHiredUnitHealth() {
+        return getHealth();
     }
 
     public boolean isAlert() {
@@ -451,11 +458,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
     }
 
     public void die(DamageSource p_70645_1_) {
-        if (!this.level.isClientSide && this.level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getOwner() instanceof ServerPlayerEntity) {
-            // TODO: Re-implement this
-            //this.getOwner().sendMessage(TextComponentUtils., Util.NIL_UUID);
-        }
-
+        HiredUnitHelper.die(this.level, p_70645_1_, this);
         super.die(p_70645_1_);
     }
 
@@ -499,18 +502,12 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
         }
     }
 
+    @Override
+    public void setHiredUnitHealth(float p_70606_1_) {
+        setHealth(p_70606_1_);
+    }
+
     public void giveExperiencePoints(int points) {
-        int newExperience = getCurrentXp() + points;
-        if (newExperience >= getMaxXp()) {
-            setExpLvl(getExpLvl() + 1);
-            int difference = newExperience - getMaxXp();
-            setCurrentXp(difference);
-            setMaxXp(getMaxXp() + 2);
-            setHealth(getHealth() + 2);
-            setBaseHealth(getBaseHealth() + 2);
-        } else {
-            setCurrentXp(newExperience);
-        }
+        HiredUnitHelper.giveExperiencePoints(this, points);
     }
 }
-

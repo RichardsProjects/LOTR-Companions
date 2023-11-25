@@ -45,7 +45,7 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
     private CompanionButton stationaryButton;
 
     public CompanionScreen(CompanionContainer p_98409_, PlayerInventory p_98410_, HirableUnit companion) {
-        super(p_98409_, p_98410_, companion.getName());
+        super(p_98409_, p_98410_, companion.getHiredUnitName());
 
         this.companion = companion;
         this.passEvents = false;
@@ -103,7 +103,7 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
         StringTextComponent classTitle = new StringTextComponent("Companion:");
         StringTextComponent healthTitle = new StringTextComponent("Health");
         StringTextComponent health =
-                new StringTextComponent(df.format(companion.getHealth()) + "/" + (int) companion.getMaxHealth());
+                new StringTextComponent(df.format(companion.getHiredUnitHealth()) + "/" + (int) companion.getHiredUnitMaxHealth());
 
         this.font.draw(matrix, classTitle.withStyle(TextFormatting.UNDERLINE), sidebarX, this.titleLabelY + 12,
                 4210752);
