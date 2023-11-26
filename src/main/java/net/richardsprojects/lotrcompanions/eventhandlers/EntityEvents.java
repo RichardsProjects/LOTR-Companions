@@ -1,17 +1,14 @@
 package net.richardsprojects.lotrcompanions.eventhandlers;
 
 import lotr.common.entity.npc.*;
-import net.minecraft.command.impl.TeleportCommand;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
@@ -25,12 +22,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.entity.*;
-import net.richardsprojects.lotrcompanions.event.LOTRFastTravelWaypointEvent;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
+import org.lwjgl.system.CallbackI;
 
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Mod.EventBusSubscriber(modid = LOTRCompanions.MOD_ID)
 public class EntityEvents {
@@ -119,7 +114,7 @@ public class EntityEvents {
         if (newEntity != null) {
             newEntity.tame(event.getPlayer());
             gondorSoldier.remove();
-            removeCoins(event.getPlayer().inventory, 60);
+            removeCoins(event.getPlayer(), event.getPlayer().inventory, 60);
             event.getPlayer().sendMessage(new StringTextComponent("The Gondor Soldier has been hired for 60 coins"), event.getPlayer().getUUID());
         }
     }
@@ -162,7 +157,7 @@ public class EntityEvents {
         if (newEntity != null) {
             newEntity.tame(event.getPlayer());
             breeGuard.remove();
-            removeCoins(event.getPlayer().inventory, 40);
+            removeCoins(event.getPlayer(), event.getPlayer().inventory, 40);
             event.getPlayer().sendMessage(new StringTextComponent("The Bree-land Guard has been hired for 40 coins"), event.getPlayer().getUUID());
         }
     }
@@ -184,7 +179,7 @@ public class EntityEvents {
         return totalValue;
     }
 
-    private static boolean removeCoins(PlayerInventory inventory, int amount) {
+    private static boolean removeCoins(PlayerEntity player, PlayerInventory inventory, int amount) {
         // TODO: Fix bug in here with stacks over 64
 
         int coinsRemoved = 0;
@@ -222,7 +217,27 @@ public class EntityEvents {
 
                 if (newDifference % currency == 0) {
                     // no change has to be made - simply reduce it
-                    itemStack.setCount(newDifference);
+                    int newCount = newDifference / currency;
+                    if (newCount > 64) {
+                        itemStack.setCount(64);
+                        List<ItemStack> stacks = new ArrayList<>();
+                        int remainder = newCount - 64;
+                        while (remainder > 64) {
+                            stacks.add(new ItemStack(itemStack.getItem(), 64));
+                            remainder -= 64;
+                        }
+                        if (remainder > 0) {
+                            stacks.add(new ItemStack(itemStack.getItem(), remainder));
+                        }
+                        for (int index = 0; index < stacks.size(); index++) {
+                            if (!inventory.add(stacks.get(index))) {
+                                ItemEntity itemEntity = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stacks.get(index));
+                                player.level.addFreshEntity(itemEntity);
+                            }
+                        }
+                    } else {
+                        itemStack.setCount(newCount);
+                    }
                     return true;
                 } else {
                     int currencyOfChange = 1;
@@ -235,8 +250,28 @@ public class EntityEvents {
                         item = LOTRCItems.TEN_COIN.get();
                     }
                     int newAmount = newDifference / currencyOfChange;
-                    ItemStack newItemStack = new ItemStack(item, newAmount);
-                    inventory.setItem(i, newItemStack);
+                    if (newAmount > 64) {
+                        ItemStack newItemStack = new ItemStack(item, 64);
+                        inventory.setItem(i, newItemStack);
+                        List<ItemStack> stacks = new ArrayList<>();
+                        int remainder = newAmount - 64;
+                        while (remainder > 64) {
+                            stacks.add(new ItemStack(item, 64));
+                            remainder -= 64;
+                        }
+                        if (remainder > 0) {
+                            stacks.add(new ItemStack(item, remainder));
+                        }
+                        for (int index = 0; index < stacks.size(); index++) {
+                            if (!inventory.add(stacks.get(index))) {
+                                ItemEntity itemEntity = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stacks.get(index));
+                                player.level.addFreshEntity(itemEntity);
+                            }
+                        }
+                    } else {
+                        ItemStack newItemStack = new ItemStack(item, newAmount);
+                        inventory.setItem(i, newItemStack);
+                    }
                     return true;
                 }
             } else {
@@ -264,12 +299,25 @@ public class EntityEvents {
         List<HiredGondorSoldier> gondorSoldiers = event.getEntity().level.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
         List<HiredBreeGuard> breeGuards = event.getEntity().level.getEntitiesOfClass(HiredBreeGuard.class, initial.inflate(256));
 
+
+        Entity playerMount = event.getEntity().getVehicle();
+        event.getEntity().stopRiding();
+        if (playerMount instanceof MobEntity) {
+            playerMount.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+            ServerChunkProvider scp = ((ServerWorld) event.getEntity().level).getChunkSource();
+            scp.removeEntity(playerMount);
+            scp.addEntity(playerMount);
+            ((ServerWorld) event.getEntity().level).updateChunkPos(playerMount);
+            event.getEntity().level.addFreshEntity(playerMount);
+        }
+
         for (HiredGondorSoldier soldier : gondorSoldiers) {
             if (!soldier.isStationary()) soldier.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
             ServerChunkProvider scp = ((ServerWorld) event.getEntity().level).getChunkSource();
             scp.removeEntity(soldier);
             scp.addEntity(soldier);
             ((ServerWorld) event.getEntity().level).updateChunkPos(soldier);
+            event.getEntity().level.addFreshEntity(soldier);
         }
 
         for (HiredBreeGuard breeGuard : breeGuards) {
@@ -278,15 +326,21 @@ public class EntityEvents {
             scp.removeEntity(breeGuard);
             scp.addEntity(breeGuard);
             ((ServerWorld) event.getEntity().level).updateChunkPos(breeGuard);
+            event.getEntity().level.addFreshEntity(breeGuard);
         }
     }
 
+    // TODO: This code and the event would work in the dev environment but not in the actual game - I could not
+    //  figure out why and went with the hacky solution performing the tp command on the player eventually
+    //  I would like to let it redo it properly but for now this gets followers to properly follow you to a
+    //  waypoint
+    /*
     @SubscribeEvent
     public static void onPlayerLOTRWaypoint(LOTRFastTravelWaypointEvent event) {
         System.out.println("Inside LOTRFastTravelWaypointEvent handler");
 
         ServerPlayerEntity player = event.getPlayer();
-        ServerWorld world = event.getWorld();
+        ServerWorld world = player.getServer().getLevel(player.level.dimension()).getWorldServer();
         BlockPos pos = event.getTravelPos();
 
         AxisAlignedBB initial = new AxisAlignedBB(event.getOriginalPos().getX(), event.getOriginalPos().getY(),
@@ -298,26 +352,36 @@ public class EntityEvents {
 
         for (HiredGondorSoldier soldier : gondorSoldiers) {
             if (!soldier.isStationary()) {
-                System.out.println("Updating position of " + soldier);
-                soldier.moveTo(pos.getX(), pos.getY(), pos.getZ());
+                System.out.println("Updating position of " + soldier + " to " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
+                EntityEvents.requests.add(new EntityMoveRequest(soldier.getId(), pos.getX(), pos.getY(), pos.getZ()));
+                soldier.moveTo(pos.getX(), pos.getY(), pos.getZ(), soldier.yRot, soldier.xRot);
+                soldier.fallDistance = 0.0F;
+                soldier.getNavigation().stop();
+                soldier.setTarget((LivingEntity)null);
                 ServerChunkProvider scp = world.getChunkSource();
                 scp.removeEntity(soldier);
                 scp.addEntity(soldier);
                 world.updateChunkPos(soldier);
+                world.addFreshEntity(soldier);
+                System.out.println("New position of soldier @ " + soldier.getX() + ", " + soldier.getY() + ", " + soldier.getZ());
             }
         }
         for (HiredBreeGuard breeGuard : breeGuards) {
-            System.out.println(breeGuard);
             if (!breeGuard.isStationary()) {
-                System.out.println("Updating position of " + breeGuard);
-                breeGuard.moveTo(pos.getX(), pos.getY(), pos.getZ());
+                System.out.println("Updating position of " + breeGuard + " to " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
+                breeGuard.moveTo(pos.getX(), pos.getY(), pos.getZ(), breeGuard.yRot, breeGuard.xRot);
+                breeGuard.fallDistance = 0.0F;
+                breeGuard.getNavigation().stop();
+                breeGuard.setTarget((LivingEntity)null);
                 ServerChunkProvider scp = world.getChunkSource();
                 scp.removeEntity(breeGuard);
                 scp.addEntity(breeGuard);
                 world.updateChunkPos(breeGuard);
+                world.addFreshEntity(breeGuard);
+                System.out.println("New position of breeGuard @ " + breeGuard.getX() + ", " + breeGuard.getY() + ", " + breeGuard.getZ());
             }
         }
-    }
+    }*/
 
     @SubscribeEvent
     public static void preventFriendlyFireFromPlayerToCompanion(LivingDamageEvent event) {

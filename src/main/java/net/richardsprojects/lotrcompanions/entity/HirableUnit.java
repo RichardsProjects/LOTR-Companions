@@ -49,7 +49,7 @@ public interface HirableUnit {
 
     boolean isAlert();
 
-    int getId();
+    int getHiredUnitId();
 
     UUID getOwnerUUID();
 

@@ -355,6 +355,11 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
         return this.entityData.get(ALERT);
     }
 
+    @Override
+    public int getHiredUnitId() {
+        return getId();
+    }
+
     public boolean isStationary() {
         return this.entityData.get(STATIONARY);
     }

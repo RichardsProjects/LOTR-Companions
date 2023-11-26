@@ -472,6 +472,11 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
         }
     }
 
+    @Override
+    public int getHiredUnitId() {
+        return getId();
+    }
+
     public void updateEquipment() {
         setItemSlot(EquipmentSlotType.HEAD, inventory.getItem(9));
         setItemSlot(EquipmentSlotType.CHEST, inventory.getItem(10));

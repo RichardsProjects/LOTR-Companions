@@ -76,14 +76,14 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
                 ,13,
                 PATROL_BUTTON,
                 btn -> {
-                    PacketHandler.INSTANCE.sendToServer(new SetPatrollingPacket(companion.getId()));
+                    PacketHandler.INSTANCE.sendToServer(new SetPatrollingPacket(companion.getHiredUnitId()));
                 })
         );
         this.stationaryButton = addButton(new CompanionButton("stationary", col1, row1 + 14,
                 16, 12, 0, 0, 13,
                 STATIONARY_BUTTON,
                 btn -> {
-                    PacketHandler.INSTANCE.sendToServer(new SetStationaryPacket(companion.getId()));
+                    PacketHandler.INSTANCE.sendToServer(new SetStationaryPacket(companion.getHiredUnitId()));
                 })
         );
     }
