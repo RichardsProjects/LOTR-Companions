@@ -1,8 +1,9 @@
 {
   "required": true,
   "package": "net.richardsprojects.lotrcompanions.mixins",
+  "minVersion": "0.7",
   "compatibilityLevel": "JAVA_8",
-  "client": [
+  "mixins": [
     "LOTRFastTravelDataModuleMixin"
   ],
   "injectors": {

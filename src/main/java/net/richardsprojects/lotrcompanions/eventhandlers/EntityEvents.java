@@ -5,6 +5,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.entity.*;
+import net.richardsprojects.lotrcompanions.event.LOTRFastTravelWaypointEvent;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
 import org.lwjgl.system.CallbackI;
 
@@ -330,11 +332,10 @@ public class EntityEvents {
         }
     }
 
-    // TODO: This code and the event would work in the dev environment but not in the actual game - I could not
-    //  figure out why and went with the hacky solution performing the tp command on the player eventually
+    // TODO: This code and the event would work in the dev environment but not in the actual game and I can not
+    //  figure out why and in the meantime went with the hacky solution performing the tp command on the player eventually
     //  I would like to let it redo it properly but for now this gets followers to properly follow you to a
     //  waypoint
-    /*
     @SubscribeEvent
     public static void onPlayerLOTRWaypoint(LOTRFastTravelWaypointEvent event) {
         System.out.println("Inside LOTRFastTravelWaypointEvent handler");
@@ -353,7 +354,7 @@ public class EntityEvents {
         for (HiredGondorSoldier soldier : gondorSoldiers) {
             if (!soldier.isStationary()) {
                 System.out.println("Updating position of " + soldier + " to " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
-                EntityEvents.requests.add(new EntityMoveRequest(soldier.getId(), pos.getX(), pos.getY(), pos.getZ()));
+                //EntityEvents.requests.add(new EntityMoveRequest(soldier.getId(), pos.getX(), pos.getY(), pos.getZ()));
                 soldier.moveTo(pos.getX(), pos.getY(), pos.getZ(), soldier.yRot, soldier.xRot);
                 soldier.fallDistance = 0.0F;
                 soldier.getNavigation().stop();
@@ -381,7 +382,7 @@ public class EntityEvents {
                 System.out.println("New position of breeGuard @ " + breeGuard.getX() + ", " + breeGuard.getY() + ", " + breeGuard.getZ());
             }
         }
-    }*/
+    }
 
     @SubscribeEvent
     public static void preventFriendlyFireFromPlayerToCompanion(LivingDamageEvent event) {
