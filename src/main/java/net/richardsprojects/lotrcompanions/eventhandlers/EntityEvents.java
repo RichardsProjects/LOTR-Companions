@@ -5,7 +5,6 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -25,7 +24,6 @@ import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.entity.*;
 import net.richardsprojects.lotrcompanions.event.LOTRFastTravelWaypointEvent;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
-import org.lwjgl.system.CallbackI;
 
 import java.util.*;
 
@@ -296,39 +294,46 @@ public class EntityEvents {
             return;
         }
 
-        AxisAlignedBB initial = new AxisAlignedBB(event.getPrevX(), event.getPrevY(), event.getPrevZ(),
-                event.getPrevX() + 1, event.getPrevY() + 1, event.getPrevZ() + 1);
-        List<HiredGondorSoldier> gondorSoldiers = event.getEntity().level.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
-        List<HiredBreeGuard> breeGuards = event.getEntity().level.getEntitiesOfClass(HiredBreeGuard.class, initial.inflate(256));
+        ServerWorld world = (ServerWorld) event.getEntity().level;
+        BlockPos originalPos = new BlockPos(event.getPrevX(), event.getPrevY(), event.getPrevZ());
+        BlockPos targetPos = new BlockPos(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+        teleportUnitsToPlayer(originalPos, targetPos, world, (PlayerEntity) event.getEntity());
+    }
+
+    private static void teleportUnitsToPlayer(BlockPos originalPos, BlockPos target, ServerWorld world, PlayerEntity player) {
+        AxisAlignedBB initial = new AxisAlignedBB(originalPos.getX(), originalPos.getY(), originalPos.getZ(),
+                originalPos.getX() + 1, originalPos.getY() + 1, originalPos.getZ() + 1);
+        List<HiredGondorSoldier> gondorSoldiers = world.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
+        List<HiredBreeGuard> breeGuards = world.getEntitiesOfClass(HiredBreeGuard.class, initial.inflate(256));
 
 
-        Entity playerMount = event.getEntity().getVehicle();
-        event.getEntity().stopRiding();
+        Entity playerMount = player.getVehicle();
+        player.stopRiding();
         if (playerMount instanceof MobEntity) {
-            playerMount.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-            ServerChunkProvider scp = ((ServerWorld) event.getEntity().level).getChunkSource();
+            playerMount.moveTo(target.getX(), target.getY(), target.getZ());
+            ServerChunkProvider scp = world.getChunkSource();
             scp.removeEntity(playerMount);
             scp.addEntity(playerMount);
-            ((ServerWorld) event.getEntity().level).updateChunkPos(playerMount);
-            event.getEntity().level.addFreshEntity(playerMount);
+            world.updateChunkPos(playerMount);
+            world.addFreshEntity(playerMount);
         }
 
         for (HiredGondorSoldier soldier : gondorSoldiers) {
-            if (!soldier.isStationary()) soldier.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-            ServerChunkProvider scp = ((ServerWorld) event.getEntity().level).getChunkSource();
+            if (!soldier.isStationary()) soldier.moveTo(target.getX(), target.getY(), target.getZ());
+            ServerChunkProvider scp = world.getChunkSource();
             scp.removeEntity(soldier);
             scp.addEntity(soldier);
-            ((ServerWorld) event.getEntity().level).updateChunkPos(soldier);
-            event.getEntity().level.addFreshEntity(soldier);
+            world.updateChunkPos(soldier);
+            world.addFreshEntity(soldier);
         }
 
         for (HiredBreeGuard breeGuard : breeGuards) {
-            if (!breeGuard.isStationary()) breeGuard.moveTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-            ServerChunkProvider scp = ((ServerWorld) event.getEntity().level).getChunkSource();
+            if (!breeGuard.isStationary()) breeGuard.moveTo(target.getX(), target.getY(), target.getZ());
+            ServerChunkProvider scp = world.getChunkSource();
             scp.removeEntity(breeGuard);
             scp.addEntity(breeGuard);
-            ((ServerWorld) event.getEntity().level).updateChunkPos(breeGuard);
-            event.getEntity().level.addFreshEntity(breeGuard);
+            world.updateChunkPos(breeGuard);
+            world.addFreshEntity(breeGuard);
         }
     }
 
@@ -339,49 +344,7 @@ public class EntityEvents {
     @SubscribeEvent
     public static void onPlayerLOTRWaypoint(LOTRFastTravelWaypointEvent event) {
         System.out.println("Inside LOTRFastTravelWaypointEvent handler");
-
-        ServerPlayerEntity player = event.getPlayer();
-        ServerWorld world = player.getServer().getLevel(player.level.dimension()).getWorldServer();
-        BlockPos pos = event.getTravelPos();
-
-        AxisAlignedBB initial = new AxisAlignedBB(event.getOriginalPos().getX(), event.getOriginalPos().getY(),
-                event.getOriginalPos().getZ(), event.getOriginalPos().getX() + 1, event.getOriginalPos().getY() + 1,
-                event.getOriginalPos().getZ() + 1);
-
-        List<HiredGondorSoldier> gondorSoldiers = world.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
-        List<HiredBreeGuard> breeGuards = world.getEntitiesOfClass(HiredBreeGuard.class, initial.inflate(256));
-
-        for (HiredGondorSoldier soldier : gondorSoldiers) {
-            if (!soldier.isStationary()) {
-                System.out.println("Updating position of " + soldier + " to " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
-                //EntityEvents.requests.add(new EntityMoveRequest(soldier.getId(), pos.getX(), pos.getY(), pos.getZ()));
-                soldier.moveTo(pos.getX(), pos.getY(), pos.getZ(), soldier.yRot, soldier.xRot);
-                soldier.fallDistance = 0.0F;
-                soldier.getNavigation().stop();
-                soldier.setTarget((LivingEntity)null);
-                ServerChunkProvider scp = world.getChunkSource();
-                scp.removeEntity(soldier);
-                scp.addEntity(soldier);
-                world.updateChunkPos(soldier);
-                world.addFreshEntity(soldier);
-                System.out.println("New position of soldier @ " + soldier.getX() + ", " + soldier.getY() + ", " + soldier.getZ());
-            }
-        }
-        for (HiredBreeGuard breeGuard : breeGuards) {
-            if (!breeGuard.isStationary()) {
-                System.out.println("Updating position of " + breeGuard + " to " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
-                breeGuard.moveTo(pos.getX(), pos.getY(), pos.getZ(), breeGuard.yRot, breeGuard.xRot);
-                breeGuard.fallDistance = 0.0F;
-                breeGuard.getNavigation().stop();
-                breeGuard.setTarget((LivingEntity)null);
-                ServerChunkProvider scp = world.getChunkSource();
-                scp.removeEntity(breeGuard);
-                scp.addEntity(breeGuard);
-                world.updateChunkPos(breeGuard);
-                world.addFreshEntity(breeGuard);
-                System.out.println("New position of breeGuard @ " + breeGuard.getX() + ", " + breeGuard.getY() + ", " + breeGuard.getZ());
-            }
-        }
+        teleportUnitsToPlayer(event.getOriginalPos(), event.getTravelPos(), event.getWorld(), event.getPlayer());
     }
 
     @SubscribeEvent
