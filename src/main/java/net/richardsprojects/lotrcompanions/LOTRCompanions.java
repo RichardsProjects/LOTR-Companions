@@ -1,6 +1,5 @@
 package net.richardsprojects.lotrcompanions;
 
-import lotr.client.render.entity.GondorSoldierRenderer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;

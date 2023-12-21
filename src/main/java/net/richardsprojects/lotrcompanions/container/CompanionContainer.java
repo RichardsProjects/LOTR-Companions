@@ -2,7 +2,6 @@ package net.richardsprojects.lotrcompanions.container;
 
 import com.mojang.datafixers.util.Pair;
 import lotr.common.item.SpearItem;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -16,8 +15,6 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CompanionContainer extends Container {
     private final IInventory container;

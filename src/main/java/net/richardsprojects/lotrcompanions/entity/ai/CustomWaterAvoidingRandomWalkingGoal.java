@@ -3,7 +3,6 @@ package net.richardsprojects.lotrcompanions.entity.ai;
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.richardsprojects.lotrcompanions.entity.HirableUnit;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class CustomWaterAvoidingRandomWalkingGoal extends WaterAvoidingRandomWalkingGoal {
     private NPCEntity entity;

@@ -6,7 +6,6 @@ import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.richardsprojects.lotrcompanions.entity.HirableUnit;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class CustomSitGoal extends Goal {
     private final NPCEntity entity;

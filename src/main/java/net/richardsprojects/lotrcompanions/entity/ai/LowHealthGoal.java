@@ -7,7 +7,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.entity.HirableUnit;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class LowHealthGoal extends Goal {
     protected final NPCEntity entity;

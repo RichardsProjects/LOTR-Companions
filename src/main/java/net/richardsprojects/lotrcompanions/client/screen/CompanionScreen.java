@@ -22,7 +22,6 @@ import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
 import net.richardsprojects.lotrcompanions.entity.HirableUnit;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
-import net.richardsprojects.lotrcompanions.networking.SetAlertPacket;
 import net.richardsprojects.lotrcompanions.networking.SetPatrollingPacket;
 import net.richardsprojects.lotrcompanions.networking.SetStationaryPacket;
 

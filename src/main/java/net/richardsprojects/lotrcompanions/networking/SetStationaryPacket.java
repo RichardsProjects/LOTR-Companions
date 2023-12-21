@@ -6,7 +6,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.richardsprojects.lotrcompanions.entity.HirableUnit;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.entity.HiredUnitHelper;
 
 import java.util.function.Supplier;

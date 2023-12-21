@@ -15,7 +15,6 @@ import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.richardsprojects.lotrcompanions.entity.HirableUnit;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class FollowOwnerGoal extends Goal {
     private final NPCEntity entity;
