@@ -58,12 +58,13 @@ public class UpdateHiredEntityEquipmentPacket {
 
         context.get().enqueueWork(() -> {
             if (msg != null) {
-                PlayerEntity player = Minecraft.getInstance().player;
+            	Minecraft minecraft = Minecraft.getInstance();
+                PlayerEntity player = minecraft.player;
                 if (player != null) {
                     System.out.println("Entity Id: " + msg.getEntityId());
                     System.out.println("Updated Gear: " + msg.getGear());
 
-                    Entity entity = Minecraft.getInstance().level.getEntity(msg.getEntityId());
+                    Entity entity = minecraft.level.getEntity(msg.getEntityId());
                     if (entity != null) {
                         System.out.println("Loaded entity " + entity);
                         if (entity instanceof HiredBreeGuard) {

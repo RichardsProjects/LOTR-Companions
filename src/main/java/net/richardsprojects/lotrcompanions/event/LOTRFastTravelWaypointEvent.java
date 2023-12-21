@@ -4,8 +4,9 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
-public class LOTRFastTravelWaypointEvent extends Event {
+public class LOTRFastTravelWaypointEvent extends Event implements IModBusEvent{
 
     private ServerPlayerEntity player;
     private ServerWorld world;

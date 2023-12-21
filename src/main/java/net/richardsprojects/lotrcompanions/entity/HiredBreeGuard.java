@@ -417,11 +417,13 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
             }
         }
 
-        NonNullList<ItemStack> items = NonNullList.withSize(15, ItemStack.EMPTY);
-        ItemStackHelper.loadAllItems(tag, items);
+        NonNullList<ItemStack> itemsStacks = NonNullList.withSize(15, ItemStack.EMPTY);
+        ItemStackHelper.loadAllItems(tag, itemsStacks);
         for (int i = 0; i < 15; i++) {
-            ItemStack item = items.get(i);
-            if (!item.getItem().equals(ItemStack.EMPTY)) this.inventory.setItem(i, items.get(i));
+            ItemStack itemStack = itemsStacks.get(i);
+            if (!itemStack.equals(ItemStack.EMPTY)) {
+            	this.inventory.setItem(i, itemsStacks.get(i));
+            }
         }
         updateEquipment();
 

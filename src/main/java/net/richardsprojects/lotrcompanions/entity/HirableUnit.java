@@ -3,7 +3,6 @@ package net.richardsprojects.lotrcompanions.entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;

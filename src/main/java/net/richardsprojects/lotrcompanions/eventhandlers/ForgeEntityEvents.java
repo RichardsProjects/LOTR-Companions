@@ -7,10 +7,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -18,17 +16,17 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.entity.*;
-import net.richardsprojects.lotrcompanions.event.LOTRFastTravelWaypointEvent;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
+import net.richardsprojects.lotrcompanions.utils.TeleportHelper;
 
 import java.util.*;
 
-@Mod.EventBusSubscriber(modid = LOTRCompanions.MOD_ID)
-public class EntityEvents {
+/**
+ * For {@link net.minecraftforge.eventbus.api.Event} that are fired on the MinecraftForge.EVENT_BUS
+ * */
+public class ForgeEntityEvents {
     @SubscribeEvent
     public static void giveExperience(final LivingDeathEvent event) {
         Entity companion = event.getSource().getEntity();
@@ -297,54 +295,7 @@ public class EntityEvents {
         ServerWorld world = (ServerWorld) event.getEntity().level;
         BlockPos originalPos = new BlockPos(event.getPrevX(), event.getPrevY(), event.getPrevZ());
         BlockPos targetPos = new BlockPos(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-        teleportUnitsToPlayer(originalPos, targetPos, world, (PlayerEntity) event.getEntity());
-    }
-
-    private static void teleportUnitsToPlayer(BlockPos originalPos, BlockPos target, ServerWorld world, PlayerEntity player) {
-        AxisAlignedBB initial = new AxisAlignedBB(originalPos.getX(), originalPos.getY(), originalPos.getZ(),
-                originalPos.getX() + 1, originalPos.getY() + 1, originalPos.getZ() + 1);
-        List<HiredGondorSoldier> gondorSoldiers = world.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
-        List<HiredBreeGuard> breeGuards = world.getEntitiesOfClass(HiredBreeGuard.class, initial.inflate(256));
-
-
-        Entity playerMount = player.getVehicle();
-        player.stopRiding();
-        if (playerMount instanceof MobEntity) {
-            playerMount.moveTo(target.getX(), target.getY(), target.getZ());
-            ServerChunkProvider scp = world.getChunkSource();
-            scp.removeEntity(playerMount);
-            scp.addEntity(playerMount);
-            world.updateChunkPos(playerMount);
-            world.addFreshEntity(playerMount);
-        }
-
-        for (HiredGondorSoldier soldier : gondorSoldiers) {
-            if (!soldier.isStationary()) soldier.moveTo(target.getX(), target.getY(), target.getZ());
-            ServerChunkProvider scp = world.getChunkSource();
-            scp.removeEntity(soldier);
-            scp.addEntity(soldier);
-            world.updateChunkPos(soldier);
-            world.addFreshEntity(soldier);
-        }
-
-        for (HiredBreeGuard breeGuard : breeGuards) {
-            if (!breeGuard.isStationary()) breeGuard.moveTo(target.getX(), target.getY(), target.getZ());
-            ServerChunkProvider scp = world.getChunkSource();
-            scp.removeEntity(breeGuard);
-            scp.addEntity(breeGuard);
-            world.updateChunkPos(breeGuard);
-            world.addFreshEntity(breeGuard);
-        }
-    }
-
-    // TODO: This code and the event would work in the dev environment but not in the actual game and I can not
-    //  figure out why and in the meantime went with the hacky solution performing the tp command on the player eventually
-    //  I would like to let it redo it properly but for now this gets followers to properly follow you to a
-    //  waypoint
-    @SubscribeEvent
-    public static void onPlayerLOTRWaypoint(LOTRFastTravelWaypointEvent event) {
-        System.out.println("Inside LOTRFastTravelWaypointEvent handler");
-        teleportUnitsToPlayer(event.getOriginalPos(), event.getTravelPos(), event.getWorld(), event.getPlayer());
+        TeleportHelper.teleportUnitsToPlayer(originalPos, targetPos, world, (PlayerEntity) event.getEntity());
     }
 
     @SubscribeEvent

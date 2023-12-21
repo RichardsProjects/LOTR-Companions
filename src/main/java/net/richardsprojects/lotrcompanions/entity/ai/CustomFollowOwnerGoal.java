@@ -2,7 +2,6 @@ package net.richardsprojects.lotrcompanions.entity.ai;
 
 import lotr.common.entity.npc.NPCEntity;
 import net.richardsprojects.lotrcompanions.entity.HirableUnit;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 
 public class CustomFollowOwnerGoal extends FollowOwnerGoal {
 

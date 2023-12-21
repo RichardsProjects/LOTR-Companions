@@ -25,7 +25,6 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.richardsprojects.lotrcompanions.entity.HiredBreeGuard;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
 
 import java.util.Objects;

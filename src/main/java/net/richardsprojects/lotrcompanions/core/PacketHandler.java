@@ -7,7 +7,6 @@
 package net.richardsprojects.lotrcompanions.core;
 
 
-import lotr.common.speech.SpeechEnums;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;

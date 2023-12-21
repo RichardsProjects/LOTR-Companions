@@ -2,10 +2,7 @@ package net.richardsprojects.lotrcompanions.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import lotr.client.render.entity.BreeManRenderer;
-import lotr.client.render.entity.GondorSoldierRenderer;
-import lotr.common.entity.npc.BreeGuardEntity;
 import lotr.common.entity.npc.BreeManEntity;
-import lotr.common.entity.npc.GondorManEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 

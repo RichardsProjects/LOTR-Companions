@@ -2,13 +2,13 @@
   "required": true,
   "package": "net.richardsprojects.lotrcompanions.mixins",
   "plugin": "net.richardsprojects.lotrcompanions.mixins.MIXINConfig",
-  "minVersion": "0.7",
+  "refmap": "lotrcompanions.mixin.refmap.json",
+  "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "LOTRFastTravelDataModuleMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "refmap": "lotrcompanions.mixin-refmap.json"
+  }
 }
