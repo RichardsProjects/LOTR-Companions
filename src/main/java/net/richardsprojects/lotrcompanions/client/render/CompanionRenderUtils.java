@@ -45,7 +45,8 @@ public class CompanionRenderUtils {
             p_225629_3_.mulPose(mgr.cameraOrientation());
             p_225629_3_.scale(-0.025F, -0.025F, 0.025F);
             Matrix4f matrix4f = p_225629_3_.last().pose();
-            float f1 = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
+            Minecraft minecraft = Minecraft.getInstance();
+            float f1 = minecraft.options.getBackgroundOpacity(0.25F);
             int j = (int) (f1 * 255.0F) << 24;
             float f2 = (float) (-fontrenderer.width(text) / 2);
             fontrenderer.drawInBatch(text, f2, 0f, 553648127, false, matrix4f, p_225629_4_, flag, j, packedLight);
