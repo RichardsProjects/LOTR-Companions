@@ -10,7 +10,6 @@ import net.richardsprojects.lotrcompanions.utils.TeleportHelper;
 public class ModEntityEvents {
     @SubscribeEvent
     public static void onPlayerLOTRWaypoint(LOTRFastTravelWaypointEvent event) {
-        System.out.println("Inside LOTRFastTravelWaypointEvent handler");
         TeleportHelper.teleportUnitsToPlayer(event.getOriginalPos(), event.getTravelPos(), event.getWorld(), event.getPlayer());
     }
 }

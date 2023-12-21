@@ -19,18 +19,6 @@ public class TeleportHelper {
         List<HiredGondorSoldier> gondorSoldiers = world.getEntitiesOfClass(HiredGondorSoldier.class, initial.inflate(256));
         List<HiredBreeGuard> breeGuards = world.getEntitiesOfClass(HiredBreeGuard.class, initial.inflate(256));
 
-
-        Entity playerMount = player.getVehicle();
-        player.stopRiding();
-        if (playerMount instanceof MobEntity) {
-            playerMount.moveTo(target.getX(), target.getY(), target.getZ());
-            ServerChunkProvider scp = world.getChunkSource();
-            scp.removeEntity(playerMount);
-            scp.addEntity(playerMount);
-            world.updateChunkPos(playerMount);
-            world.addFreshEntity(playerMount);
-        }
-
         for (HiredGondorSoldier soldier : gondorSoldiers) {
             if (!soldier.isStationary()) soldier.moveTo(target.getX(), target.getY(), target.getZ());
             ServerChunkProvider scp = world.getChunkSource();
