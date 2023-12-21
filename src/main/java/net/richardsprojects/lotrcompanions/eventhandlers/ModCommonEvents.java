@@ -1,15 +1,15 @@
-package net.richardsprojects.lotrcompanions.core;
+package net.richardsprojects.lotrcompanions.eventhandlers;
 
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.entity.HiredBreeGuard;
 import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
 
-@Mod.EventBusSubscriber(modid = LOTRCompanions.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class CommonModEvents {
+/**
+ * For {@link net.minecraftforge.eventbus.api.Event} that are fired on the Mod bus IModBusEvent
+ * */
+public class ModCommonEvents {
 
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
