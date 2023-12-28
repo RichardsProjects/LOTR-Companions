@@ -10,8 +10,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.richardsprojects.lotrcompanions.client.render.HiredBreeGuardRenderer;
 import net.richardsprojects.lotrcompanions.client.render.HiredGondorSoldierRenderer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
-import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
-import net.richardsprojects.lotrcompanions.eventhandlers.ModCommonEvents;
+import net.richardsprojects.lotrcompanions.npcs.LOTRCNpcs;
 import net.richardsprojects.lotrcompanions.eventhandlers.ForgeEntityEvents;
 import net.richardsprojects.lotrcompanions.eventhandlers.ModEntityEvents;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
@@ -40,19 +39,17 @@ public class LOTRCompanions {
         
         //Register Listeners that use the Mod Event Bus
         eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        LOTRCEntities.ENTITIES.register(eventBus);
         LOTRCItems.ITEMS.register(eventBus);
         eventBus.register(this);
         eventBus.register(ModEntityEvents.class);
-        eventBus.register(ModCommonEvents.class);
-        
+
         PacketHandler.register();
     }
 
     @SubscribeEvent
     public void setupClientRendering(final FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(LOTRCEntities.HIRED_GONDOR_SOLDIER.get(), HiredGondorSoldierRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(LOTRCEntities.HIRED_BREE_GUARD.get(), HiredBreeGuardRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(LOTRCNpcs.HIRED_GONDOR_SOLDIER.get(), HiredGondorSoldierRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(LOTRCNpcs.HIRED_BREE_GUARD.get(), HiredBreeGuardRenderer::new);
     }
 
 }

@@ -1,4 +1,4 @@
-package net.richardsprojects.lotrcompanions.entity;
+package net.richardsprojects.lotrcompanions.npcs;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;

@@ -5,8 +5,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.richardsprojects.lotrcompanions.entity.HirableUnit;
-import net.richardsprojects.lotrcompanions.entity.HiredUnitHelper;
+import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
+import net.richardsprojects.lotrcompanions.npcs.HiredUnitHelper;
 
 import java.util.function.Supplier;
 

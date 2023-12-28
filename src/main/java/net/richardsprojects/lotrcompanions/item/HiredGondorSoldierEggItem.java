@@ -25,14 +25,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
-import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
+import net.richardsprojects.lotrcompanions.npcs.HiredGondorSoldier;
+import net.richardsprojects.lotrcompanions.npcs.LOTRCNpcs;
 
 import java.util.Objects;
 
 public class HiredGondorSoldierEggItem extends ForgeSpawnEggItem {
     public HiredGondorSoldierEggItem() {
-        super(LOTRCEntities.HIRED_GONDOR_SOLDIER,0xE8AF5A, 0xFF0000,
+        super(LOTRCNpcs.HIRED_GONDOR_SOLDIER,0xE8AF5A, 0xFF0000,
                 new Item.Properties().stacksTo(64).tab(ItemGroup.TAB_MISC));
     }
 

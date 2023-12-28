@@ -9,8 +9,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
-import net.richardsprojects.lotrcompanions.entity.HiredBreeGuard;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
+import net.richardsprojects.lotrcompanions.npcs.HiredBreeGuard;
+import net.richardsprojects.lotrcompanions.npcs.HiredGondorSoldier;
 
 public class TeleportHelper {
 	public static void teleportUnitsToPlayer(BlockPos originalPos, BlockPos target, ServerWorld world, PlayerEntity player) {

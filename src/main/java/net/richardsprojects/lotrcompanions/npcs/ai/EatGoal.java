@@ -1,11 +1,11 @@
-package net.richardsprojects.lotrcompanions.entity.ai;
+package net.richardsprojects.lotrcompanions.npcs.ai;
 
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.richardsprojects.lotrcompanions.entity.HirableUnit;
+import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 
 public class EatGoal extends Goal {
     protected final NPCEntity entity;

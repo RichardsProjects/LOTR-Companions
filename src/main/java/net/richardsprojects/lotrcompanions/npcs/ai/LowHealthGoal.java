@@ -1,4 +1,4 @@
-package net.richardsprojects.lotrcompanions.entity.ai;
+package net.richardsprojects.lotrcompanions.npcs.ai;
 
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.entity.HirableUnit;
+import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 
 public class LowHealthGoal extends Goal {
     protected final NPCEntity entity;

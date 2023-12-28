@@ -24,14 +24,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.richardsprojects.lotrcompanions.entity.HiredBreeGuard;
-import net.richardsprojects.lotrcompanions.entity.LOTRCEntities;
+import net.richardsprojects.lotrcompanions.npcs.HiredBreeGuard;
+import net.richardsprojects.lotrcompanions.npcs.LOTRCNpcs;
 
 import java.util.Objects;
 
 public class HiredBreeGuardEggItem extends ForgeSpawnEggItem {
     public HiredBreeGuardEggItem() {
-        super(LOTRCEntities.HIRED_BREE_GUARD,0xE8AF5A, 0xFF0000,
+        super(LOTRCNpcs.HIRED_BREE_GUARD,0xE8AF5A, 0xFF0000,
                 new Properties().stacksTo(64).tab(ItemGroup.TAB_MISC));
     }
 

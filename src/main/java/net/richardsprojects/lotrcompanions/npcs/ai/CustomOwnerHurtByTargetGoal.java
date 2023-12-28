@@ -1,4 +1,4 @@
-package net.richardsprojects.lotrcompanions.entity.ai;
+package net.richardsprojects.lotrcompanions.npcs.ai;
 
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.EntityPredicate;
@@ -6,7 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.TargetGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.entity.HirableUnit;
+import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 
 import java.util.EnumSet;
 

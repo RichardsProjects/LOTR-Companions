@@ -1,9 +1,9 @@
-package net.richardsprojects.lotrcompanions.entity.ai;
+package net.richardsprojects.lotrcompanions.npcs.ai;
 
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.util.math.vector.Vector3d;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
+import net.richardsprojects.lotrcompanions.npcs.HiredGondorSoldier;
 
 import javax.annotation.Nullable;
 

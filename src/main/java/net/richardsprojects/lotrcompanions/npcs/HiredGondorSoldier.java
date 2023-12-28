@@ -5,7 +5,7 @@
  * https://github.com/justinwon777/HumanCompanions/tree/main
  */
 
-package net.richardsprojects.lotrcompanions.entity;
+package net.richardsprojects.lotrcompanions.npcs;
 
 import lotr.common.entity.npc.GondorSoldierEntity;
 import lotr.common.init.LOTRItems;
@@ -31,13 +31,14 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
-import net.richardsprojects.lotrcompanions.entity.ai.*;
+import net.richardsprojects.lotrcompanions.npcs.ai.*;
 import net.richardsprojects.lotrcompanions.networking.OpenInventoryPacket;
 
 import javax.annotation.Nullable;
@@ -172,7 +173,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
 
     @Override
     public ITextComponent getHiredUnitName() {
-        return getName();
+        return new StringTextComponent(getName().getString().replace(" Hired", ""));
     }
 
     public ItemStack checkFood() {

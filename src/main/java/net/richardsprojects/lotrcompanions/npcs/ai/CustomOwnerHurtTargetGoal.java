@@ -1,4 +1,4 @@
-package net.richardsprojects.lotrcompanions.entity.ai;
+package net.richardsprojects.lotrcompanions.npcs.ai;
 
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.EntityPredicate;
@@ -8,7 +8,7 @@ import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.entity.HirableUnit;
+import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 
 import java.util.EnumSet;
 

@@ -1,7 +1,7 @@
-package net.richardsprojects.lotrcompanions.entity.ai;
+package net.richardsprojects.lotrcompanions.npcs.ai;
 
 import lotr.common.entity.npc.NPCEntity;
-import net.richardsprojects.lotrcompanions.entity.HirableUnit;
+import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 
 public class CustomFollowOwnerGoal extends FollowOwnerGoal {
 

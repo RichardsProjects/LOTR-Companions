@@ -1,6 +1,7 @@
 package net.richardsprojects.lotrcompanions.eventhandlers;
 
 import lotr.common.entity.npc.*;
+import lotr.common.init.ExtendedItems;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,11 +14,12 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
-import net.richardsprojects.lotrcompanions.entity.*;
+import net.richardsprojects.lotrcompanions.npcs.*;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
 import net.richardsprojects.lotrcompanions.utils.TeleportHelper;
 
@@ -55,26 +57,30 @@ public class ForgeEntityEvents {
     }
 
     @SubscribeEvent
-    public static void lotrEntityDeathEvent(final LivingDeathEvent event) {
+    public static void lotrEntityDeathEvent(final LivingDropsEvent event) {
         if (!(event.getEntity() instanceof NPCEntity)) {
+           return;
+        }
+
+        if (!(event.getEntity() instanceof ManEntity
+            || event.getEntity() instanceof ElfEntity
+            || event.getEntity() instanceof DwarfEntity
+            || event.getEntity() instanceof OrcEntity)) {
             return;
         }
 
-        // hobbits and wargs don't drop coins
-        if (event.getEntity() instanceof HobbitEntity || event.getEntity() instanceof BreeHobbitEntity || event.getEntity() instanceof WargEntity) {
-            return;
-        }
+        // verify coins are in the collection - if not add them
+        Set<Item> items = new HashSet<>();
+        event.getDrops().forEach(e -> items.add(e.getItem().getItem()));
 
-        // drop between 0 and 4 coins
-        Random random = new Random();
-        int count = random.nextInt(5);
-        if (count > 0) {
-            ItemEntity item = new ItemEntity(event.getEntity().level, event.getEntity().getX(),
-                    event.getEntity().getY() + 1, event.getEntity().getZ(),
-                    new ItemStack(LOTRCItems.ONE_COIN.get(), count));
-            event.getEntity().level.addFreshEntity(item);
+        if (!items.contains(ExtendedItems.SILVER_COIN_ONE.get())) {
+            ItemEntity entity = new ItemEntity(event.getEntity().level, event.getEntity().getX(),
+                    event.getEntity().getY(), event.getEntity().getZ(),
+                    new ItemStack(ExtendedItems.SILVER_COIN_ONE.get(), new Random().nextInt(2) + 1));
+            event.getDrops().add(entity);
         }
     }
+
     @SubscribeEvent
     public static void hireGondorSoldier(PlayerInteractEvent.EntityInteract event) {
         // TODO: Clean up code between hireGOndorSoldier and hireBreelandGuard so that they are one method with less
@@ -104,7 +110,7 @@ public class ForgeEntityEvents {
         }
 
         GondorSoldierEntity gondorSoldier = (GondorSoldierEntity) event.getTarget();
-        HiredGondorSoldier newEntity = (HiredGondorSoldier) LOTRCEntities.HIRED_GONDOR_SOLDIER.get().spawn(
+        HiredGondorSoldier newEntity = (HiredGondorSoldier) LOTRCNpcs.HIRED_GONDOR_SOLDIER.get().spawn(
                 (ServerWorld) event.getWorld(), null,
                 event.getPlayer(), new BlockPos(gondorSoldier.getX(), gondorSoldier.getY(), gondorSoldier.getZ()),
                 SpawnReason.NATURAL, true, false
@@ -144,7 +150,7 @@ public class ForgeEntityEvents {
         }
 
         BreeGuardEntity breeGuard = (BreeGuardEntity) event.getTarget();
-        HiredBreeGuard newEntity = (HiredBreeGuard) LOTRCEntities.HIRED_BREE_GUARD.get().spawn(
+        HiredBreeGuard newEntity = (HiredBreeGuard) LOTRCNpcs.HIRED_BREE_GUARD.get().spawn(
                 (ServerWorld) event.getWorld(), null,
                 event.getPlayer(), new BlockPos(breeGuard.getX(), breeGuard.getY(), breeGuard.getZ()),
                 SpawnReason.NATURAL, true, false

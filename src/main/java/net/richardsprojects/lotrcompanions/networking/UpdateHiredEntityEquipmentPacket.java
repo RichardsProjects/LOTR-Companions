@@ -7,7 +7,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.richardsprojects.lotrcompanions.entity.HiredBreeGuard;
+import net.richardsprojects.lotrcompanions.npcs.HiredBreeGuard;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;

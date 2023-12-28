@@ -20,8 +20,8 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.client.screen.CompanionScreen;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
-import net.richardsprojects.lotrcompanions.entity.HiredBreeGuard;
-import net.richardsprojects.lotrcompanions.entity.HiredGondorSoldier;
+import net.richardsprojects.lotrcompanions.npcs.HiredBreeGuard;
+import net.richardsprojects.lotrcompanions.npcs.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.networking.*;
 
 public class PacketHandler {
