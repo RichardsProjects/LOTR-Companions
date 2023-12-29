@@ -33,11 +33,11 @@ public class LOTRCompanions {
 
     public static IEventBus eventBus;
     public LOTRCompanions() {
-    	//Register Listeners that use the Forge Event Bus
+    	// register Listeners that use the Forge Event Bus
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(ForgeEntityEvents.class);
         
-        //Register Listeners that use the Mod Event Bus
+        // register Listeners that use the Mod Event Bus
         eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         LOTRCItems.ITEMS.register(eventBus);
         eventBus.register(this);

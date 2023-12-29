@@ -5,7 +5,6 @@ import lotr.common.init.ExtendedItems;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +19,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.npcs.*;
-import net.richardsprojects.lotrcompanions.item.LOTRCItems;
 import net.richardsprojects.lotrcompanions.utils.CoinUtils;
 import net.richardsprojects.lotrcompanions.utils.TeleportHelper;
 
@@ -82,11 +80,9 @@ public class ForgeEntityEvents {
         }
     }
 
-
-
     @SubscribeEvent
     public static void hireGondorSoldier(PlayerInteractEvent.EntityInteract event) {
-        // TODO: Clean up code between hireGOndorSoldier and hireBreelandGuard so that they are one method with less
+        // TODO: Clean up code between hireGondorSoldier and hireBreelandGuard so that they are one method with less
         //  repeated code
 
         // only allow this event to run on the server
