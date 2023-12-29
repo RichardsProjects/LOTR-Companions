@@ -21,6 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.npcs.*;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
+import net.richardsprojects.lotrcompanions.utils.CoinUtils;
 import net.richardsprojects.lotrcompanions.utils.TeleportHelper;
 
 import java.util.*;
@@ -81,6 +82,8 @@ public class ForgeEntityEvents {
         }
     }
 
+
+
     @SubscribeEvent
     public static void hireGondorSoldier(PlayerInteractEvent.EntityInteract event) {
         // TODO: Clean up code between hireGOndorSoldier and hireBreelandGuard so that they are one method with less
@@ -96,13 +99,11 @@ public class ForgeEntityEvents {
         }
 
         // check that they have a coin in their hand
-        if (!(event.getItemStack().getItem().equals(LOTRCItems.ONE_COIN.get()) ||
-              event.getItemStack().getItem().equals(LOTRCItems.HUNDRED_COIN.get()) ||
-              event.getItemStack().getItem().equals(LOTRCItems.TEN_COIN.get()))) {
+        if (!CoinUtils.isValidCoin(event.getItemStack())) {
             return;
-            }
+        }
 
-        int coins = totalCoins(event.getPlayer().inventory);
+        int coins = CoinUtils.totalCoins(event.getPlayer().inventory);
         System.out.println("Total Coins: " + coins);
         if (coins < 60) {
             event.getPlayer().sendMessage(new StringTextComponent("I require 60 coins in payment to be hired."), event.getPlayer().getUUID());
@@ -118,7 +119,7 @@ public class ForgeEntityEvents {
         if (newEntity != null) {
             newEntity.tame(event.getPlayer());
             gondorSoldier.remove();
-            removeCoins(event.getPlayer(), event.getPlayer().inventory, 60);
+            CoinUtils.removeCoins(event.getPlayer(), event.getPlayer().inventory, 60);
             event.getPlayer().sendMessage(new StringTextComponent("The Gondor Soldier has been hired for 60 coins"), event.getPlayer().getUUID());
         }
     }
@@ -135,15 +136,13 @@ public class ForgeEntityEvents {
         }
 
         // check that they have a coin in their hand
-        if (!(event.getItemStack().getItem().equals(LOTRCItems.ONE_COIN.get()) ||
-                event.getItemStack().getItem().equals(LOTRCItems.HUNDRED_COIN.get()) ||
-                event.getItemStack().getItem().equals(LOTRCItems.TEN_COIN.get()))) {
+        if (!CoinUtils.isValidCoin(event.getItemStack())) {
             return;
         }
 
         // TODO: Make prices be based upon faction reputation
 
-        int coins = totalCoins(event.getPlayer().inventory);
+        int coins = CoinUtils.totalCoins(event.getPlayer().inventory);
         if (coins < 40) {
             event.getPlayer().sendMessage(new StringTextComponent("I require 40 coins in payment to be hired."), event.getPlayer().getUUID());
             return;
@@ -161,131 +160,9 @@ public class ForgeEntityEvents {
         if (newEntity != null) {
             newEntity.tame(event.getPlayer());
             breeGuard.remove();
-            removeCoins(event.getPlayer(), event.getPlayer().inventory, 40);
+            CoinUtils.removeCoins(event.getPlayer(), event.getPlayer().inventory, 40);
             event.getPlayer().sendMessage(new StringTextComponent("The Bree-land Guard has been hired for 40 coins"), event.getPlayer().getUUID());
         }
-    }
-
-    private static int totalCoins(PlayerInventory inventory) {
-        int totalValue = 0;
-
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            ItemStack itemStack = inventory.getItem(i);
-            if (itemStack.getItem().equals(LOTRCItems.ONE_COIN.get())) {
-                totalValue += itemStack.getCount();
-            } else if (itemStack.getItem().equals(LOTRCItems.TEN_COIN.get())) {
-                totalValue += (itemStack.getCount() * 10);
-            } else if (itemStack.getItem().equals(LOTRCItems.HUNDRED_COIN.get())) {
-                totalValue += (itemStack.getCount() * 100);
-            }
-        }
-
-        return totalValue;
-    }
-
-    private static boolean removeCoins(PlayerEntity player, PlayerInventory inventory, int amount) {
-        // TODO: Fix bug in here with stacks over 64
-
-        int coinsRemoved = 0;
-
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            ItemStack itemStack = inventory.getItem(i);
-
-            if (!(itemStack.getItem().equals(LOTRCItems.ONE_COIN.get()) ||
-                  itemStack.getItem().equals(LOTRCItems.TEN_COIN.get()) ||
-                  itemStack.getItem().equals(LOTRCItems.HUNDRED_COIN.get()))) {
-                continue;
-            }
-
-            int value;
-            int currency = 0;
-
-            if (itemStack.getItem().equals(LOTRCItems.ONE_COIN.get())) {
-                currency = 1;
-            } else if (itemStack.getItem().equals(LOTRCItems.TEN_COIN.get())) {
-                currency = 10;
-            } else if (itemStack.getItem().equals(LOTRCItems.HUNDRED_COIN.get())) {
-                currency = 100;
-            }
-            value = itemStack.getCount() * currency;
-
-            if (coinsRemoved + value >= amount) {
-                // check if change has to be mode
-                int amountLeft = amount - coinsRemoved;
-                int newDifference = value - amountLeft;
-
-                if (newDifference == 0) {
-                    inventory.setItem(i, ItemStack.EMPTY);
-                    return true;
-                }
-
-                if (newDifference % currency == 0) {
-                    // no change has to be made - simply reduce it
-                    int newCount = newDifference / currency;
-                    if (newCount > 64) {
-                        itemStack.setCount(64);
-                        List<ItemStack> stacks = new ArrayList<>();
-                        int remainder = newCount - 64;
-                        while (remainder > 64) {
-                            stacks.add(new ItemStack(itemStack.getItem(), 64));
-                            remainder -= 64;
-                        }
-                        if (remainder > 0) {
-                            stacks.add(new ItemStack(itemStack.getItem(), remainder));
-                        }
-                        for (int index = 0; index < stacks.size(); index++) {
-                            if (!inventory.add(stacks.get(index))) {
-                                ItemEntity itemEntity = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stacks.get(index));
-                                player.level.addFreshEntity(itemEntity);
-                            }
-                        }
-                    } else {
-                        itemStack.setCount(newCount);
-                    }
-                    return true;
-                } else {
-                    int currencyOfChange = 1;
-                    Item item = LOTRCItems.ONE_COIN.get();
-                    if (newDifference % 100 == 0) {
-                        currencyOfChange = 100;
-                        item = LOTRCItems.HUNDRED_COIN.get();
-                    } else if (newDifference % 10 == 0) {
-                        currencyOfChange = 10;
-                        item = LOTRCItems.TEN_COIN.get();
-                    }
-                    int newAmount = newDifference / currencyOfChange;
-                    if (newAmount > 64) {
-                        ItemStack newItemStack = new ItemStack(item, 64);
-                        inventory.setItem(i, newItemStack);
-                        List<ItemStack> stacks = new ArrayList<>();
-                        int remainder = newAmount - 64;
-                        while (remainder > 64) {
-                            stacks.add(new ItemStack(item, 64));
-                            remainder -= 64;
-                        }
-                        if (remainder > 0) {
-                            stacks.add(new ItemStack(item, remainder));
-                        }
-                        for (int index = 0; index < stacks.size(); index++) {
-                            if (!inventory.add(stacks.get(index))) {
-                                ItemEntity itemEntity = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stacks.get(index));
-                                player.level.addFreshEntity(itemEntity);
-                            }
-                        }
-                    } else {
-                        ItemStack newItemStack = new ItemStack(item, newAmount);
-                        inventory.setItem(i, newItemStack);
-                    }
-                    return true;
-                }
-            } else {
-                // remove all coins
-                coinsRemoved += value;
-                inventory.setItem(i, ItemStack.EMPTY);
-            }
-        }
-
-        return false;
     }
 
     @SubscribeEvent

@@ -17,12 +17,4 @@ public class LOTRCItems {
 
     public static final RegistryObject<ForgeSpawnEggItem> HIRED_BREE_GUARD_EGG = ITEMS.register("hired_bree_guard_spawn_egg",
             HiredBreeGuardEggItem::new);
-
-    public static final RegistryObject<Item> ONE_COIN = ITEMS.register("one_coin",
-            OneCoinItem::new);
-    public static final RegistryObject<Item> TEN_COIN = ITEMS.register("ten_coin",
-            TenCoinItem::new);
-    public static final RegistryObject<Item> HUNDRED_COIN = ITEMS.register("hundred_coin",
-            HundredCoinItem::new);
-
 }
