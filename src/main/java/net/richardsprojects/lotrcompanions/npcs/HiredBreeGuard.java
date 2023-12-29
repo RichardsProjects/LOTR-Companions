@@ -43,6 +43,9 @@ import java.util.*;
 
 public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
 
+    private static final int HEAL_RATE = 80;
+    private int lastHealed = 0;
+
     protected static final DataParameter<Byte> DATA_FLAGS_ID = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.BYTE);
     protected static final DataParameter<Optional<UUID>> DATA_OWNERUUID_ID = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.OPTIONAL_UUID);
     private static final DataParameter<Integer> LVL = EntityDataManager.defineId(HiredBreeGuard.class,
@@ -458,6 +461,14 @@ public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
     }
 
     public void tick() {
+        // heal
+        if (lastHealed == HEAL_RATE)  {
+            if (this.getHealth() < this.getMaxHealth()) this.setHealth(this.getHealth() + 1);
+            lastHealed = 0;
+        } else {
+            lastHealed++;
+        }
+
         checkStats();
         updateEquipment();
 

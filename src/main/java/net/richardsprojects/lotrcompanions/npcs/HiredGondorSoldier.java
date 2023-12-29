@@ -49,6 +49,8 @@ import java.util.UUID;
 
 public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUnit {
 
+    private static final int HEAL_RATE = 80;
+    private int lastHealed = 0;
     protected static final DataParameter<Byte> DATA_FLAGS_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.BYTE);
     protected static final DataParameter<Optional<UUID>> DATA_OWNERUUID_ID = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.OPTIONAL_UUID);
     private static final DataParameter<Integer> LVL = EntityDataManager.defineId(HiredGondorSoldier.class,
@@ -449,6 +451,14 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUn
     }
 
     public void tick() {
+        // heal
+        if (lastHealed == HEAL_RATE)  {
+            if (this.getHealth() < this.getMaxHealth()) this.setHealth(this.getHealth() + 1);
+            lastHealed = 0;
+        } else {
+            lastHealed++;
+        }
+
         checkStats();
         updateEquipment();
 

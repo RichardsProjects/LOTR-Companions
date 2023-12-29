@@ -1,6 +1,8 @@
 package net.richardsprojects.lotrcompanions.eventhandlers;
 
 import lotr.common.entity.npc.*;
+import lotr.common.entity.npc.data.NPCEntitySettings;
+import lotr.common.entity.npc.data.NPCEntitySettingsManager;
 import lotr.common.init.ExtendedItems;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
@@ -32,8 +34,16 @@ public class ForgeEntityEvents {
     public static void giveExperience(final LivingDeathEvent event) {
         Entity companion = event.getSource().getEntity();
         if (companion instanceof HiredGondorSoldier || companion instanceof HiredBreeGuard) {
-            // TODO: put in some calculations for each mob type
-            ((HirableUnit) companion).giveExperiencePoints(1);
+            // base amount of xp off kill alignment bonus
+            int xpPoints;
+            NPCEntitySettings settings = NPCEntitySettingsManager.getEntityTypeSettings(event.getEntity());
+            if (settings != null && settings.getKillAlignmentBonus() > 0) {
+                xpPoints = (int) settings.getKillAlignmentBonus();
+            } else {
+                xpPoints = 1;
+            }
+
+            ((HirableUnit) companion).giveExperiencePoints(xpPoints);
             ((HirableUnit) companion).setMobKills(((HirableUnit) companion).getMobKills() + 1);
         }
     }
