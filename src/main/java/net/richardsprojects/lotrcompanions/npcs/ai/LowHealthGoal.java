@@ -1,22 +1,22 @@
 package net.richardsprojects.lotrcompanions.npcs.ai;
 
+import lotr.common.entity.npc.ExtendedHirableEntity;
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 
 public class LowHealthGoal extends Goal {
     protected final NPCEntity entity;
-    protected final HirableUnit unit;
+    protected final ExtendedHirableEntity unit;
 
     int startTick = 0;
     StringTextComponent text = new StringTextComponent("I need food!");
     ItemStack food = ItemStack.EMPTY;
 
-    public LowHealthGoal(NPCEntity entity, HirableUnit unit) {
+    public LowHealthGoal(NPCEntity entity, ExtendedHirableEntity unit) {
         this.entity = entity;
         this.unit = unit;
     }

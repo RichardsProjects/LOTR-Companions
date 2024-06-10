@@ -1,22 +1,22 @@
 package net.richardsprojects.lotrcompanions.npcs.ai;
 
+import lotr.common.entity.npc.ExtendedHirableEntity;
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 
 public class EatGoal extends Goal {
     protected final NPCEntity entity;
 
-    protected final HirableUnit companion;
+    protected final ExtendedHirableEntity companion;
     ItemStack food = ItemStack.EMPTY;
     ItemStack oldOffhand = ItemStack.EMPTY;
     boolean started = false;
     int timeLeft = -1;
 
-    public EatGoal(NPCEntity entity, HirableUnit unit) {
+    public EatGoal(NPCEntity entity, ExtendedHirableEntity unit) {
         this.entity = entity;
         companion = unit;
     }

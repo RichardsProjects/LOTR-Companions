@@ -1,6 +1,7 @@
 package net.richardsprojects.lotrcompanions.npcs;
 
 import lotr.common.entity.npc.BreeGuardEntity;
+import lotr.common.entity.npc.ExtendedHirableEntity;
 import lotr.common.init.LOTRItems;
 
 import net.minecraft.entity.*;
@@ -41,7 +42,7 @@ import net.richardsprojects.lotrcompanions.networking.UpdateHiredEntityEquipment
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class HiredBreeGuard extends BreeGuardEntity implements HirableUnit {
+public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEntity {
 
     private static final int HEAL_RATE = 80;
     private int lastHealed = 0;

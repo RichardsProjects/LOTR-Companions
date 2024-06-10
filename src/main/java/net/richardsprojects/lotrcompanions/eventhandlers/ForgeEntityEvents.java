@@ -43,8 +43,8 @@ public class ForgeEntityEvents {
                 xpPoints = 1;
             }
 
-            ((HirableUnit) companion).giveExperiencePoints(xpPoints);
-            ((HirableUnit) companion).setMobKills(((HirableUnit) companion).getMobKills() + 1);
+            ((ExtendedHirableEntity) companion).giveExperiencePoints(xpPoints);
+            ((ExtendedHirableEntity) companion).setMobKills(((ExtendedHirableEntity) companion).getMobKills() + 1);
         }
     }
 
@@ -193,7 +193,7 @@ public class ForgeEntityEvents {
             return;
         }
 
-        UUID owner = HiredUnitHelper.getHirableUnit(event.getEntity()).getOwnerUUID();
+        UUID owner = HiredUnitHelper.getExtendedHirableEntity(event.getEntity()).getOwnerUUID();
 
         if (event.getSource() != null && event.getSource().getEntity() != null
                 && event.getSource().getEntity() instanceof PlayerEntity) {

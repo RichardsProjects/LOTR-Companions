@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import lotr.common.entity.npc.ExtendedHirableEntity;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -20,7 +21,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
-import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 import net.richardsprojects.lotrcompanions.npcs.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.networking.SetPatrollingPacket;
 import net.richardsprojects.lotrcompanions.networking.SetStationaryPacket;
@@ -33,7 +33,7 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
     private static final ResourceLocation STATIONARY_BUTTON = new ResourceLocation(LOTRCompanions.MOD_ID, "textures" +
             "/stationary_button.png");
 
-    private final HirableUnit companion;
+    private final ExtendedHirableEntity companion;
     DecimalFormat df = new DecimalFormat("#.#");
     int sidebarX;
     int row1;
@@ -43,7 +43,7 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
     private CompanionButton patrolButton;
     private CompanionButton stationaryButton;
 
-    public CompanionScreen(CompanionContainer p_98409_, PlayerInventory p_98410_, HirableUnit companion) {
+    public CompanionScreen(CompanionContainer p_98409_, PlayerInventory p_98410_, ExtendedHirableEntity companion) {
         super(p_98409_, p_98410_, companion.getHiredUnitName());
 
         this.companion = companion;
