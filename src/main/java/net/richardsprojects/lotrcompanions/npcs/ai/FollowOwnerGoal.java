@@ -2,6 +2,7 @@ package net.richardsprojects.lotrcompanions.npcs.ai;
 
 import java.util.EnumSet;
 
+import lotr.common.entity.npc.ExtendedHirableEntity;
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
@@ -14,11 +15,10 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
-import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 
 public class FollowOwnerGoal extends Goal {
     private final NPCEntity entity;
-    private final HirableUnit hirable;
+    private final ExtendedHirableEntity hirable;
     private LivingEntity owner;
     private final IWorldReader level;
     private final double speedModifier;
@@ -29,7 +29,7 @@ public class FollowOwnerGoal extends Goal {
     private float oldWaterCost;
     private final boolean canFly;
 
-    public FollowOwnerGoal(NPCEntity p_i225711_1_, HirableUnit hirable, double p_i225711_2_, float p_i225711_4_, float p_i225711_5_, boolean p_i225711_6_) {
+    public FollowOwnerGoal(NPCEntity p_i225711_1_, ExtendedHirableEntity hirable, double p_i225711_2_, float p_i225711_4_, float p_i225711_5_, boolean p_i225711_6_) {
         this.entity = p_i225711_1_;
         this.hirable = hirable;
 

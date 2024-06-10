@@ -1,5 +1,6 @@
 package net.richardsprojects.lotrcompanions.npcs.ai;
 
+import lotr.common.entity.npc.ExtendedHirableEntity;
 import lotr.common.entity.npc.NPCEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
@@ -8,17 +9,16 @@ import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
-import net.richardsprojects.lotrcompanions.npcs.HirableUnit;
 
 import java.util.EnumSet;
 
 public class CustomOwnerHurtTargetGoal extends TargetGoal {
     private final NPCEntity entity;
-    private final HirableUnit unit;
+    private final ExtendedHirableEntity unit;
     private LivingEntity ownerLastHurt;
     private int timestamp;
 
-    public CustomOwnerHurtTargetGoal(NPCEntity entity, HirableUnit unit) {
+    public CustomOwnerHurtTargetGoal(NPCEntity entity, ExtendedHirableEntity unit) {
         super(entity, false);
 
         this.entity = entity;

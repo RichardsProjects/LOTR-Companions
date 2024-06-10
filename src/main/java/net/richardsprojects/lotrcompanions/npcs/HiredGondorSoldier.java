@@ -7,6 +7,7 @@
 
 package net.richardsprojects.lotrcompanions.npcs;
 
+import lotr.common.entity.npc.ExtendedHirableEntity;
 import lotr.common.entity.npc.GondorSoldierEntity;
 import lotr.common.init.LOTRItems;
 
@@ -47,7 +48,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public class HiredGondorSoldier extends GondorSoldierEntity implements HirableUnit {
+public class HiredGondorSoldier extends GondorSoldierEntity implements ExtendedHirableEntity {
 
     private static final int HEAL_RATE = 80;
     private int lastHealed = 0;

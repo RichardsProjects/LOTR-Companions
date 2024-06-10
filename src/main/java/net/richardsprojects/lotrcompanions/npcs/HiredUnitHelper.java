@@ -1,5 +1,6 @@
 package net.richardsprojects.lotrcompanions.npcs;
 
+import lotr.common.entity.npc.ExtendedHirableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
@@ -9,14 +10,14 @@ import net.minecraft.world.World;
 
 public class HiredUnitHelper {
 
-    public static void die(World world, DamageSource source, HirableUnit unit) {
+    public static void die(World world, DamageSource source, ExtendedHirableEntity unit) {
         if (!world.isClientSide && world.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && unit.getOwner() instanceof ServerPlayerEntity) {
             // TODO: Update this show cause of death
             unit.getOwner().sendMessage(new StringTextComponent("Your hired companion " + unit.getHiredUnitName().getString() + " has died."), unit.getOwnerUUID());
         }
     }
 
-    public static void giveExperiencePoints(HirableUnit unit, int points) {
+    public static void giveExperiencePoints(ExtendedHirableEntity unit, int points) {
         int newExperience = unit.getCurrentXp() + points;
         if (newExperience >= unit.getMaxXp()) {
             unit.setExpLvl(unit.getExpLvl() + 1);
@@ -41,16 +42,16 @@ public class HiredUnitHelper {
              || entity instanceof HiredBreeGuard;
     }
 
-    public static HirableUnit getHirableUnit(Entity entity) {
+    public static ExtendedHirableEntity getExtendedHirableEntity(Entity entity) {
         if (!isEntityHiredUnit(entity)) return null;
 
         // attempt to cast to proper unit
-        HirableUnit result = null;
+        ExtendedHirableEntity result = null;
 
         if (entity instanceof HiredBreeGuard) {
-            result = (HirableUnit) entity;
+            result = (ExtendedHirableEntity) entity;
         } else if (entity instanceof HiredGondorSoldier) {
-            result = (HirableUnit) entity;
+            result = (ExtendedHirableEntity) entity;
         }
 
         return result;
