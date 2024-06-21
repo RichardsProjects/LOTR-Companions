@@ -10,9 +10,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.richardsprojects.lotrcompanions.client.render.HiredBreeGuardRenderer;
 import net.richardsprojects.lotrcompanions.client.render.HiredGondorSoldierRenderer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
+import net.richardsprojects.lotrcompanions.eventhandlers.LOTRFastTravelEventHandler;
 import net.richardsprojects.lotrcompanions.npcs.LOTRCNpcs;
 import net.richardsprojects.lotrcompanions.eventhandlers.ForgeEntityEvents;
-import net.richardsprojects.lotrcompanions.eventhandlers.ModEntityEvents;
 import net.richardsprojects.lotrcompanions.item.LOTRCItems;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +41,7 @@ public class LOTRCompanions {
         eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         LOTRCItems.ITEMS.register(eventBus);
         eventBus.register(this);
-        eventBus.register(ModEntityEvents.class);
+        eventBus.register(LOTRFastTravelEventHandler.class);
 
         PacketHandler.register();
     }

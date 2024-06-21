@@ -1,15 +1,17 @@
 package net.richardsprojects.lotrcompanions.eventhandlers;
 
+import lotr.common.event.LOTRFastTravelWaypointEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.richardsprojects.lotrcompanions.event.LOTRFastTravelWaypointEvent;
 import net.richardsprojects.lotrcompanions.utils.TeleportHelper;
 
-/**
- * For {@link net.minecraftforge.eventbus.api.Event} that are fired on the Mod bus IModBusEvent
- * */
-public class ModEntityEvents {
+public class LOTRFastTravelEventHandler {
+
     @SubscribeEvent
     public static void onPlayerLOTRWaypoint(LOTRFastTravelWaypointEvent event) {
+        System.out.println("Event received 1");
         TeleportHelper.teleportUnitsToPlayer(event.getOriginalPos(), event.getTravelPos(), event.getWorld(), event.getPlayer());
+        System.out.println("Event received 2");
     }
+
 }
+
