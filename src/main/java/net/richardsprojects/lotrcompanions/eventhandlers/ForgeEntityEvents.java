@@ -110,7 +110,6 @@ public class ForgeEntityEvents {
         }
 
         int coins = CoinUtils.totalCoins(event.getPlayer().inventory);
-        System.out.println("Total Coins: " + coins);
         if (coins < 60) {
             event.getPlayer().sendMessage(new StringTextComponent("I require 60 coins in payment to be hired."), event.getPlayer().getUUID());
             return;
