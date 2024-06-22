@@ -20,16 +20,13 @@ public class TeleportHelper {
         List<NPCEntity> lotrEntities = world.getEntitiesOfClass(NPCEntity.class, initial.inflate(256));
 
         for (NPCEntity npc : lotrEntities) {
-            System.out.println("Looping through NPCEntity: " + npc.getName().getString());
             if (!(npc instanceof ExtendedHirableEntity)) {
                 continue;
             }
-            System.out.println("Confirm NPCEntity is instanceof ExtendedHirableEntity: " + npc.getName().getString());
 
             ExtendedHirableEntity hireling = (ExtendedHirableEntity) npc;
 
             if (!hireling.isStationary()) {
-                System.out.println("Entity is stationary and teleporting: " + npc.getName().getString());
                 fastTravelEntity(world, npc, target.getX() + 0.5D, target.getY() + 0.5D, target.getZ() + 0.5D);
             }
         }
