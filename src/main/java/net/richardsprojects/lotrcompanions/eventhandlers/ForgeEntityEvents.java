@@ -120,7 +120,7 @@ public class ForgeEntityEvents {
         HiredGondorSoldier newEntity = (HiredGondorSoldier) LOTRCNpcs.HIRED_GONDOR_SOLDIER.get().spawn(
                 (ServerWorld) event.getWorld(), null,
                 event.getPlayer(), new BlockPos(gondorSoldier.getX(), gondorSoldier.getY(), gondorSoldier.getZ()),
-                SpawnReason.NATURAL, true, false
+                SpawnReason.NATURAL, false, false
         );
         if (newEntity != null) {
             newEntity.tame(event.getPlayer());
@@ -158,7 +158,7 @@ public class ForgeEntityEvents {
         HiredBreeGuard newEntity = (HiredBreeGuard) LOTRCNpcs.HIRED_BREE_GUARD.get().spawn(
                 (ServerWorld) event.getWorld(), null,
                 event.getPlayer(), new BlockPos(breeGuard.getX(), breeGuard.getY(), breeGuard.getZ()),
-                SpawnReason.NATURAL, true, false
+                SpawnReason.NATURAL, false, false
         );
 
         // TODO: Update gear to match correctly

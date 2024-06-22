@@ -86,6 +86,7 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
 
     public HiredBreeGuard(EntityType<? extends BreeGuardEntity> type, World w) {
         super(type, w);
+        setPersistenceRequired();
 
         inventory.setItem(9, new ItemStack(Items.IRON_HELMET));
         inventory.setItem(10, new ItemStack(Items.LEATHER_CHESTPLATE));
