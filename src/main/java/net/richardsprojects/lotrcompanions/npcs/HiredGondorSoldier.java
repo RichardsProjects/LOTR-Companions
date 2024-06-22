@@ -107,6 +107,7 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements ExtendedH
 
     public HiredGondorSoldier(EntityType<? extends GondorSoldierEntity> entityType, World level) {
         super(entityType, level);
+        this.setPersistenceRequired();
 
         inventory.setItem(9, new ItemStack(LOTRItems.GONDOR_HELMET.get()));
         inventory.setItem(10, new ItemStack(LOTRItems.GONDOR_CHESTPLATE.get()));

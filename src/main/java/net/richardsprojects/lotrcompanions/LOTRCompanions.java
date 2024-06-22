@@ -36,12 +36,13 @@ public class LOTRCompanions {
     	// register Listeners that use the Forge Event Bus
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(ForgeEntityEvents.class);
-        
+        MinecraftForge.EVENT_BUS.register(LOTRFastTravelEventHandler.class);
+
         // register Listeners that use the Mod Event Bus
         eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         LOTRCItems.ITEMS.register(eventBus);
         eventBus.register(this);
-        eventBus.register(LOTRFastTravelEventHandler.class);
+        //eventBus.register(LOTRFastTravelEventHandler.class);
 
         PacketHandler.register();
     }
