@@ -1,17 +1,24 @@
 package net.richardsprojects.lotrcompanions.eventhandlers;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import lotr.common.entity.npc.*;
 import lotr.common.entity.npc.data.NPCEntitySettings;
 import lotr.common.entity.npc.data.NPCEntitySettingsManager;
 import lotr.common.init.ExtendedItems;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.client.event.RenderNameplateEvent;
 import net.minecraftforge.event.entity.living.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -19,12 +26,15 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.richardsprojects.lotrcompanions.client.render.CompanionHpBar;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.npcs.*;
 import net.richardsprojects.lotrcompanions.utils.CoinUtils;
 import net.richardsprojects.lotrcompanions.utils.TeleportHelper;
 
 import java.util.*;
+
+import static net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance;
 
 /**
  * For {@link net.minecraftforge.eventbus.api.Event} that are fired on the MinecraftForge.EVENT_BUS
@@ -200,6 +210,62 @@ public class ForgeEntityEvents {
             PlayerEntity player = (PlayerEntity) event.getSource().getEntity();
             if (owner.equals(player.getUUID())) {
                 event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void renderHpBar(RenderNameplateEvent event) {
+        if (event.getEntity() instanceof ExtendedHirableEntity) {
+            Minecraft minecraft = Minecraft.getInstance();
+            MatrixStack matrixStackIn = event.getMatrixStack();
+            float health = ((LivingEntity)event.getEntity()).getHealth();
+            float maxhealth = ((LivingEntity)event.getEntity()).getMaxHealth();
+            double d0 = minecraft.getEntityRenderDispatcher().distanceToSqr(event.getEntity());
+            FontRenderer fontrenderer = event.getEntityRenderer().getFont();
+            IRenderTypeBuffer.Impl buffer = minecraft.renderBuffers().bufferSource();
+            Matrix4f matrix4f = matrixStackIn.last().pose();
+
+            if (isNameplateInRenderDistance(event.getEntity(), d0)) {
+                float f = event.getEntity().getBbHeight() + 1.2F;
+                matrixStackIn.pushPose();
+                matrixStackIn.translate(0.0D, f, 0.0D);
+                matrixStackIn.mulPose(minecraft.getEntityRenderDispatcher().cameraOrientation());
+                matrixStackIn.scale(-0.025F, -0.025F, 0.025F);
+
+                CompanionHpBar.draw(
+                        (LivingEntity)event.getEntity(),
+                        144 / 255.0F,
+                        238 / 255.0F,
+                        144 / 255.0F,
+                        255 / 255.0F,
+                        144 / 255.0F,
+                        238 / 255.0F,
+                        144 / 255.0F,
+                        255 / 255.0F,
+                        144 / 255.0F,
+                        238 / 255.0F,
+                        144 / 255.0F,
+                        255 / 255.0F,
+                        144 / 255.0F,
+                        238 / 255.0F,
+                        144 / 255.0F,
+                        255 / 255.0F,
+                        // text scale default 1X
+                        100 / 100.0F,
+                        // text posX and posY
+                        0,
+                        0,
+                        // text hardcoded as white
+                        255,
+                        255,
+                        255,
+                        matrixStackIn,
+                        fontrenderer
+                );
+
+                matrixStackIn.popPose();
+                RenderSystem.disableDepthTest();
             }
         }
     }
