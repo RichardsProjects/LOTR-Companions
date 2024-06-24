@@ -42,18 +42,9 @@ public class CompanionHpBar {
         RenderSystem.defaultBlendFunc();
         matrixStackIn.pushPose();
 
-        // render background
-        matrixStackIn.translate(HB_POS_X_OFFSET, HB_POS_Y_OFFSET, 0.0D);
-        matrixStackIn.scale(1.0F, 1.0F, 1.0F);
-        ResourceLocation bar = new ResourceLocation(LOTRCompanions.MOD_ID, "textures/gui/healthbar.png");
-        BarRendererHelper.bind(bar);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-
-        RenderSystem.color4f(BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, HEALTHBAR_OPACITY);
-        BarRendererHelper.blit(matrixStackIn, HB_POS_X, HB_POS_Y, 0, 19, HB_WIDTH, HB_HEIGHT);
-
         // render healthbar
+        ResourceLocation bar = new ResourceLocation(LOTRCompanions.MOD_ID, "textures/gui/healthbar.png");
+
         matrixStackIn.translate(HB_POS_X_OFFSET, HB_POS_Y_OFFSET, 0.0D);
         matrixStackIn.scale(1.0F, 1.0F, 1.0F);
         BarRendererHelper.bind(bar);
@@ -61,7 +52,20 @@ public class CompanionHpBar {
         RenderSystem.defaultBlendFunc();
 
         RenderSystem.color4f(HB_GREEN_R, HB_GREEN_G, HB_GREEN_B, HEALTHBAR_OPACITY);
-        BarRendererHelper.blit(matrixStackIn, HB_POS_X, HB_POS_Y, 0, 19, (int) Math.ceil((double) HB_WIDTH * (hp / vit)), HB_HEIGHT);
+        int endOfHealth =  (int) Math.ceil((double) HB_WIDTH * (hp / vit));
+        BarRendererHelper.blit(matrixStackIn, HB_POS_X, HB_POS_Y, 0, 19, endOfHealth, HB_HEIGHT);
+
+        // render background
+        if (endOfHealth < 100) {
+            matrixStackIn.translate(HB_POS_X_OFFSET, HB_POS_Y_OFFSET, 0.0D);
+            matrixStackIn.scale(1.0F, 1.0F, 1.0F);
+            BarRendererHelper.bind(bar);
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+
+            RenderSystem.color4f(BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, HEALTHBAR_OPACITY);
+            BarRendererHelper.blit(matrixStackIn, HB_POS_X + endOfHealth, HB_POS_Y, 0, 19, HB_WIDTH - endOfHealth, HB_HEIGHT);
+        }
 
         // render text
         matrixStackIn.translate(0.0D, 0.0D, -0.01D);
