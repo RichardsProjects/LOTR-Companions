@@ -219,8 +219,7 @@ public class ForgeEntityEvents {
         if (event.getEntity() instanceof ExtendedHirableEntity) {
             Minecraft minecraft = Minecraft.getInstance();
             MatrixStack matrixStackIn = event.getMatrixStack();
-            float health = ((LivingEntity)event.getEntity()).getHealth();
-            float maxhealth = ((LivingEntity)event.getEntity()).getMaxHealth();
+
             double d0 = minecraft.getEntityRenderDispatcher().distanceToSqr(event.getEntity());
             FontRenderer fontrenderer = event.getEntityRenderer().getFont();
             IRenderTypeBuffer.Impl buffer = minecraft.renderBuffers().bufferSource();
@@ -234,32 +233,8 @@ public class ForgeEntityEvents {
                 matrixStackIn.scale(-0.025F, -0.025F, 0.025F);
 
                 CompanionHpBar.draw(
-                        (LivingEntity)event.getEntity(),
-                        144 / 255.0F,
-                        238 / 255.0F,
-                        144 / 255.0F,
-                        255 / 255.0F,
-                        144 / 255.0F,
-                        238 / 255.0F,
-                        144 / 255.0F,
-                        255 / 255.0F,
-                        144 / 255.0F,
-                        238 / 255.0F,
-                        144 / 255.0F,
-                        255 / 255.0F,
-                        144 / 255.0F,
-                        238 / 255.0F,
-                        144 / 255.0F,
-                        255 / 255.0F,
-                        // text scale default 1X
-                        100 / 100.0F,
-                        // text posX and posY
-                        0,
-                        0,
-                        // text hardcoded as white
-                        255,
-                        255,
-                        255,
+                        (LivingEntity) event.getEntity(),
+                        100 / 100.0F, // text scale default 1X
                         matrixStackIn,
                         fontrenderer
                 );

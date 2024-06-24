@@ -11,10 +11,6 @@ import net.minecraft.client.gui.AbstractGui;
 
 public class BarRendererHelper {
 
-        public static boolean isMouseOverArea(double mouseX, double mouseY, int posX, int posY, int sizeX, int sizeY) {
-            return (mouseX >= posX && mouseX < (posX + sizeX) && mouseY >= posY && mouseY < (posY + sizeY));
-        }
-
         public static void bind(ResourceLocation res) {
             Minecraft.getInstance().getTextureManager().bind(res);
         }
@@ -32,11 +28,11 @@ public class BarRendererHelper {
         }
 
         public static int drawInternal(FontRenderer font, String text, float x, float y, int color, Matrix4f matrix, boolean p_92809_, boolean shadow) {
-            if (text == null)
-                return 0;
-            IRenderTypeBuffer.Impl multibuffersource$buffersource = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
-            int i = font.drawInBatch(text, x, y, color, shadow, matrix, (IRenderTypeBuffer)multibuffersource$buffersource, false, 0, 15728880, p_92809_);
-            multibuffersource$buffersource.endBatch();
+            if (text == null) return 0;
+
+            IRenderTypeBuffer.Impl bufferSource = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
+            int i = font.drawInBatch(text, x, y, color, shadow, matrix, bufferSource, false, 0, 15728880, p_92809_);
+            bufferSource.endBatch();
             return i;
         }
 }
