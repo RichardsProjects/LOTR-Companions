@@ -10,55 +10,66 @@ import net.richardsprojects.lotrcompanions.client.ColorHelper;
 
 public class CompanionHpBar {
 
-    public static void draw(LivingEntity entity, float bgr, float bgg, float bgb, float bgo, float hpr, float hpg, float hpb, float hpo, float fr, float fg, float fb, float fo, float f2r, float f2g, float f2b, float f2o, float textScale, int textposx, int textposy, int textr, int textg, int textb, MatrixStack matrixStackIn, FontRenderer font) {
+    private static final float HEALTHBAR_OPACITY = 80 / 100f;
 
-        // experimental values - tweak these to get it right
-        int posx = 0;
-        int posy = 0;
-        float scale = 1f;
+    private static final float BACKGROUND_RED = 0 / 255f;
+    private static final float BACKGROUND_GREEN = 0 / 255f;
+    private static final float BACKGROUND_BLUE = 0 / 255f;
 
-        float scaleX = 0;
-        int texto = 255;
+    private static final int TEXT_POS_X = 0;
+    private static final int TEXT_POS_Y = 0;
 
+    private static final int HB_POS_X_OFFSET = 0;
+    private static final int HB_POS_Y_OFFSET = 0;
+
+    private static final int HB_POS_X = -50;
+    private static final int HB_POS_Y = 20;
+
+    private static final int HB_WIDTH = 100;
+    private static final int HB_HEIGHT = 9;
+
+    private static final float HB_GREEN_R = 144 / 255.0F;
+    private static final float HB_GREEN_G = 238 / 255.0F;
+    private static final float HB_GREEN_B = 144 / 255.0F;
+
+
+
+    public static void draw(LivingEntity entity, float textScale, MatrixStack matrixStackIn, FontRenderer font) {
         float vit = entity.getMaxHealth(), hp = entity.getHealth();
         float hpWidth = ((float) -font.width((int) hp + "/" + (int) vit) / 2);
-        float widthMultiplier = 111.0F / vit;
-        int currentWidth = (int)Math.floor((hp * widthMultiplier));
+
         RenderSystem.enableDepthTest();
         RenderSystem.defaultBlendFunc();
-
         matrixStackIn.pushPose();
-        matrixStackIn.translate(posx, posy, 0.0D);
-        matrixStackIn.scale(scale, scale, 1.0F);
+
+        // render background
+        matrixStackIn.translate(HB_POS_X_OFFSET, HB_POS_Y_OFFSET, 0.0D);
+        matrixStackIn.scale(1.0F, 1.0F, 1.0F);
         ResourceLocation bar = new ResourceLocation(LOTRCompanions.MOD_ID, "textures/gui/healthbar.png");
         BarRendererHelper.bind(bar);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        float scalehp = 1.0F;
-        int posxhp = 63;
-        int posyhp = 28;
-        int startXhp = 0;
-        int startYhp = 19;
-        int sizeXhp = 150;
-        int sizeYhp = 13;
 
-        RenderSystem.color4f(bgr, bgg, bgb, bgo);
-        matrixStackIn.scale(scalehp, scalehp, 1.0F);
-        if (bgo != 0.0F)
-            BarRendererHelper.blit(matrixStackIn, posxhp, posyhp, startXhp, startYhp, sizeXhp, sizeYhp);
+        RenderSystem.color4f(BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, HEALTHBAR_OPACITY);
+        BarRendererHelper.blit(matrixStackIn, HB_POS_X, HB_POS_Y, 0, 19, HB_WIDTH, HB_HEIGHT);
+
+        // render healthbar
+        matrixStackIn.translate(HB_POS_X_OFFSET, HB_POS_Y_OFFSET, 0.0D);
+        matrixStackIn.scale(1.0F, 1.0F, 1.0F);
+        BarRendererHelper.bind(bar);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
+        RenderSystem.color4f(HB_GREEN_R, HB_GREEN_G, HB_GREEN_B, HEALTHBAR_OPACITY);
+        BarRendererHelper.blit(matrixStackIn, HB_POS_X, HB_POS_Y, 0, 19, (int) Math.ceil((double) HB_WIDTH * (hp / vit)), HB_HEIGHT);
+
+        // render text
         matrixStackIn.translate(0.0D, 0.0D, -0.01D);
-        matrixStackIn.pushPose();
-
-        RenderSystem.color4f(f2r, f2g, f2b, f2o);
-        matrixStackIn.scale(scalehp + scaleX, scalehp, 1.0F);
-        if (f2o != 0.0F)
-            BarRendererHelper.blit(matrixStackIn, posxhp, posyhp, startXhp, startYhp, sizeXhp, sizeYhp);
-        matrixStackIn.popPose();
-        int trueOpacity = (texto < 25) ? 25 : texto;
-        matrixStackIn.translate(textposx, textposy, -0.03D);
+        matrixStackIn.translate(TEXT_POS_X, TEXT_POS_Y, -0.03D);
         matrixStackIn.scale(textScale, textScale, 1.0F);
-        int k = ColorHelper.ARGB32.color(trueOpacity, textr, textg, textb);
-        BarRendererHelper.drawString(matrixStackIn, font, (int) hp + "/" + (int) vit, (int)hpWidth + 137, 31, k, false);
+        int color = ColorHelper.ARGB32.color(255, 255, 255, 255); // set black text color no opacity
+        BarRendererHelper.drawString(matrixStackIn, font, (int) hp + "/" + (int) vit, (int)hpWidth, 20, color, false);
+
         RenderSystem.disableBlend();
         matrixStackIn.popPose();
         RenderSystem.disableDepthTest();
