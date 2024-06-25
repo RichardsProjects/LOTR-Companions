@@ -14,7 +14,5 @@ public class HiredGondorSoldierRenderer extends GondorSoldierRenderer {
     @Override
     public void render(GondorManEntity entity, float yaw, float partialTicks, MatrixStack matStack, IRenderTypeBuffer buf, int packedLight) {
         super.render(entity, yaw, partialTicks, matStack, buf, packedLight);
-
-        //CompanionRenderUtils.renderHealthBar(this.entityRenderDispatcher, this.getFont(), entity, matStack, buf, packedLight);
     }
 }

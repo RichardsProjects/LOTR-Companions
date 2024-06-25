@@ -5,6 +5,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.client.ColorHelper;
 
@@ -28,9 +30,17 @@ public class CompanionHpBar {
     private static final int HB_WIDTH = 100;
     private static final int HB_HEIGHT = 9;
 
-    private static final float HB_GREEN_R = 144 / 255.0F;
-    private static final float HB_GREEN_G = 238 / 255.0F;
-    private static final float HB_GREEN_B = 144 / 255.0F;
+    private static final float HB_GREEN_R = 85 / 255.0F;
+    private static final float HB_GREEN_G = 255 / 255.0F;
+    private static final float HB_GREEN_B = 85 / 255.0F;
+
+    private static final float HB_YELLOW_R = 255 / 255.0F;
+    private static final float HB_YELLOW_G = 255 / 255.0F;
+    private static final float HB_YELLOW_B = 85 / 255.0F;
+
+    private static final float HB_RED_R = 255 / 255.0F;
+    private static final float HB_RED_G = 85 / 255.0F;
+    private static final float HB_RED_B = 85 / 255.0F;
 
 
 
@@ -51,8 +61,14 @@ public class CompanionHpBar {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        RenderSystem.color4f(HB_GREEN_R, HB_GREEN_G, HB_GREEN_B, HEALTHBAR_OPACITY);
-        int endOfHealth =  (int) Math.ceil((double) HB_WIDTH * (hp / vit));
+        int endOfHealth = (int) Math.ceil((double) HB_WIDTH * (hp / vit));
+        if (endOfHealth >= 80) {
+            RenderSystem.color4f(HB_GREEN_R, HB_GREEN_G, HB_GREEN_B, HEALTHBAR_OPACITY);
+        } else if (endOfHealth >= 40) {
+            RenderSystem.color4f(HB_YELLOW_R, HB_YELLOW_G, HB_YELLOW_B, HEALTHBAR_OPACITY);
+        } else {
+            RenderSystem.color4f(HB_RED_R, HB_RED_G, HB_RED_B, HEALTHBAR_OPACITY);
+        }
         BarRendererHelper.blit(matrixStackIn, HB_POS_X, HB_POS_Y, 0, 19, endOfHealth, HB_HEIGHT);
 
         // render background
