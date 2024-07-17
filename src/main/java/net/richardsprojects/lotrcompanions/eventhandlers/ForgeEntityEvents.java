@@ -114,6 +114,10 @@ public class ForgeEntityEvents {
             return;
         }
 
+        if (event.getTarget() instanceof HiredGondorSoldier) {
+            return;
+        }
+
         // check that they have a coin in their hand
         if (!CoinUtils.isValidCoin(event.getItemStack())) {
             return;
@@ -147,6 +151,10 @@ public class ForgeEntityEvents {
         }
 
         if (!(event.getTarget() instanceof BreeGuardEntity)) {
+            return;
+        }
+
+        if (event.getTarget() instanceof HiredBreeGuard) {
             return;
         }
 
