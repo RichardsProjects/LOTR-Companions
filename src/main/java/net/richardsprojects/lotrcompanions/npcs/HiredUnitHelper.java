@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -13,7 +14,7 @@ public class HiredUnitHelper {
     public static void die(World world, DamageSource source, ExtendedHirableEntity unit) {
         if (!world.isClientSide && world.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && unit.getOwner() instanceof ServerPlayerEntity) {
             // TODO: Update this show cause of death
-            unit.getOwner().sendMessage(new StringTextComponent("Your hired companion " + unit.getHiredUnitName().getString() + " has died."), unit.getOwnerUUID());
+            unit.getOwner().sendMessage(new TranslationTextComponent("notification.hired_companion_died", unit.getHiredUnitName()), unit.getOwnerUUID());
         }
     }
 
@@ -28,8 +29,11 @@ public class HiredUnitHelper {
             unit.setBaseHealth(unit.getBaseHealth() + 2);
 
             if (unit.getOwner() != null) {
-                unit.getOwner().sendMessage(new StringTextComponent("Your hired companion " + unit.getHiredUnitName().getString() +
-                        " has reached level " + unit.getExpLvl() + "!"), unit.getOwnerUUID());
+                unit.getOwner().sendMessage(
+                        new StringTextComponent("Your hired companion ").
+                                append(unit.getHiredUnitName()).
+                                append(" has reached level " + unit.getExpLvl() + "!"),
+                        unit.getOwnerUUID());
             }
         } else {
             unit.setCurrentXp(newExperience);

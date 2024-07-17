@@ -33,6 +33,8 @@ import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -177,7 +179,8 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements ExtendedH
 
     @Override
     public ITextComponent getHiredUnitName() {
-        return new StringTextComponent(getName().getString().replace(" Hired", ""));
+        return new TranslationTextComponent("entity.lotr.shortname.hired_gondor_soldier",
+                new StringTextComponent(getPersonalInfo().getName()));
     }
 
     public ItemStack checkFood() {

@@ -27,6 +27,7 @@ import net.minecraft.util.*;
 
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraft.world.server.ServerWorld;
@@ -172,7 +173,8 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
 
     @Override
     public ITextComponent getHiredUnitName() {
-        return new StringTextComponent(getName().getString().replace(" Hired", ""));
+        return new TranslationTextComponent("entity.lotr.shortname.hired_bree_guard",
+                new StringTextComponent(getPersonalInfo().getName()));
     }
 
     public ItemStack checkFood() {
