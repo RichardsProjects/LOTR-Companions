@@ -114,6 +114,10 @@ public class ForgeEntityEvents {
             return;
         }
 
+        if (event.getTarget() instanceof HiredGondorSoldier) {
+            return;
+        }
+
         // check that they have a coin in their hand
         if (!CoinUtils.isValidCoin(event.getItemStack())) {
             return;
@@ -147,6 +151,10 @@ public class ForgeEntityEvents {
         }
 
         if (!(event.getTarget() instanceof BreeGuardEntity)) {
+            return;
+        }
+
+        if (event.getTarget() instanceof HiredBreeGuard) {
             return;
         }
 
@@ -210,37 +218,6 @@ public class ForgeEntityEvents {
             PlayerEntity player = (PlayerEntity) event.getSource().getEntity();
             if (owner.equals(player.getUUID())) {
                 event.setCanceled(true);
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void renderHpBar(RenderNameplateEvent event) {
-        if (event.getEntity() instanceof ExtendedHirableEntity) {
-            Minecraft minecraft = Minecraft.getInstance();
-            MatrixStack matrixStackIn = event.getMatrixStack();
-
-            double d0 = minecraft.getEntityRenderDispatcher().distanceToSqr(event.getEntity());
-            FontRenderer fontrenderer = event.getEntityRenderer().getFont();
-            IRenderTypeBuffer.Impl buffer = minecraft.renderBuffers().bufferSource();
-            Matrix4f matrix4f = matrixStackIn.last().pose();
-
-            if (isNameplateInRenderDistance(event.getEntity(), d0)) {
-                float f = event.getEntity().getBbHeight() + 1.2F;
-                matrixStackIn.pushPose();
-                matrixStackIn.translate(0.0D, f, 0.0D);
-                matrixStackIn.mulPose(minecraft.getEntityRenderDispatcher().cameraOrientation());
-                matrixStackIn.scale(-0.025F, -0.025F, 0.025F);
-
-                CompanionHpBar.draw(
-                        (LivingEntity) event.getEntity(),
-                        100 / 100.0F, // text scale default 1X
-                        matrixStackIn,
-                        fontrenderer
-                );
-
-                matrixStackIn.popPose();
-                RenderSystem.disableDepthTest();
             }
         }
     }

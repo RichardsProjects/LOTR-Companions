@@ -1,12 +1,15 @@
 package net.richardsprojects.lotrcompanions;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.richardsprojects.lotrcompanions.client.eventhandlers.RenderHealthbars;
 import net.richardsprojects.lotrcompanions.client.render.HiredBreeGuardRenderer;
 import net.richardsprojects.lotrcompanions.client.render.HiredGondorSoldierRenderer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
@@ -42,9 +45,15 @@ public class LOTRCompanions {
         eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         LOTRCItems.ITEMS.register(eventBus);
         eventBus.register(this);
-        //eventBus.register(LOTRFastTravelEventHandler.class);
+
+        // register client event handlers only on clients
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> this::registerClientEvents);
 
         PacketHandler.register();
+    }
+
+    private void registerClientEvents() {
+        MinecraftForge.EVENT_BUS.register(RenderHealthbars.class);
     }
 
     @SubscribeEvent
