@@ -10,7 +10,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraftforge.client.event.RenderNameplateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.client.render.CompanionHpBar;
+
+import java.util.UUID;
 
 import static net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance;
 
@@ -19,6 +22,13 @@ public class RenderHealthbars {
     @SubscribeEvent
     public static void renderHpBar(RenderNameplateEvent event) {
         if (event.getEntity() instanceof ExtendedHirableEntity) {
+            ExtendedHirableEntity hired = (ExtendedHirableEntity) event.getEntity();
+            if (hired.getOwnerUUID() == null ||
+                    LOTRCompanions.usersUUID.equals(null) ||
+                    !hired.getOwnerUUID().equals(LOTRCompanions.usersUUID)) {
+                return;
+            }
+
             Minecraft minecraft = Minecraft.getInstance();
             MatrixStack matrixStackIn = event.getMatrixStack();
 

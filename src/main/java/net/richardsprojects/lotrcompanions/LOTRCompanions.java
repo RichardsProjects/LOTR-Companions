@@ -1,5 +1,6 @@
 package net.richardsprojects.lotrcompanions;
 
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -20,6 +21,8 @@ import net.richardsprojects.lotrcompanions.item.LOTRCItems;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.UUID;
+
 @Mod(LOTRCompanions.MOD_ID)
 public class LOTRCompanions {
 
@@ -34,6 +37,8 @@ public class LOTRCompanions {
 
     public static final boolean FRIENDLY_FIRE_COMPANIONS = false;
 
+    public static UUID usersUUID = null;
+
     public static IEventBus eventBus;
     public LOTRCompanions() {
     	// register Listeners that use the Forge Event Bus
@@ -47,13 +52,28 @@ public class LOTRCompanions {
         eventBus.register(this);
 
         // register client event handlers only on clients
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> this::registerClientEvents);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> this::setupClient);
 
         PacketHandler.register();
     }
 
-    private void registerClientEvents() {
+    private void setupClient() {
         MinecraftForge.EVENT_BUS.register(RenderHealthbars.class);
+
+        String userUUIDString = Minecraft.getInstance().getUser().getUuid();
+        if (!userUUIDString.equals("")) userUUIDString = LOTRCompanions.addDashesToUUID(userUUIDString);
+        try {
+            usersUUID = UUID.fromString(userUUIDString);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static String addDashesToUUID(String uuid) {
+        return uuid.replaceFirst(
+                "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
+                "$1-$2-$3-$4-$5"
+        );
     }
 
     @SubscribeEvent
