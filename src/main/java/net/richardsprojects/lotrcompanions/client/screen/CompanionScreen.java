@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -24,6 +25,7 @@ import net.richardsprojects.lotrcompanions.core.PacketHandler;
 import net.richardsprojects.lotrcompanions.npcs.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.networking.SetPatrollingPacket;
 import net.richardsprojects.lotrcompanions.networking.SetStationaryPacket;
+import net.richardsprojects.lotrcompanions.utils.Constants;
 
 public class CompanionScreen extends ContainerScreen<CompanionContainer> implements IHasContainer<CompanionContainer> {
 
@@ -59,6 +61,12 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
     public void render(MatrixStack p_98418_, int p_98419_, int p_98420_, float p_98421_) {
         this.renderBackground(p_98418_);
         super.render(p_98418_, p_98419_, p_98420_, p_98421_);
+
+        renderBaseGearSlot(leftPos + 25, topPos + 31, Constants.BREE_GUARD_HEAD);
+        renderBaseGearSlot(leftPos + 25, topPos + 49, Constants.BREE_GUARD_CHEST);
+        renderBaseGearSlot(leftPos + 25, topPos + 67, Constants.BREE_GUARD_LEGS);
+        renderBaseGearSlot(leftPos + 25, topPos + 85, Constants.BREE_GUARD_BOOTS);
+
         this.renderTooltip(p_98418_, p_98419_, p_98420_);
     }
 
@@ -155,6 +163,20 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
 
             this.renderComponentTooltip(stack, tooltips, x, y);
         }
+
+        // render tooltips for base gear
+        if (isHovering(25, 31, x, y)) {
+            this.renderTooltip(stack, Constants.BREE_GUARD_HEAD, x, y);
+        }
+        if (isHovering(25, 49, x, y)) {
+            this.renderTooltip(stack, Constants.BREE_GUARD_CHEST, x, y);
+        }
+        if (isHovering(25, 67, x, y)) {
+            this.renderTooltip(stack, Constants.BREE_GUARD_LEGS, x, y);
+        }
+        if (isHovering(25, 85, x, y)) {
+            this.renderTooltip(stack, Constants.BREE_GUARD_BOOTS, x, y);
+        }
     }
 
 
@@ -199,4 +221,34 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
             RenderSystem.disableBlend();
         }
     }
+
+    private void renderBaseGearSlot(int slotX, int slotY, ItemStack item) {
+        String itemStackCountText = null;
+
+        // Set rendering offsets
+        this.setBlitOffset(100);
+        this.itemRenderer.blitOffset = 100.0F;
+
+        // Render the item in the slot
+        RenderSystem.enableDepthTest();
+        this.itemRenderer.renderAndDecorateItem(this.minecraft.player, item, slotX, slotY);
+        this.itemRenderer.renderGuiItemDecorations(this.font, item, slotX, slotY, itemStackCountText);
+
+        // Reset rendering offsets
+        this.itemRenderer.blitOffset = 0.0F;
+        this.setBlitOffset(0);
+    }
+
+    private boolean isHovering(int hoverX, int hoverY, double mouseX, double mouseY) {
+        // Adjust the mouse coordinates based on the position of the component
+        double adjustedMouseX = mouseX - this.leftPos;
+        double adjustedMouseY = mouseY - this.topPos;
+
+        // Check if the adjusted mouse coordinates are within the bounds of the component
+        boolean isWithinXBounds = adjustedMouseX >= (hoverX - 1) && adjustedMouseX < (hoverX + 16 + 1);
+        boolean isWithinYBounds = adjustedMouseY >= (hoverY - 1) && adjustedMouseY < (hoverY + 16 + 1);
+
+        return isWithinXBounds && isWithinYBounds;
+    }
+
 }
