@@ -54,7 +54,7 @@ public class UpdateHiredEntityEquipmentPacket {
     }
 
     public static void handle(UpdateHiredEntityEquipmentPacket msg, Supplier<NetworkEvent.Context> context) {
-        System.out.println("Handling UpdateHiredEntityEquipmentPacket packet from server: ");
+        System.out.println("Handling UpdateHiredEntityEquipmentPacket packet from client: ");
 
         context.get().enqueueWork(() -> {
             if (msg != null) {

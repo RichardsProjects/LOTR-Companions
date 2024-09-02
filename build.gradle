@@ -131,7 +131,7 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.39'
     implementation fg.deobf("curse.maven:the-lord-of-the-rings-mod-renewed-406893:3661524")
-    implementation fg.deobf("curse.maven:lotr-renewed-extended-954566:5456210")
+    implementation fg.deobf("curse.maven:lotr-renewed-extended-954566:5606668")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 

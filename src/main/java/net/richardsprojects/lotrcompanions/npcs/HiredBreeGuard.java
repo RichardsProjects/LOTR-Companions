@@ -29,8 +29,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerChunkProvider;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -38,7 +36,6 @@ import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
 import net.richardsprojects.lotrcompanions.npcs.ai.*;
 import net.richardsprojects.lotrcompanions.networking.OpenInventoryPacket;
-import net.richardsprojects.lotrcompanions.networking.UpdateHiredEntityEquipmentPacket;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -82,6 +79,14 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
     private static final DataParameter<Boolean> INVENTORY_OPEN = EntityDataManager.defineId(HiredBreeGuard.class,
             DataSerializers.BOOLEAN);
 
+    // Data Parameters for all equipment so it can be automatically synced
+    private static final DataParameter<ItemStack> EQUIPMENT_CHEST = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_HEAD = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_LEGS = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_FEET = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_MAINHAND = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_OFFHAND = EntityDataManager.defineId(HiredBreeGuard.class, DataSerializers.ITEM_STACK);
+
     // 9 inventory slots + 6 equipment slots
     public Inventory inventory = new Inventory(15);
 
@@ -95,7 +100,14 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
         inventory.setItem(12, new ItemStack(Items.CHAINMAIL_BOOTS));
         inventory.setItem(13, new ItemStack(LOTRItems.IRON_SPEAR.get()));
         inventory.setItem(14, new ItemStack(Items.SHIELD));
-        //updateEquipment();
+
+        // set initial entity data
+        entityData.set(EQUIPMENT_HEAD, inventory.getItem(9));
+        entityData.set(EQUIPMENT_CHEST, inventory.getItem(10));
+        entityData.set(EQUIPMENT_LEGS, inventory.getItem(11));
+        entityData.set(EQUIPMENT_FEET, inventory.getItem(12));
+        entityData.set(EQUIPMENT_MAINHAND, inventory.getItem(13));
+        entityData.set(EQUIPMENT_OFFHAND, inventory.getItem(14));
 
         this.setTame(false);
     }
@@ -121,9 +133,7 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
     }
 
     @Override
-    public ItemStack eat(World world, ItemStack stack) {
-        if (stack.isEdible()) {
-            this.heal(stack.getItem().getFoodProperties().getNutrition());
+    public ItemStack eat(World world, ItemStack stack) { if (stack.isEdible()) { this.heal(stack.getItem().getFoodProperties().getNutrition());
         }
         super.eat(world, stack);
         return stack;
@@ -145,6 +155,14 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
         this.entityData.define(BASE_HEALTH, 30);
         this.entityData.define(INVENTORY_OPEN, false);
         this.entityData.define(TMP_LAST_HEALTH, 30f);
+
+        // equipment slots
+        this.entityData.define(EQUIPMENT_CHEST, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_HEAD, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_LEGS, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_FEET, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_MAINHAND, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_OFFHAND, ItemStack.EMPTY);
     }
 
     public static AttributeModifierMap.MutableAttribute createAttributes() {
@@ -268,12 +286,12 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
         setInventoryOpen(true);
 
         // synchronize the equipment slots
-        inventory.setItem(9, getItemBySlot(EquipmentSlotType.HEAD));
-        inventory.setItem(10, getItemBySlot(EquipmentSlotType.CHEST));
-        inventory.setItem(11, getItemBySlot(EquipmentSlotType.LEGS));
-        inventory.setItem(12, getItemBySlot(EquipmentSlotType.FEET));
-        inventory.setItem(13, getItemBySlot(EquipmentSlotType.MAINHAND));
-        inventory.setItem(14, getItemBySlot(EquipmentSlotType.OFFHAND));
+        inventory.setItem(9, entityData.get(EQUIPMENT_HEAD));
+        inventory.setItem(10, entityData.get(EQUIPMENT_CHEST));
+        inventory.setItem(11, entityData.get(EQUIPMENT_LEGS));
+        inventory.setItem(12, entityData.get(EQUIPMENT_FEET));
+        inventory.setItem(13, entityData.get(EQUIPMENT_MAINHAND));
+        inventory.setItem(14, entityData.get(EQUIPMENT_OFFHAND));
 
         player.containerMenu = new CompanionContainer(
                 player.containerCounter, player.inventory, inventory, getId()
@@ -430,8 +448,17 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
         for (int i = 0; i < 15; i++) {
             ItemStack itemStack = itemsStacks.get(i);
             if (!itemStack.equals(ItemStack.EMPTY)) {
-            	this.inventory.setItem(i, itemsStacks.get(i));
+                this.inventory.setItem(i, itemsStacks.get(i));
             }
+        }
+
+        if (!this.level.isClientSide) {
+            entityData.set(EQUIPMENT_HEAD, inventory.getItem(9));
+            entityData.set(EQUIPMENT_CHEST, inventory.getItem(10));
+            entityData.set(EQUIPMENT_LEGS, inventory.getItem(11));
+            entityData.set(EQUIPMENT_FEET, inventory.getItem(12));
+            entityData.set(EQUIPMENT_MAINHAND, inventory.getItem(13));
+            entityData.set(EQUIPMENT_OFFHAND, inventory.getItem(14));
         }
         updateEquipment();
 
@@ -480,25 +507,11 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
             this.setHealth(getTmpLastHealth());
             healthUpdateFromTmpHealth = true;
 
-            if (this.level instanceof ServerWorld && !((ServerWorld) this.level).isClientSide()) {
-                System.out.println("Running tick on Server Side");
+            /*if (this.level instanceof ServerWorld && !(this.level).isClientSide()) {
                 ServerChunkProvider scp = ((ServerWorld) this.level).getChunkSource();
                 scp.removeEntity(this);
                 scp.addEntity(this);
-
-                // TODO: Send armor update packet
-                ArrayList<ItemStack> gear = new ArrayList<>();
-                for (int i = 0; i < 6; i++) gear.add(ItemStack.EMPTY);
-                gear.set(0, inventory.getItem(9));
-                gear.set(1, inventory.getItem(10));
-                gear.set(2, inventory.getItem(11));
-                gear.set(3, inventory.getItem(12));
-                gear.set(4, inventory.getItem(13));
-                gear.set(5, inventory.getItem(14));
-
-                System.out.println("Sending UpdateHiredEntityEquipmentPacket packet from server: ");
-                PacketHandler.INSTANCE.send(PacketDistributor.NEAR.with(() -> PacketDistributor.TargetPoint.p(getX(), getY(), getZ(), 50, level.dimension()).get()), new UpdateHiredEntityEquipmentPacket(this.getId(), gear));
-            }
+            }*/
         }
 
         super.tick();
@@ -520,12 +533,23 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
     }
 
     public void updateEquipment() {
-        setItemSlot(EquipmentSlotType.HEAD, inventory.getItem(9));
-        setItemSlot(EquipmentSlotType.CHEST, inventory.getItem(10));
-        setItemSlot(EquipmentSlotType.LEGS, inventory.getItem(11));
-        setItemSlot(EquipmentSlotType.FEET, inventory.getItem((12)));
-        setItemSlot(EquipmentSlotType.MAINHAND, inventory.getItem(13));
-        setItemSlot(EquipmentSlotType.OFFHAND, inventory.getItem(14));
+        // only on server side update entityData to match inventory
+        if (!level.isClientSide) {
+            entityData.set(EQUIPMENT_HEAD, inventory.getItem(9));
+            entityData.set(EQUIPMENT_CHEST, inventory.getItem(10));
+            entityData.set(EQUIPMENT_LEGS, inventory.getItem(11));
+            entityData.set(EQUIPMENT_FEET, inventory.getItem(12));
+            entityData.set(EQUIPMENT_MAINHAND, inventory.getItem(13));
+            entityData.set(EQUIPMENT_OFFHAND, inventory.getItem(14));
+        }
+
+        // update item slot on both server and client
+        setItemSlot(EquipmentSlotType.HEAD, entityData.get(EQUIPMENT_HEAD));
+        setItemSlot(EquipmentSlotType.CHEST, entityData.get(EQUIPMENT_CHEST));
+        setItemSlot(EquipmentSlotType.LEGS, entityData.get(EQUIPMENT_LEGS));
+        setItemSlot(EquipmentSlotType.FEET, entityData.get(EQUIPMENT_FEET));
+        setItemSlot(EquipmentSlotType.OFFHAND, entityData.get(EQUIPMENT_OFFHAND));
+        setItemSlot(EquipmentSlotType.MAINHAND, entityData.get(EQUIPMENT_MAINHAND));
     }
 
     public void modifyMaxHealth(int change, String name, boolean permanent) {
