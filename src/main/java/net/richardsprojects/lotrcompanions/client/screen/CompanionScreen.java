@@ -13,6 +13,7 @@ import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -22,6 +23,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
+import net.richardsprojects.lotrcompanions.npcs.HiredBreeGuard;
 import net.richardsprojects.lotrcompanions.npcs.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.networking.SetPatrollingPacket;
 import net.richardsprojects.lotrcompanions.networking.SetStationaryPacket;
@@ -45,8 +47,10 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
     private CompanionButton patrolButton;
     private CompanionButton stationaryButton;
 
-    public CompanionScreen(CompanionContainer p_98409_, PlayerInventory p_98410_, ExtendedHirableEntity companion) {
-        super(p_98409_, p_98410_, companion.getHiredUnitName());
+    private ItemStack[] baseGear;
+
+    public CompanionScreen(CompanionContainer container, PlayerInventory p_98410_, ExtendedHirableEntity companion) {
+        super(container, p_98410_, companion.getHiredUnitName());
 
         this.companion = companion;
         this.passEvents = false;
@@ -55,6 +59,13 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
         this.imageWidth = 226;
         df.setRoundingMode(RoundingMode.CEILING);
         sidebarX = 90;
+
+        Entity entity = p_98410_.player.level.getEntity(container.getEntityId());
+        System.out.println(entity);
+        System.out.println("Is Gondor Soldier: " + (entity instanceof HiredGondorSoldier));
+        System.out.println("Is Bree Guard: " + (entity instanceof HiredBreeGuard));
+
+        baseGear = Constants.getBaseGear(entity);
     }
 
     @Override
@@ -62,10 +73,10 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
         this.renderBackground(p_98418_);
         super.render(p_98418_, p_98419_, p_98420_, p_98421_);
 
-        renderBaseGearSlot(leftPos + 25, topPos + 31, Constants.BREE_GUARD_HEAD);
-        renderBaseGearSlot(leftPos + 25, topPos + 49, Constants.BREE_GUARD_CHEST);
-        renderBaseGearSlot(leftPos + 25, topPos + 67, Constants.BREE_GUARD_LEGS);
-        renderBaseGearSlot(leftPos + 25, topPos + 85, Constants.BREE_GUARD_BOOTS);
+        renderBaseGearSlot(leftPos + 25, topPos + 31, baseGear[0]);
+        renderBaseGearSlot(leftPos + 25, topPos + 49, baseGear[1]);
+        renderBaseGearSlot(leftPos + 25, topPos + 67, baseGear[2]);
+        renderBaseGearSlot(leftPos + 25, topPos + 85, baseGear[3]);
 
         this.renderTooltip(p_98418_, p_98419_, p_98420_);
     }
@@ -166,16 +177,16 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
 
         // render tooltips for base gear
         if (isHovering(25, 31, x, y)) {
-            this.renderTooltip(stack, Constants.BREE_GUARD_HEAD, x, y);
+            this.renderTooltip(stack, baseGear[0], x, y);
         }
         if (isHovering(25, 49, x, y)) {
-            this.renderTooltip(stack, Constants.BREE_GUARD_CHEST, x, y);
+            this.renderTooltip(stack, baseGear[1], x, y);
         }
         if (isHovering(25, 67, x, y)) {
-            this.renderTooltip(stack, Constants.BREE_GUARD_LEGS, x, y);
+            this.renderTooltip(stack, baseGear[2], x, y);
         }
         if (isHovering(25, 85, x, y)) {
-            this.renderTooltip(stack, Constants.BREE_GUARD_BOOTS, x, y);
+            this.renderTooltip(stack, baseGear[3], x, y);
         }
     }
 

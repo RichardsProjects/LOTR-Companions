@@ -87,6 +87,14 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements ExtendedH
     private static final DataParameter<Boolean> INVENTORY_OPEN = EntityDataManager.defineId(HiredGondorSoldier.class,
             DataSerializers.BOOLEAN);
 
+    // Data Parameters for all equipment so it can be automatically synced
+    private static final DataParameter<ItemStack> EQUIPMENT_CHEST = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_HEAD = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_LEGS = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_FEET = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_MAINHAND = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.ITEM_STACK);
+    private static final DataParameter<ItemStack> EQUIPMENT_OFFHAND = EntityDataManager.defineId(HiredGondorSoldier.class, DataSerializers.ITEM_STACK);
+
     // 9 inventory slots + 6 equipment slots
     public Inventory inventory = new Inventory(15);
 
@@ -116,7 +124,14 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements ExtendedH
         inventory.setItem(12, new ItemStack(LOTRItems.GONDOR_BOOTS.get()));
         inventory.setItem(13, new ItemStack(LOTRItems.GONDOR_SWORD.get()));
         inventory.setItem(14, new ItemStack(LOTRItems.GONDOR_SHIELD.get()));
-        //updateEquipment();
+
+        // set initial entity data
+        entityData.set(EQUIPMENT_HEAD, inventory.getItem(9));
+        entityData.set(EQUIPMENT_CHEST, inventory.getItem(10));
+        entityData.set(EQUIPMENT_LEGS, inventory.getItem(11));
+        entityData.set(EQUIPMENT_FEET, inventory.getItem(12));
+        entityData.set(EQUIPMENT_MAINHAND, inventory.getItem(13));
+        entityData.set(EQUIPMENT_OFFHAND, inventory.getItem(14));
 
         this.setTame(false);
     }
@@ -150,6 +165,14 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements ExtendedH
         this.entityData.define(BASE_HEALTH, 30);
         this.entityData.define(INVENTORY_OPEN, false);
         this.entityData.define(TMP_LAST_HEALTH, 30f);
+
+        // equipment slots
+        this.entityData.define(EQUIPMENT_CHEST, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_HEAD, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_LEGS, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_FEET, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_MAINHAND, ItemStack.EMPTY);
+        this.entityData.define(EQUIPMENT_OFFHAND, ItemStack.EMPTY);
     }
 
     public static AttributeModifierMap.MutableAttribute createAttributes() {
@@ -264,12 +287,12 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements ExtendedH
         setInventoryOpen(true);
 
         // synchronize the equipment slots
-        inventory.setItem(9, getItemBySlot(EquipmentSlotType.HEAD));
-        inventory.setItem(10, getItemBySlot(EquipmentSlotType.CHEST));
-        inventory.setItem(11, getItemBySlot(EquipmentSlotType.LEGS));
-        inventory.setItem(12, getItemBySlot(EquipmentSlotType.FEET));
-        inventory.setItem(13, getItemBySlot(EquipmentSlotType.MAINHAND));
-        inventory.setItem(14, getItemBySlot(EquipmentSlotType.OFFHAND));
+        inventory.setItem(9, entityData.get(EQUIPMENT_HEAD));
+        inventory.setItem(10, entityData.get(EQUIPMENT_CHEST));
+        inventory.setItem(11, entityData.get(EQUIPMENT_LEGS));
+        inventory.setItem(12, entityData.get(EQUIPMENT_FEET));
+        inventory.setItem(13, entityData.get(EQUIPMENT_MAINHAND));
+        inventory.setItem(14, entityData.get(EQUIPMENT_OFFHAND));
 
         player.containerMenu = new CompanionContainer(
                 player.containerCounter, player.inventory, inventory, getId()
@@ -423,6 +446,16 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements ExtendedH
             	this.inventory.setItem(i, itemsStacks.get(i));
             }
         }
+
+        if (!this.level.isClientSide) {
+            entityData.set(EQUIPMENT_HEAD, inventory.getItem(9));
+            entityData.set(EQUIPMENT_CHEST, inventory.getItem(10));
+            entityData.set(EQUIPMENT_LEGS, inventory.getItem(11));
+            entityData.set(EQUIPMENT_FEET, inventory.getItem(12));
+            entityData.set(EQUIPMENT_MAINHAND, inventory.getItem(13));
+            entityData.set(EQUIPMENT_OFFHAND, inventory.getItem(14));
+        }
+
         updateEquipment();
 
         if (tag.contains("following")) {
@@ -495,12 +528,23 @@ public class HiredGondorSoldier extends GondorSoldierEntity implements ExtendedH
     }
 
     public void updateEquipment() {
-        setItemSlot(EquipmentSlotType.HEAD, inventory.getItem(9));
-        setItemSlot(EquipmentSlotType.CHEST, inventory.getItem(10));
-        setItemSlot(EquipmentSlotType.LEGS, inventory.getItem(11));
-        setItemSlot(EquipmentSlotType.FEET, inventory.getItem((12)));
-        setItemSlot(EquipmentSlotType.MAINHAND, inventory.getItem(13));
-        setItemSlot(EquipmentSlotType.OFFHAND, inventory.getItem(14));
+        // only on server side update entityData to match inventory
+        if (!level.isClientSide) {
+            entityData.set(EQUIPMENT_HEAD, inventory.getItem(9));
+            entityData.set(EQUIPMENT_CHEST, inventory.getItem(10));
+            entityData.set(EQUIPMENT_LEGS, inventory.getItem(11));
+            entityData.set(EQUIPMENT_FEET, inventory.getItem(12));
+            entityData.set(EQUIPMENT_MAINHAND, inventory.getItem(13));
+            entityData.set(EQUIPMENT_OFFHAND, inventory.getItem(14));
+        }
+
+        // update item slot on both server and client
+        setItemSlot(EquipmentSlotType.HEAD, entityData.get(EQUIPMENT_HEAD));
+        setItemSlot(EquipmentSlotType.CHEST, entityData.get(EQUIPMENT_CHEST));
+        setItemSlot(EquipmentSlotType.LEGS, entityData.get(EQUIPMENT_LEGS));
+        setItemSlot(EquipmentSlotType.FEET, entityData.get(EQUIPMENT_FEET));
+        setItemSlot(EquipmentSlotType.OFFHAND, entityData.get(EQUIPMENT_OFFHAND));
+        setItemSlot(EquipmentSlotType.MAINHAND, entityData.get(EQUIPMENT_MAINHAND));
     }
 
     public void modifyMaxHealth(int change, String name, boolean permanent) {

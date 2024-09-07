@@ -506,12 +506,6 @@ public class HiredBreeGuard extends BreeGuardEntity implements ExtendedHirableEn
         if (tmpHealthLoaded && !healthUpdateFromTmpHealth) {
             this.setHealth(getTmpLastHealth());
             healthUpdateFromTmpHealth = true;
-
-            /*if (this.level instanceof ServerWorld && !(this.level).isClientSide()) {
-                ServerChunkProvider scp = ((ServerWorld) this.level).getChunkSource();
-                scp.removeEntity(this);
-                scp.addEntity(this);
-            }*/
         }
 
         super.tick();
