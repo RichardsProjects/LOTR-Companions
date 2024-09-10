@@ -11,19 +11,18 @@ import net.richardsprojects.lotrcompanions.npcs.HiredGondorSoldier;
 
 public class Constants {
 
-    private static final ItemStack BREE_GUARD_HEAD = new ItemStack(Items.IRON_HELMET).setHoverName(new StringTextComponent("Base Helmet").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack BREE_GUARD_CHEST = new ItemStack(Items.LEATHER_CHESTPLATE).setHoverName(new StringTextComponent("Base Chestplate").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack BREE_GUARD_LEGS = new ItemStack(Items.CHAINMAIL_LEGGINGS).setHoverName(new StringTextComponent("Base Leggings").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack BREE_GUARD_FEET = new ItemStack(Items.CHAINMAIL_BOOTS).setHoverName(new StringTextComponent("Base Boots").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack BREE_GUARD_MAINHAND  = new ItemStack(LOTRItems.IRON_SPEAR.get()).setHoverName(new StringTextComponent("Base Weapon").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack BREE_GUARD_OFFHAND = new ItemStack(Items.SHIELD).setHoverName(new StringTextComponent("Base Shield").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-
-    private static final ItemStack GONDOR_SOLDIER_HEAD = new ItemStack(LOTRItems.GONDOR_HELMET.get()).setHoverName(new StringTextComponent("Base Helmet").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack GONDOR_SOLDIER_CHEST = new ItemStack(LOTRItems.GONDOR_CHESTPLATE.get()).setHoverName(new StringTextComponent("Base Chestplate").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack GONDOR_SOLDIER_LEGS = new ItemStack(LOTRItems.GONDOR_LEGGINGS.get()).setHoverName(new StringTextComponent("Base Leggings").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack GONDOR_SOLDIER_FEET = new ItemStack(LOTRItems.GONDOR_BOOTS.get()).setHoverName(new StringTextComponent("Base Boots").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack GONDOR_SOLDIER_MAINHAND  = new ItemStack(LOTRItems.GONDOR_SWORD.get()).setHoverName(new StringTextComponent("Base Weapon").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
-    private static final ItemStack GONDOR_SOLDIER_OFFHAND = new ItemStack(LOTRItems.GONDOR_SHIELD.get()).setHoverName(new StringTextComponent("Base Shield").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack BREE_GUARD_HEAD = new ItemStack(Items.IRON_HELMET).setHoverName(new StringTextComponent("Base Helmet").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack BREE_GUARD_CHEST = new ItemStack(Items.LEATHER_CHESTPLATE).setHoverName(new StringTextComponent("Base Chestplate").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack BREE_GUARD_LEGS = new ItemStack(Items.CHAINMAIL_LEGGINGS).setHoverName(new StringTextComponent("Base Leggings").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack BREE_GUARD_FEET = new ItemStack(Items.CHAINMAIL_BOOTS).setHoverName(new StringTextComponent("Base Boots").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack BREE_GUARD_MAINHAND  = new ItemStack(LOTRItems.IRON_SPEAR.get()).setHoverName(new StringTextComponent("Base Weapon").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack BREE_GUARD_OFFHAND = new ItemStack(Items.SHIELD).setHoverName(new StringTextComponent("Base Shield").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack GONDOR_SOLDIER_HEAD = new ItemStack(LOTRItems.GONDOR_HELMET.get()).setHoverName(new StringTextComponent("Base Helmet").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack GONDOR_SOLDIER_CHEST = new ItemStack(LOTRItems.GONDOR_CHESTPLATE.get()).setHoverName(new StringTextComponent("Base Chestplate").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack GONDOR_SOLDIER_LEGS = new ItemStack(LOTRItems.GONDOR_LEGGINGS.get()).setHoverName(new StringTextComponent("Base Leggings").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack GONDOR_SOLDIER_FEET = new ItemStack(LOTRItems.GONDOR_BOOTS.get()).setHoverName(new StringTextComponent("Base Boots").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack GONDOR_SOLDIER_MAINHAND  = new ItemStack(LOTRItems.GONDOR_SWORD.get()).setHoverName(new StringTextComponent("Base Weapon").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
+    public static final ItemStack GONDOR_SOLDIER_OFFHAND = new ItemStack(LOTRItems.GONDOR_SHIELD.get()).setHoverName(new StringTextComponent("Base Shield").withStyle(TextFormatting.BOLD).withStyle(TextFormatting.GOLD));
 
     public static ItemStack[] getBaseGear(Entity entity) {
         ItemStack[] baseGear = new ItemStack[6];
