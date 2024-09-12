@@ -84,8 +84,11 @@ public class CompanionContainer extends Container {
         }
 
         // add the 6 companion equipment slots
-        mainHand = this.addSlot(new Slot(companionInv, 13,62,67));
-        offHand = this.addSlot(new Slot(companionInv, 14,62,85) {
+        // TODO: Keeping these for reference for when creating the new Upgrade Equipment Menu
+        //mainHand = this.addSlot(new Slot(companionInv, 13,61,64));
+        mainHand = this.addSlot(new Slot(companionInv, 13,44,67));
+        //offHand = this.addSlot(new Slot(companionInv, 14,61,82);
+        offHand = this.addSlot(new Slot(companionInv, 14,44,85) {
             public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
                 return Pair.of(PlayerContainer.BLOCK_ATLAS, EMPTY_ARMOR_SLOT_SHIELD);
             }

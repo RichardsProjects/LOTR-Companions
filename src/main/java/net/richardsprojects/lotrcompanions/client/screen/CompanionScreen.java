@@ -23,7 +23,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.richardsprojects.lotrcompanions.LOTRCompanions;
 import net.richardsprojects.lotrcompanions.container.CompanionContainer;
 import net.richardsprojects.lotrcompanions.core.PacketHandler;
-import net.richardsprojects.lotrcompanions.npcs.HiredBreeGuard;
 import net.richardsprojects.lotrcompanions.npcs.HiredGondorSoldier;
 import net.richardsprojects.lotrcompanions.networking.SetPatrollingPacket;
 import net.richardsprojects.lotrcompanions.networking.SetStationaryPacket;
@@ -61,9 +60,6 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
         sidebarX = 90;
 
         Entity entity = p_98410_.player.level.getEntity(container.getEntityId());
-        System.out.println(entity);
-        System.out.println("Is Gondor Soldier: " + (entity instanceof HiredGondorSoldier));
-        System.out.println("Is Bree Guard: " + (entity instanceof HiredBreeGuard));
 
         baseGear = Constants.getBaseGear(entity);
     }
@@ -77,6 +73,8 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
         renderBaseGearSlot(leftPos + 25, topPos + 49, baseGear[1]);
         renderBaseGearSlot(leftPos + 25, topPos + 67, baseGear[2]);
         renderBaseGearSlot(leftPos + 25, topPos + 85, baseGear[3]);
+        renderBaseGearSlot(leftPos + 62, topPos + 67, baseGear[4]);
+        renderBaseGearSlot(leftPos + 62, topPos + 85, baseGear[5]);
 
         this.renderTooltip(p_98418_, p_98419_, p_98420_);
     }
@@ -187,6 +185,12 @@ public class CompanionScreen extends ContainerScreen<CompanionContainer> impleme
         }
         if (isHovering(25, 85, x, y)) {
             this.renderTooltip(stack, baseGear[3], x, y);
+        }
+        if (isHovering(62, 67, x, y)) {
+            this.renderTooltip(stack, baseGear[4], x, y);
+        }
+        if (isHovering(62, 85, x, y)) {
+            this.renderTooltip(stack, baseGear[5], x, y);
         }
     }
 
