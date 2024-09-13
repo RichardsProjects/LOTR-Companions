@@ -83,11 +83,11 @@ public class CompanionContainer extends Container {
             });
         }
 
-        // add the 6 companion equipment slots
-        // TODO: Keeping these for reference for when creating the new Upgrade Equipment Menu
+        // add the companion main hand and off hand slots
+        // TODO: Keeping these for reference for when creating the new "Equipment" screen
         //mainHand = this.addSlot(new Slot(companionInv, 13,61,64));
-        mainHand = this.addSlot(new Slot(companionInv, 13,44,67));
         //offHand = this.addSlot(new Slot(companionInv, 14,61,82);
+        mainHand = this.addSlot(new Slot(companionInv, 13,44,67));
         offHand = this.addSlot(new Slot(companionInv, 14,44,85) {
             public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
                 return Pair.of(PlayerContainer.BLOCK_ATLAS, EMPTY_ARMOR_SLOT_SHIELD);
@@ -103,10 +103,29 @@ public class CompanionContainer extends Container {
         return this.container.stillValid(p_39242_);
     }
 
-    public ItemStack quickMoveStack(PlayerEntity p_39253_, int p_39254_) {
+    public ItemStack quickMoveStack(PlayerEntity player, int p_39254_) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(p_39254_);
-        if (slot != null && slot.hasItem()) {
+
+        // handle shift-clicking the main hand and sending it back to the player's inventory
+        if (slot != null && slot.equals(mainHand) && slot.hasItem()) {
+           if (player.inventory.getFreeSlot() > -1 || player.inventory.getSlotWithRemainingSpace(slot.getItem()) > -1) {
+               player.addItem(slot.getItem());
+               mainHand.set(ItemStack.EMPTY);
+               mainHand.setChanged();
+           } else {
+               return ItemStack.EMPTY;
+           }
+        // handle shift-clicking offhand and sending it back to the player's inventory
+        } else if (slot != null && slot.equals(offHand) && slot.hasItem()) {
+            if (player.inventory.getFreeSlot() > -1 || player.inventory.getSlotWithRemainingSpace(slot.getItem()) > -1) {
+                player.addItem(slot.getItem());
+                offHand.set(ItemStack.EMPTY);
+                offHand.setChanged();
+            } else {
+                return ItemStack.EMPTY;
+            }
+        } else if (slot != null && slot.hasItem()) {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
 
